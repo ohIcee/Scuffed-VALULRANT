@@ -69,7 +69,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         Debug.Log(newName);
     }
 
-    public string getDisplayName()
+    public string GetDisplayName()
     {
         return displayName;
     }

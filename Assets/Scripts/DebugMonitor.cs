@@ -24,7 +24,7 @@ public class DebugMonitor : MonoBehaviour
 
     void Update()
     {
-        playerNameText.text = $" {networkPlayer.getDisplayName()}";
+        playerNameText.text = $" {networkPlayer.GetDisplayName()}";
         playerIDText.text = $"Player ID: {networkPlayer.netId}";
         playerMovementSpeedText.text = $"{fpMov.characterVelocity}";
         isShiftingText.text = $"Is Shifting: {fpMov.isPressingShift}";

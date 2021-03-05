@@ -38,7 +38,7 @@ public class InputManager : NetworkBehaviour
         playerInput.EscapeMenu.performed += _ =>
         {
             uIManager.ToggleEscapeMenu();
-            toggleCursorLock(false);
+            ToggleCursorLock(false);
         };
 
         playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
@@ -47,7 +47,12 @@ public class InputManager : NetworkBehaviour
         playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
         playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
 
-        playerInput.Aim.started += _ => playerShooting.OnStartAiming();
+        playerInput.Aim.started += _ =>
+        {
+            playerShooting.OnStartAiming(); 
+            ToggleCursorLock(true);
+        };
+
         playerInput.Aim.canceled += _ => playerShooting.OnStopAiming();
 
         playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
@@ -56,9 +61,11 @@ public class InputManager : NetworkBehaviour
         playerInput.Shoot.started += _ =>
         {
             playerShooting.OnStartShooting();
-            toggleCursorLock(true);
         };
-        playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
+        playerInput.Shoot.canceled += _ =>
+        {
+            playerShooting.OnStopShooting();
+        };
 
         playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
         playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
@@ -78,7 +85,7 @@ public class InputManager : NetworkBehaviour
 
         controls.Disable();
     }
-    private void toggleCursorLock(bool locked)
+    private void ToggleCursorLock(bool locked)
     {
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !locked;
