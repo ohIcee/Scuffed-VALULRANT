@@ -2,8 +2,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Cinemachine;
+using System.Collections;
 
-public class FirstPersonMovement : NetworkBehaviour
+public class Player : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] private UIManager uiManager;
@@ -11,7 +12,7 @@ public class FirstPersonMovement : NetworkBehaviour
     public Health GetHealth() => health;
 
     [Tooltip("Reference to the main camera used for the player")]
-    [SerializeField] private CinemachineVirtualCamera playerCamera;
+    [SerializeField] private Camera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
     [SerializeField] private AudioSource footstepAudioSource;
     [SerializeField] private AudioSource jumpAudioSource;
@@ -90,11 +91,6 @@ public class FirstPersonMovement : NetworkBehaviour
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
-
-    public AutomaticGunScriptLPFP DEBUG_GUN;
-
-
-
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
 
@@ -135,39 +131,186 @@ public class FirstPersonMovement : NetworkBehaviour
     const float k_JumpGroundingPreventionTime = 0.2f;
     const float k_GroundCheckDistanceInAir = 0.07f;
 
-    public override void OnStartAuthority()
+    public int kills;
+    public int deaths;
+
+    [SyncVar]
+    public string username = "Loading...";
+
+    [SerializeField]
+    private Behaviour[] disableOnDeath;
+    private bool[] wasEnabled;
+
+    private bool firstSetup = true;
+
+    [SerializeField]
+    private GameObject[] disableGameObjectsOnDeath;
+
+    [SerializeField]
+    private GameObject deathEffect;
+
+    [SerializeField]
+    private GameObject spawnEffect;
+
+    public void SetupPlayer()
     {
-        base.OnStartAuthority();
+        if (isLocalPlayer)
+        {
+            //Switch cameras
+            GameManager.instance.SetSceneCameraActive(false);
+            m_Controller = GetComponent<CharacterController>();
+            GetComponent<PlayerSetup>().playerUIInstance.SetActive(true);
+        }
 
-        playerCamera.enabled = true;
-        playerCamera.GetComponent<AudioListener>().enabled = true;
-
-        // fetch components on the same gameObject
-        m_Controller = GetComponent<CharacterController>();
-        //DebugUtility.HandleErrorIfNullGetComponent<CharacterController, PlayerCharacterController>(m_Controller, this, gameObject);
-
-        //m_WeaponsManager = GetComponent<PlayerWeaponsManager>();
-        //DebugUtility.HandleErrorIfNullGetComponent<PlayerWeaponsManager, PlayerCharacterController>(m_WeaponsManager, this, gameObject);
-
-        uiManager.gameObject.SetActive(true);
-
-        m_Controller.enableOverlapRecovery = true;
-
-        // force the crouch state to false when starting
-        SetCrouchingState(false, true);
-        UpdateCharacterHeight(true);
+        CmdBroadCastNewPlayerSetup();
     }
+
+    private void OnEnable()
+    {
+        health.ServerOnDie += Die;
+    }
+
+    private void OnDestroy()
+    {
+        health.ServerOnDie -= Die;
+    }
+
+    [Command]
+    private void CmdBroadCastNewPlayerSetup()
+    {
+        RpcSetupPlayerOnAllClients();
+    }
+
+    [ClientRpc]
+    private void RpcSetupPlayerOnAllClients()
+    {
+        if (firstSetup)
+        {
+            wasEnabled = new bool[disableOnDeath.Length];
+            for (int i = 0; i < wasEnabled.Length; i++)
+            {
+                wasEnabled[i] = disableOnDeath[i].enabled;
+            }
+
+            firstSetup = false;
+        }
+
+        SetDefaults();
+    }
+
+    private void Die(string _sourceID)
+    {
+        Player sourcePlayer = GameManager.GetPlayer(_sourceID);
+        if (sourcePlayer != null)
+        {
+            sourcePlayer.kills++;
+            GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
+        }
+
+        deaths++;
+
+        //Disable components
+        for (int i = 0; i < disableOnDeath.Length; i++)
+        {
+            disableOnDeath[i].enabled = false;
+        }
+
+        //Disable GameObjects
+        for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
+        {
+            disableGameObjectsOnDeath[i].SetActive(false);
+        }
+
+        //Spawn a death effect
+        GameObject _gfxIns = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
+        Destroy(_gfxIns, 3f);
+
+        //Switch cameras
+        if (isLocalPlayer)
+        {
+            GameManager.instance.SetSceneCameraActive(true);
+            GetComponent<PlayerSetup>().playerUIInstance.SetActive(false);
+        }
+
+        Debug.Log(transform.name + " is DEAD!");
+
+        StartCoroutine(Respawn());
+    }
+
+    private IEnumerator Respawn()
+    {
+        yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
+
+        Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
+        transform.position = _spawnPoint.position;
+        transform.rotation = _spawnPoint.rotation;
+
+        yield return new WaitForSeconds(0.1f);
+
+        SetupPlayer();
+
+        Debug.Log(transform.name + " respawned.");
+    }
+
+    public void SetDefaults()
+    {
+        health.ResetPlayer();
+
+        //Enable the components
+        for (int i = 0; i < disableOnDeath.Length; i++)
+        {
+            disableOnDeath[i].enabled = wasEnabled[i];
+        }
+
+        //Enable the gameobjects
+        for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
+        {
+            disableGameObjectsOnDeath[i].SetActive(true);
+        }
+
+        //Enable the collider
+        Collider _col = GetComponent<Collider>();
+        if (_col != null)
+            _col.enabled = true;
+
+        //Create spawn effect
+        GameObject _gfxIns = (GameObject)Instantiate(spawnEffect, transform.position, Quaternion.identity);
+        Destroy(_gfxIns, 3f);
+    }
+
+    //public override void OnStartAuthority()
+    //{
+    //    base.OnStartAuthority();
+
+    //    playerCamera.enabled = true;
+    //    playerCamera.GetComponent<AudioListener>().enabled = true;
+
+    //    // fetch components on the same gameObject
+    //    m_Controller = GetComponent<CharacterController>();
+    //    //DebugUtility.HandleErrorIfNullGetComponent<CharacterController, PlayerCharacterController>(m_Controller, this, gameObject);
+
+    //    //m_WeaponsManager = GetComponent<PlayerWeaponsManager>();
+    //    //DebugUtility.HandleErrorIfNullGetComponent<PlayerWeaponsManager, PlayerCharacterController>(m_WeaponsManager, this, gameObject);
+
+    //    uiManager.gameObject.SetActive(true);
+
+    //    m_Controller.enableOverlapRecovery = true;
+
+    //    // force the crouch state to false when starting
+    //    SetCrouchingState(false, true);
+    //    UpdateCharacterHeight(true);
+    //}
 
     [Command]
     private void CmdSuicide()
     {
-        health.DealDamage(9999);
+        health.DealDamage(9999, transform.name);
     }
 
     [Command]
     private void CmdTakeFallDamage(int damage)
     {
-        health.DealDamage(damage);
+        health.DealDamage(damage, transform.name);
     }
 
     [ClientCallback]
@@ -196,12 +339,14 @@ public class FirstPersonMovement : NetworkBehaviour
                 CmdTakeFallDamage((int)dmgFromFall);
 
                 // fall damage SFX
-                fallDamageAudioSource.PlayOneShot(fallDamageSFX);
+                if (fallDamageAudioSource)
+                    fallDamageAudioSource.PlayOneShot(fallDamageSFX);
             }
             else
             {
                 // land SFX
-                landAudioSource.PlayOneShot(landSFX);
+                if (landAudioSource)
+                    landAudioSource.PlayOneShot(landSFX);
             }
         }
 
@@ -306,7 +451,8 @@ public class FirstPersonMovement : NetworkBehaviour
                         characterVelocity += Vector3.up * jumpForce;
 
                         // play sound
-                        jumpAudioSource.PlayOneShot(jumpSFX);
+                        if (jumpAudioSource)
+                            jumpAudioSource.PlayOneShot(jumpSFX);
 
                         // remember last time we jumped because we need to prevent snapping to ground for a short time
                         m_LastTimeJumped = Time.time;
@@ -325,7 +471,8 @@ public class FirstPersonMovement : NetworkBehaviour
 
                     if (!isCrouching)
                     {
-                        footstepAudioSource.PlayOneShot(footstepSFX);
+                        if (footstepAudioSource)
+                            footstepAudioSource.PlayOneShot(footstepSFX);
                     }
                 }
 
@@ -463,7 +610,6 @@ public class FirstPersonMovement : NetworkBehaviour
     public void OnCrouchReleased() => SetCrouchingState(!isCrouching, false);
     public void ReceiveMovementInput(Vector2 movementInput) => this.movementInput = movementInput;
     public void ReceiveMouseInput(Vector2 mouseInput) {
-        DEBUG_GUN.MouseInput = mouseInput;
         this.mouseInput = mouseInput; 
     }
 

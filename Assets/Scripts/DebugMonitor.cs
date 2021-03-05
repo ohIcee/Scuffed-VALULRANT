@@ -5,7 +5,7 @@ using TMPro;
 
 public class DebugMonitor : MonoBehaviour
 {
-    [SerializeField] private FirstPersonMovement fpMov;
+    [SerializeField] private Player fpMov;
     [SerializeField] private ValulrantNetworkPlayer networkPlayer;
 
     [SerializeField] private TextMeshProUGUI playerNameText;
@@ -16,7 +16,7 @@ public class DebugMonitor : MonoBehaviour
     [SerializeField] private TextMeshProUGUI isGroundedText;
     [SerializeField] private TextMeshProUGUI isDeadText;
 
-    public void Initialize(FirstPersonMovement fpMov)
+    public void Initialize(Player fpMov)
     {
         this.fpMov = fpMov;
         networkPlayer = fpMov.GetComponent<ValulrantNetworkPlayer>();

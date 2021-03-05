@@ -6,7 +6,7 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private float mouseSensitivityMultiplier = .5f;
 
     [Header("Scripts")]
-    [SerializeField] private FirstPersonMovement fpMov;
+    [SerializeField] private Player fpMov;
     [SerializeField] private PlayerShooting playerShooting;
 
     private UIManager uIManager;

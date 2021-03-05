@@ -8,8 +8,16 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Image healthBarImage = null;
     [SerializeField] private TextMeshProUGUI healthText = null;
 
-    private void Awake()
+    private Player player;
+    private WeaponManager weaponManager;
+
+    public void SetPlayer(Player _player)
     {
+        player = _player;
+        weaponManager = player.GetComponent<WeaponManager>();
+
+        health = player.GetComponent<Health>();
+
         health.ClientOnHealthUpdated += HandleHealthUpdated;
     }
 

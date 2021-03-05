@@ -13,11 +13,11 @@ TagManager:
   - UI
   - 
   - 
-  - Ground
+  - LocalPlayer
+  - RemotePlayer
+  - DontDraw
   - Weapon
-  - 
-  - 
-  - 
+  - CollidableEnvironment
   - 
   - 
   - 
