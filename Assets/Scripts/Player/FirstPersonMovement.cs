@@ -96,7 +96,7 @@ public class FirstPersonMovement : NetworkBehaviour
     public bool isCrouching { get; private set; }
 
     private bool isPressingJump = false;
-    private bool isPressingShift = false;
+    [HideInInspector] public bool isPressingShift = false;
     private Vector2 movementInput = Vector2.zero;
     private Vector2 mouseInput = Vector2.zero;
 
@@ -121,6 +121,7 @@ public class FirstPersonMovement : NetworkBehaviour
     float m_CameraVerticalAngle = 0f;
     float m_footstepDistanceCounter;
     float m_TargetCharacterHeight;
+    [HideInInspector] public float currentHeight;
 
     const float k_JumpGroundingPreventionTime = 0.2f;
     const float k_GroundCheckDistanceInAir = 0.07f;
@@ -387,6 +388,7 @@ public class FirstPersonMovement : NetworkBehaviour
         if (force)
         {
             m_Controller.height = m_TargetCharacterHeight;
+            currentHeight = m_Controller.height;
             m_Controller.center = Vector3.up * m_Controller.height * 0.5f;
             playerCamera.transform.localPosition = Vector3.up * m_TargetCharacterHeight * cameraHeightRatio;
             //m_Actor.aimPoint.transform.localPosition = m_Controller.center;
@@ -396,6 +398,7 @@ public class FirstPersonMovement : NetworkBehaviour
         {
             // resize the capsule and adjust camera position
             m_Controller.height = Mathf.Lerp(m_Controller.height, m_TargetCharacterHeight, crouchingSharpness * Time.deltaTime);
+            currentHeight = m_Controller.height;
             m_Controller.center = Vector3.up * m_Controller.height * 0.5f;
             playerCamera.transform.localPosition = Vector3.Lerp(playerCamera.transform.localPosition, Vector3.up * m_TargetCharacterHeight * cameraHeightRatio, crouchingSharpness * Time.deltaTime);
             //m_Actor.aimPoint.transform.localPosition = m_Controller.center;
