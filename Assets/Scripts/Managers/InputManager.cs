@@ -9,6 +9,8 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private FirstPersonMovement fpMov;
     [SerializeField] private PlayerShooting playerShooting;
 
+    private UIManager uIManager;
+
     PlayerControls controls;
     PlayerControls.PlayerInputActions playerInput;
 
@@ -27,11 +29,15 @@ public class InputManager : NetworkBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        uIManager = FindObjectOfType<UIManager>();
+
         controls = new PlayerControls();
         controls.Enable();
         playerInput = controls.PlayerInput;
 
         playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+
+        playerInput.ShowDebugMonitor.performed += _ => uIManager.toggleDebugMonitor();
 
         playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
         playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();

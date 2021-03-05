@@ -12962,6 +12962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  uIPrefab: {fileID: 1860634370021181188, guid: 1b925385e16e5224f9a1d5431e15c82e, type: 3}
   playerCamera: {fileID: 1182025833}
   footstepAudioSource: {fileID: 2506036057340823877}
   jumpAudioSource: {fileID: 8156362539813285737}

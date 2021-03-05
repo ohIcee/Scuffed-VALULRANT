@@ -1,11 +1,11 @@
 ﻿using Mirror;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Cinemachine;
 
 public class FirstPersonMovement : NetworkBehaviour
 {
+    [SerializeField] GameObject uIPrefab;
 
     [Header("References")]
     [Tooltip("Reference to the main camera used for the player")]
@@ -149,6 +149,9 @@ public class FirstPersonMovement : NetworkBehaviour
         // force the crouch state to false when starting
         SetCrouchingState(false, true);
         UpdateCharacterHeight(true);
+
+        GameObject ui = Instantiate(uIPrefab);
+        ui.GetComponentInChildren<DebugMonitor>().fpMov = this;
     }
 
     [ClientCallback]
