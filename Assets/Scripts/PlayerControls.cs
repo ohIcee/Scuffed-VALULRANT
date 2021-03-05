@@ -15,7 +15,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     ""name"": ""PlayerControls"",
     ""maps"": [
         {
-            ""name"": ""GroundMovement"",
+            ""name"": ""PlayerInput"",
             ""id"": ""aac3fb2f-a702-4458-9437-0b73339e0daf"",
             ""actions"": [
                 {
@@ -78,6 +78,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": ""Shoot"",
                     ""type"": ""Button"",
                     ""id"": ""efec4be8-00f0-422f-ba03-9f443a9d3946"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""ShowDebugMonitor"",
+                    ""type"": ""Button"",
+                    ""id"": ""7eacb172-d519-40ee-bc51-039c028ba365"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -215,22 +223,34 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""513cf210-38ae-43aa-a383-0fef840ec991"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowDebugMonitor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
     ],
     ""controlSchemes"": []
 }");
-        // GroundMovement
-        m_GroundMovement = asset.FindActionMap("GroundMovement", throwIfNotFound: true);
-        m_GroundMovement_Movement = m_GroundMovement.FindAction("Movement", throwIfNotFound: true);
-        m_GroundMovement_Jump = m_GroundMovement.FindAction("Jump", throwIfNotFound: true);
-        m_GroundMovement_MouseX = m_GroundMovement.FindAction("MouseX", throwIfNotFound: true);
-        m_GroundMovement_MouseY = m_GroundMovement.FindAction("MouseY", throwIfNotFound: true);
-        m_GroundMovement_Crouch = m_GroundMovement.FindAction("Crouch", throwIfNotFound: true);
-        m_GroundMovement_ShiftWalk = m_GroundMovement.FindAction("ShiftWalk", throwIfNotFound: true);
-        m_GroundMovement_Zoom = m_GroundMovement.FindAction("Zoom", throwIfNotFound: true);
-        m_GroundMovement_Shoot = m_GroundMovement.FindAction("Shoot", throwIfNotFound: true);
+        // PlayerInput
+        m_PlayerInput = asset.FindActionMap("PlayerInput", throwIfNotFound: true);
+        m_PlayerInput_Movement = m_PlayerInput.FindAction("Movement", throwIfNotFound: true);
+        m_PlayerInput_Jump = m_PlayerInput.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerInput_MouseX = m_PlayerInput.FindAction("MouseX", throwIfNotFound: true);
+        m_PlayerInput_MouseY = m_PlayerInput.FindAction("MouseY", throwIfNotFound: true);
+        m_PlayerInput_Crouch = m_PlayerInput.FindAction("Crouch", throwIfNotFound: true);
+        m_PlayerInput_ShiftWalk = m_PlayerInput.FindAction("ShiftWalk", throwIfNotFound: true);
+        m_PlayerInput_Zoom = m_PlayerInput.FindAction("Zoom", throwIfNotFound: true);
+        m_PlayerInput_Shoot = m_PlayerInput.FindAction("Shoot", throwIfNotFound: true);
+        m_PlayerInput_ShowDebugMonitor = m_PlayerInput.FindAction("ShowDebugMonitor", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -277,64 +297,69 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         asset.Disable();
     }
 
-    // GroundMovement
-    private readonly InputActionMap m_GroundMovement;
-    private IGroundMovementActions m_GroundMovementActionsCallbackInterface;
-    private readonly InputAction m_GroundMovement_Movement;
-    private readonly InputAction m_GroundMovement_Jump;
-    private readonly InputAction m_GroundMovement_MouseX;
-    private readonly InputAction m_GroundMovement_MouseY;
-    private readonly InputAction m_GroundMovement_Crouch;
-    private readonly InputAction m_GroundMovement_ShiftWalk;
-    private readonly InputAction m_GroundMovement_Zoom;
-    private readonly InputAction m_GroundMovement_Shoot;
-    public struct GroundMovementActions
+    // PlayerInput
+    private readonly InputActionMap m_PlayerInput;
+    private IPlayerInputActions m_PlayerInputActionsCallbackInterface;
+    private readonly InputAction m_PlayerInput_Movement;
+    private readonly InputAction m_PlayerInput_Jump;
+    private readonly InputAction m_PlayerInput_MouseX;
+    private readonly InputAction m_PlayerInput_MouseY;
+    private readonly InputAction m_PlayerInput_Crouch;
+    private readonly InputAction m_PlayerInput_ShiftWalk;
+    private readonly InputAction m_PlayerInput_Zoom;
+    private readonly InputAction m_PlayerInput_Shoot;
+    private readonly InputAction m_PlayerInput_ShowDebugMonitor;
+    public struct PlayerInputActions
     {
         private @PlayerControls m_Wrapper;
-        public GroundMovementActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Movement => m_Wrapper.m_GroundMovement_Movement;
-        public InputAction @Jump => m_Wrapper.m_GroundMovement_Jump;
-        public InputAction @MouseX => m_Wrapper.m_GroundMovement_MouseX;
-        public InputAction @MouseY => m_Wrapper.m_GroundMovement_MouseY;
-        public InputAction @Crouch => m_Wrapper.m_GroundMovement_Crouch;
-        public InputAction @ShiftWalk => m_Wrapper.m_GroundMovement_ShiftWalk;
-        public InputAction @Zoom => m_Wrapper.m_GroundMovement_Zoom;
-        public InputAction @Shoot => m_Wrapper.m_GroundMovement_Shoot;
-        public InputActionMap Get() { return m_Wrapper.m_GroundMovement; }
+        public PlayerInputActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Movement => m_Wrapper.m_PlayerInput_Movement;
+        public InputAction @Jump => m_Wrapper.m_PlayerInput_Jump;
+        public InputAction @MouseX => m_Wrapper.m_PlayerInput_MouseX;
+        public InputAction @MouseY => m_Wrapper.m_PlayerInput_MouseY;
+        public InputAction @Crouch => m_Wrapper.m_PlayerInput_Crouch;
+        public InputAction @ShiftWalk => m_Wrapper.m_PlayerInput_ShiftWalk;
+        public InputAction @Zoom => m_Wrapper.m_PlayerInput_Zoom;
+        public InputAction @Shoot => m_Wrapper.m_PlayerInput_Shoot;
+        public InputAction @ShowDebugMonitor => m_Wrapper.m_PlayerInput_ShowDebugMonitor;
+        public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(GroundMovementActions set) { return set.Get(); }
-        public void SetCallbacks(IGroundMovementActions instance)
+        public static implicit operator InputActionMap(PlayerInputActions set) { return set.Get(); }
+        public void SetCallbacks(IPlayerInputActions instance)
         {
-            if (m_Wrapper.m_GroundMovementActionsCallbackInterface != null)
+            if (m_Wrapper.m_PlayerInputActionsCallbackInterface != null)
             {
-                @Movement.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMovement;
-                @Movement.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMovement;
-                @Movement.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMovement;
-                @Jump.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnJump;
-                @Jump.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnJump;
-                @Jump.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnJump;
-                @MouseX.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMouseX;
-                @MouseX.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMouseX;
-                @MouseX.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMouseX;
-                @MouseY.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMouseY;
-                @MouseY.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMouseY;
-                @MouseY.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnMouseY;
-                @Crouch.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnCrouch;
-                @Crouch.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnCrouch;
-                @Crouch.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnCrouch;
-                @ShiftWalk.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShiftWalk;
-                @ShiftWalk.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShiftWalk;
-                @ShiftWalk.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShiftWalk;
-                @Zoom.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnZoom;
-                @Zoom.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnZoom;
-                @Zoom.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnZoom;
-                @Shoot.started -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShoot;
-                @Shoot.performed -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShoot;
-                @Shoot.canceled -= m_Wrapper.m_GroundMovementActionsCallbackInterface.OnShoot;
+                @Movement.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMovement;
+                @Movement.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMovement;
+                @Movement.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMovement;
+                @Jump.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnJump;
+                @Jump.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnJump;
+                @Jump.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnJump;
+                @MouseX.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMouseX;
+                @MouseX.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMouseX;
+                @MouseX.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMouseX;
+                @MouseY.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMouseY;
+                @MouseY.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMouseY;
+                @MouseY.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnMouseY;
+                @Crouch.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnCrouch;
+                @Crouch.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnCrouch;
+                @Crouch.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnCrouch;
+                @ShiftWalk.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShiftWalk;
+                @ShiftWalk.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShiftWalk;
+                @ShiftWalk.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShiftWalk;
+                @Zoom.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnZoom;
+                @Zoom.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnZoom;
+                @Zoom.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnZoom;
+                @Shoot.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
+                @Shoot.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
+                @Shoot.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
+                @ShowDebugMonitor.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShowDebugMonitor;
+                @ShowDebugMonitor.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShowDebugMonitor;
+                @ShowDebugMonitor.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShowDebugMonitor;
             }
-            m_Wrapper.m_GroundMovementActionsCallbackInterface = instance;
+            m_Wrapper.m_PlayerInputActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @Movement.started += instance.OnMovement;
@@ -361,11 +386,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Shoot.started += instance.OnShoot;
                 @Shoot.performed += instance.OnShoot;
                 @Shoot.canceled += instance.OnShoot;
+                @ShowDebugMonitor.started += instance.OnShowDebugMonitor;
+                @ShowDebugMonitor.performed += instance.OnShowDebugMonitor;
+                @ShowDebugMonitor.canceled += instance.OnShowDebugMonitor;
             }
         }
     }
-    public GroundMovementActions @GroundMovement => new GroundMovementActions(this);
-    public interface IGroundMovementActions
+    public PlayerInputActions @PlayerInput => new PlayerInputActions(this);
+    public interface IPlayerInputActions
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
@@ -375,5 +403,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnShiftWalk(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnShowDebugMonitor(InputAction.CallbackContext context);
     }
 }

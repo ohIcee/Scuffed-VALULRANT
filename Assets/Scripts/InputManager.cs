@@ -10,7 +10,7 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private PlayerShooting playerShooting;
 
     PlayerControls controls;
-    PlayerControls.GroundMovementActions playerMovement;
+    PlayerControls.PlayerInputActions playerInput;
 
     Vector2 movementInput;
     Vector2 mouseInput;
@@ -29,24 +29,24 @@ public class InputManager : NetworkBehaviour
 
         controls = new PlayerControls();
         controls.Enable();
-        playerMovement = controls.GroundMovement;
+        playerInput = controls.PlayerInput;
 
-        playerMovement.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+        playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
-        playerMovement.Jump.performed += _ => fpMov.OnJumpPressed();
-        playerMovement.Jump.canceled += _ => fpMov.OnJumpReleased();
+        playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
+        playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();
 
-        playerMovement.Crouch.started += _ => fpMov.OnCrouchPressed();
-        playerMovement.Crouch.canceled += _ => fpMov.OnCrouchReleased();
+        playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
+        playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
 
-        playerMovement.ShiftWalk.started += _ => fpMov.OnShiftPressed();
-        playerMovement.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
+        playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
+        playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
 
-        playerMovement.Shoot.started += _ => playerShooting.OnStartShooting();
-        playerMovement.Shoot.canceled += _ => playerShooting.OnStopShooting();
+        playerInput.Shoot.started += _ => playerShooting.OnStartShooting();
+        playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
 
-        playerMovement.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
-        playerMovement.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
+        playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
+        playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
     }
 
     private void Update()

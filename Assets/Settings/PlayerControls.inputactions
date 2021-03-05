@@ -2,7 +2,7 @@
     "name": "PlayerControls",
     "maps": [
         {
-            "name": "GroundMovement",
+            "name": "PlayerInput",
             "id": "aac3fb2f-a702-4458-9437-0b73339e0daf",
             "actions": [
                 {
@@ -65,6 +65,14 @@
                     "name": "Shoot",
                     "type": "Button",
                     "id": "efec4be8-00f0-422f-ba03-9f443a9d3946",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "ShowDebugMonitor",
+                    "type": "Button",
+                    "id": "7eacb172-d519-40ee-bc51-039c028ba365",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -200,6 +208,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "513cf210-38ae-43aa-a383-0fef840ec991",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowDebugMonitor",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
