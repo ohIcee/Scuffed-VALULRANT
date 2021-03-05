@@ -34,10 +34,10 @@ public class InputManager : NetworkBehaviour
 
         playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
-        playerInput.DebugMonitor.performed += _ => uIManager.ToggleDebugMonitor();
+        //playerInput.DebugMonitor.performed += _ => uIManager.ToggleDebugMonitor();
         playerInput.EscapeMenu.performed += _ =>
         {
-            uIManager.ToggleEscapeMenu();
+            //uIManager.ToggleEscapeMenu();
             toggleCursorLock(false);
         };
 

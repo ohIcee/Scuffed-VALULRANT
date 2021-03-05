@@ -165,40 +165,20 @@ public class Player : NetworkBehaviour
         CmdBroadCastNewPlayerSetup();
     }
 
-    private void OnEnable()
+    #region Server
+
+    public override void OnStartServer()
     {
-        health.ServerOnDie += Die;
+        health.ServerOnDie += ServerHandleDie;
     }
 
-    private void OnDestroy()
+    public override void OnStopServer()
     {
-        health.ServerOnDie -= Die;
+        health.ServerOnDie -= ServerHandleDie;
     }
 
-    [Command]
-    private void CmdBroadCastNewPlayerSetup()
-    {
-        RpcSetupPlayerOnAllClients();
-    }
-
-    [ClientRpc]
-    private void RpcSetupPlayerOnAllClients()
-    {
-        if (firstSetup)
-        {
-            wasEnabled = new bool[disableOnDeath.Length];
-            for (int i = 0; i < wasEnabled.Length; i++)
-            {
-                wasEnabled[i] = disableOnDeath[i].enabled;
-            }
-
-            firstSetup = false;
-        }
-
-        SetDefaults();
-    }
-
-    private void Die(string _sourceID)
+    [Server]
+    private void ServerHandleDie(string _sourceID)
     {
         Player sourcePlayer = GameManager.GetPlayer(_sourceID);
         if (sourcePlayer != null)
@@ -235,6 +215,31 @@ public class Player : NetworkBehaviour
         Debug.Log(transform.name + " is DEAD!");
 
         StartCoroutine(Respawn());
+    }
+
+    #endregion
+
+    [Command]
+    private void CmdBroadCastNewPlayerSetup()
+    {
+        RpcSetupPlayerOnAllClients();
+    }
+
+    [ClientRpc]
+    private void RpcSetupPlayerOnAllClients()
+    {
+        if (firstSetup)
+        {
+            wasEnabled = new bool[disableOnDeath.Length];
+            for (int i = 0; i < wasEnabled.Length; i++)
+            {
+                wasEnabled[i] = disableOnDeath[i].enabled;
+            }
+
+            firstSetup = false;
+        }
+
+        SetDefaults();
     }
 
     private IEnumerator Respawn()
