@@ -12899,7 +12899,6 @@ GameObject:
   - component: {fileID: 7718639232595436120}
   - component: {fileID: 114963311885979670}
   - component: {fileID: 8005298539887990908}
-  - component: {fileID: 8552320018629435729}
   - component: {fileID: -3964556893396428943}
   - component: {fileID: -6831680668883263901}
   - component: {fileID: 4710802543775420695}
@@ -12963,6 +12962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  uIPrefab: {fileID: 1860634370021181188, guid: 1b925385e16e5224f9a1d5431e15c82e, type: 3}
   playerCamera: {fileID: 1182025833}
   audioSource: {fileID: 5214411502167622387}
   gravityDownForce: 20
@@ -13012,24 +13012,6 @@ MonoBehaviour:
   mouseSensitivityMultiplier: 0.5
   fpMov: {fileID: 114963311885979670}
   playerShooting: {fileID: 7891231476885191673}
---- !u!114 &8552320018629435729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 084c01ab381b9da4082c1f84cf70751b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 256
-  offset: {x: 0, y: 0.47, z: 0}
-  size: 0.5
-  isGrounded: 0
 --- !u!114 &-3964556893396428943
 MonoBehaviour:
   m_ObjectHideFlags: 0
