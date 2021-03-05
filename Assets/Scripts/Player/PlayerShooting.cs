@@ -14,8 +14,7 @@ public class PlayerShooting : NetworkBehaviour
     private bool isShooting = false;
 
     private WaitForSeconds shotDuration = new WaitForSeconds(0.07f);    // shot line show duration
-    private LineRenderer laserLine;
-    private float nextFire;
+    [SyncVar] private float nextFire;
 
     private Camera playerCamera;
 
@@ -23,7 +22,6 @@ public class PlayerShooting : NetworkBehaviour
     {
         base.OnStartAuthority();
 
-        laserLine = GetComponent<LineRenderer>();
         playerCamera = GetComponentInChildren<Camera>();
     }
 
@@ -33,49 +31,38 @@ public class PlayerShooting : NetworkBehaviour
         if (!hasAuthority || !isShooting || Time.time < nextFire) return;
 
         CmdTryShoot(playerCamera.transform.position, playerCamera.transform.forward);
-
-        laserLine.SetPosition(0, playerCamera.transform.position);
-
-        nextFire = Time.time + fireRate;
-
-        StartCoroutine(ShotEffect());
-
-        //Vector3 rayOrigin = playerCamera.ViewportToWorldPoint(new Vector3(.5f, .5f, 0f));
-        Vector3 rayOrigin = playerCamera.transform.position;
-        RaycastHit hit;
-
-        if (Physics.Raycast(rayOrigin, playerCamera.transform.forward, out hit, shootRange))
-        {
-            laserLine.SetPosition(1, hit.point);
-
-            // do damage
-            Debug.Log($"Hit {hit.transform.name}");
-
-            if (hit.transform.CompareTag("Player")) {
-                Debug.Log($"hit player {hit.transform.name}");
-
-            }
-        }
-        else {
-            laserLine.SetPosition(1, rayOrigin + (playerCamera.transform.forward * shootRange));
-        }
     }
 
     [Command]
     private void CmdTryShoot(Vector3 clientCameraPosition, Vector3 clientCameraForward) {
         // Server side check
 
+        if (Time.time < nextFire) return;
+
+        nextFire = Time.time + fireRate;
+
         Ray ray = new Ray(clientCameraPosition, clientCameraForward * shootRange);
+        Debug.DrawRay(clientCameraPosition, clientCameraForward * shootRange, Color.red, .3f);
+
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit)) {
+            Debug.Log($"hit {hit.transform.name}");
+
+            // if we hit a networked player
+            if (hit.transform.TryGetComponent<NetworkIdentity>(out NetworkIdentity networkIdentity)) {
+                if (networkIdentity.connectionToClient == connectionToClient) return;
+
+                if (hit.transform.TryGetComponent<Health>(out Health health)) {
+                    health.DealDamage(shotDamage);
+                }
+            }
+        }
     }
 
     private IEnumerator ShotEffect() {
         // play gunshot sound
 
-        laserLine.enabled = true;
-        
         yield return shotDuration;
-        
-        laserLine.enabled = false;
     }
 
     public void OnStartShooting() {

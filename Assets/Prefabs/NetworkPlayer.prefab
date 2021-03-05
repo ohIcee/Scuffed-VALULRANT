@@ -12904,6 +12904,7 @@ GameObject:
   - component: {fileID: 4710802543775420695}
   - component: {fileID: 7891231476885191673}
   - component: {fileID: 1292279689953263490}
+  - component: {fileID: 5840844209503925772}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Player
@@ -13082,8 +13083,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   shootRange: 150
-  shotDamage: 1
-  fireRate: 1
+  shotDamage: 20
+  fireRate: 0.1
 --- !u!120 &1292279689953263490
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -13182,6 +13183,21 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &5840844209503925772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773623360729482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d80a9ec0481d45a4a98af127ce03341b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  maxHealth: 100
 --- !u!1 &213094168931480701
 GameObject:
   m_ObjectHideFlags: 0
