@@ -57,12 +57,6 @@ public class PlayerShooting : NetworkBehaviour
         }
     }
 
-    private IEnumerator ShotEffect() {
-        // play gunshot sound
-
-        yield return shotDuration;
-    }
-
     public void OnStartShooting() {
         isShooting = true;
     }

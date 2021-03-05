@@ -8,92 +8,96 @@ public class FirstPersonMovement : NetworkBehaviour
     [Header("References")]
     [SerializeField] private UIManager uiManager;
     [SerializeField] private Health health;
+    public Health GetHealth() => health;
+
     [Tooltip("Reference to the main camera used for the player")]
-    public CinemachineVirtualCamera playerCamera;
+    [SerializeField] private CinemachineVirtualCamera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
-    public AudioSource footstepAudioSource;
-    public AudioSource jumpAudioSource;
-    public AudioSource landAudioSource;
-    public AudioSource fallDamageAudioSource;
+    [SerializeField] private AudioSource footstepAudioSource;
+    [SerializeField] private AudioSource jumpAudioSource;
+    [SerializeField] private AudioSource landAudioSource;
+    [SerializeField] private AudioSource fallDamageAudioSource;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
-    public float gravityDownForce = 20f;
+    [SerializeField] private float gravityDownForce = 20f;
     [Tooltip("Physic layers checked to consider the player grounded")]
-    public LayerMask groundCheckLayers = -1;
+    [SerializeField] private LayerMask groundCheckLayers = -1;
     [Tooltip("distance from the bottom of the character controller capsule to test for grounded")]
-    public float groundCheckDistance = 0.05f;
+    [SerializeField] private float groundCheckDistance = 0.05f;
 
     [Header("Movement")]
     [Tooltip("Max movement speed when grounded (when not sprinting)")]
-    public float maxSpeedOnGround = 10f;
+    [SerializeField] private float maxSpeedOnGround = 10f;
     [Tooltip("Sharpness for the movement when grounded, a low value will make the player accelerate and decelerate slowly, a high value will do the opposite")]
-    public float movementSharpnessOnGround = 15;
+    [SerializeField] private float movementSharpnessOnGround = 15;
     [Tooltip("Max movement speed when crouching")]
     [Range(0, 1)]
-    public float maxSpeedCrouchedRatio = 0.5f;
+    [SerializeField] private float maxSpeedCrouchedRatio = 0.5f;
     [Tooltip("Max movement speed when not grounded")]
-    public float maxSpeedInAir = 10f;
+    [SerializeField] private float maxSpeedInAir = 10f;
     [Tooltip("Acceleration speed when in the air")]
-    public float accelerationSpeedInAir = 25f;
+    [SerializeField] private float accelerationSpeedInAir = 25f;
     [Tooltip("Multiplicator for the sprint speed (based on grounded speed)")]
-    public float sprintSpeedModifier = 2f;
+    [SerializeField] private float sprintSpeedModifier = 2f;
     [Tooltip("Height at which the player dies instantly when falling off the map")]
-    public float killHeight = -50f;
+    [SerializeField] private float killHeight = -50f;
 
     [Header("Rotation")]
     [Tooltip("Rotation speed for moving the camera")]
-    public float rotationSpeed = 200f;
+    [SerializeField] private float rotationSpeed = 200f;
     [Range(0.1f, 1f)]
     [Tooltip("Rotation speed multiplier when aiming")]
-    public float aimingRotationMultiplier = 0.4f;
+    [SerializeField] private float aimingRotationMultiplier = 0.4f;
 
     [Header("Jump")]
     [Tooltip("Force applied upward when jumping")]
-    public float jumpForce = 9f;
+    [SerializeField] private float jumpForce = 9f;
 
     [Header("Stance")]
     [Tooltip("Ratio (0-1) of the character height where the camera will be at")]
-    public float cameraHeightRatio = 0.9f;
+    [SerializeField] private float cameraHeightRatio = 0.9f;
     [Tooltip("Height of character when standing")]
-    public float capsuleHeightStanding = 1.8f;
+    [SerializeField] private float capsuleHeightStanding = 1.8f;
     [Tooltip("Height of character when crouching")]
-    public float capsuleHeightCrouching = 0.9f;
+    [SerializeField] private float capsuleHeightCrouching = 0.9f;
     [Tooltip("Speed of crouching transitions")]
-    public float crouchingSharpness = 10f;
+    [SerializeField] private float crouchingSharpness = 10f;
 
     [Header("Audio")]
     [Tooltip("Amount of footstep sounds played when moving one meter")]
-    public float footstepSFXFrequency = 1f;
+    [SerializeField] private float footstepSFXFrequency = 1f;
     [Tooltip("Amount of footstep sounds played when moving one meter while sprinting")]
-    public float footstepSFXFrequencyWhileSprinting = 1f;
+    [SerializeField] private float footstepSFXFrequencyWhileSprinting = 1f;
     [Tooltip("Sound played for footsteps")]
-    public AudioClip footstepSFX;
+    [SerializeField] private AudioClip footstepSFX;
     [Tooltip("Sound played when jumping")]
-    public AudioClip jumpSFX;
+    [SerializeField] private AudioClip jumpSFX;
     [Tooltip("Sound played when landing")]
-    public AudioClip landSFX;
+    [SerializeField] private AudioClip landSFX;
     [Tooltip("Sound played when taking damage froma fall")]
-    public AudioClip fallDamageSFX;
+    [SerializeField] private AudioClip fallDamageSFX;
 
     [Header("Fall Damage")]
     [Tooltip("Whether the player will recieve damage when hitting the ground at high speed")]
-    public bool recievesFallDamage;
+    [SerializeField] private bool recievesFallDamage;
     [Tooltip("Minimun fall speed for recieving fall damage")]
-    public float minSpeedForFallDamage = 10f;
+    [SerializeField] private float minSpeedForFallDamage = 10f;
     [Tooltip("Fall speed for recieving th emaximum amount of fall damage")]
-    public float maxSpeedForFallDamage = 30f;
+    [SerializeField] private float maxSpeedForFallDamage = 30f;
     [Tooltip("Damage recieved when falling at the mimimum speed")]
-    public float fallDamageAtMinSpeed = 10f;
+    [SerializeField] private float fallDamageAtMinSpeed = 10f;
     [Tooltip("Damage recieved when falling at the maximum speed")]
-    public float fallDamageAtMaxSpeed = 50f;
+    [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
-    public bool isGrounded { get; private set; }
-    public bool hasJumpedThisFrame { get; private set; }
-    public bool isDead { get; private set; }
-    public bool isCrouching { get; private set; }
+
+    private bool isGrounded { get; set; }
+    public bool IsGrounded => isGrounded;
+
+    private bool isCrouching { get; set; }
+    public bool IsCrouching => isCrouching;
 
     private bool isPressingJump = false;
     [HideInInspector] public bool isPressingShift = false;
@@ -165,12 +169,10 @@ public class FirstPersonMovement : NetworkBehaviour
         if (!hasAuthority) return;
 
         // check for Y kill
-        if (!isDead && transform.position.y < killHeight)
+        if (!health.IsDead && transform.position.y < killHeight)
         {
             CmdSuicide();
         }
-
-        hasJumpedThisFrame = false;
 
         bool wasGrounded = isGrounded;
         GroundCheck();
@@ -301,7 +303,6 @@ public class FirstPersonMovement : NetworkBehaviour
 
                         // remember last time we jumped because we need to prevent snapping to ground for a short time
                         m_LastTimeJumped = Time.time;
-                        hasJumpedThisFrame = true;
 
                         // Force grounding to false
                         isGrounded = false;

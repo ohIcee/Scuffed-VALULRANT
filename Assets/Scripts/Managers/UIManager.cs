@@ -3,10 +3,10 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] DebugMonitor debugMonitor;
-    [SerializeField] PlayerHUD playerHUD;
+    [SerializeField] private DebugMonitor debugMonitor;
+    [SerializeField] private PlayerHUD playerHUD;
 
-    public void toggleDebugMonitor()
+    public void ToggleDebugMonitor()
     {
         if (debugMonitor.gameObject.activeSelf)
         {
@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void toggleEscapeMenu()
+    public void ToggleEscapeMenu()
     {
 
     }

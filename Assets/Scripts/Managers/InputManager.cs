@@ -11,11 +11,11 @@ public class InputManager : NetworkBehaviour
 
     private UIManager uIManager;
 
-    PlayerControls controls;
-    PlayerControls.PlayerInputActions playerInput;
+    private PlayerControls controls;
+    private PlayerControls.PlayerInputActions playerInput;
 
-    Vector2 movementInput;
-    Vector2 mouseInput;
+    private Vector2 movementInput;
+    private Vector2 mouseInput;
 
     public override void OnStartAuthority()
     {
@@ -34,10 +34,10 @@ public class InputManager : NetworkBehaviour
 
         playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
-        playerInput.DebugMonitor.performed += _ => uIManager.toggleDebugMonitor();
+        playerInput.DebugMonitor.performed += _ => uIManager.ToggleDebugMonitor();
         playerInput.EscapeMenu.performed += _ =>
         {
-            uIManager.toggleEscapeMenu();
+            uIManager.ToggleEscapeMenu();
             toggleCursorLock(false);
         };
 

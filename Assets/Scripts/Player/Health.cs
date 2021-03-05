@@ -10,6 +10,8 @@ public class Health : NetworkBehaviour
     [SerializeField] private int maxHealth = 100;
 
     [SyncVar(hook = nameof(HandleHealthUpdated))] private int currentHealth;
+    [SyncVar] private bool isDead;
+    public bool IsDead => isDead;
 
     public event Action ServerOnDie;
 
@@ -34,6 +36,7 @@ public class Health : NetworkBehaviour
         ServerOnDie?.Invoke();
 
         Debug.Log("We Died!");
+        isDead = true;
     }
 
     #endregion
