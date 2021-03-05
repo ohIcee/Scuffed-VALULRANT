@@ -83,9 +83,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""ShowDebugMonitor"",
+                    ""name"": ""DebugMonitor"",
                     ""type"": ""Button"",
                     ""id"": ""7eacb172-d519-40ee-bc51-039c028ba365"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""EscapeMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""62a482b4-7aff-4bf6-a17a-728b83235548"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -231,7 +239,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ShowDebugMonitor"",
+                    ""action"": ""DebugMonitor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3d08ff27-33b9-490b-aa3d-b41c2304e06e"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EscapeMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -250,7 +269,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_PlayerInput_ShiftWalk = m_PlayerInput.FindAction("ShiftWalk", throwIfNotFound: true);
         m_PlayerInput_Zoom = m_PlayerInput.FindAction("Zoom", throwIfNotFound: true);
         m_PlayerInput_Shoot = m_PlayerInput.FindAction("Shoot", throwIfNotFound: true);
-        m_PlayerInput_ShowDebugMonitor = m_PlayerInput.FindAction("ShowDebugMonitor", throwIfNotFound: true);
+        m_PlayerInput_DebugMonitor = m_PlayerInput.FindAction("DebugMonitor", throwIfNotFound: true);
+        m_PlayerInput_EscapeMenu = m_PlayerInput.FindAction("EscapeMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -308,7 +328,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerInput_ShiftWalk;
     private readonly InputAction m_PlayerInput_Zoom;
     private readonly InputAction m_PlayerInput_Shoot;
-    private readonly InputAction m_PlayerInput_ShowDebugMonitor;
+    private readonly InputAction m_PlayerInput_DebugMonitor;
+    private readonly InputAction m_PlayerInput_EscapeMenu;
     public struct PlayerInputActions
     {
         private @PlayerControls m_Wrapper;
@@ -321,7 +342,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @ShiftWalk => m_Wrapper.m_PlayerInput_ShiftWalk;
         public InputAction @Zoom => m_Wrapper.m_PlayerInput_Zoom;
         public InputAction @Shoot => m_Wrapper.m_PlayerInput_Shoot;
-        public InputAction @ShowDebugMonitor => m_Wrapper.m_PlayerInput_ShowDebugMonitor;
+        public InputAction @DebugMonitor => m_Wrapper.m_PlayerInput_DebugMonitor;
+        public InputAction @EscapeMenu => m_Wrapper.m_PlayerInput_EscapeMenu;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -355,9 +377,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Shoot.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
                 @Shoot.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
                 @Shoot.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
-                @ShowDebugMonitor.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShowDebugMonitor;
-                @ShowDebugMonitor.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShowDebugMonitor;
-                @ShowDebugMonitor.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShowDebugMonitor;
+                @DebugMonitor.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDebugMonitor;
+                @DebugMonitor.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDebugMonitor;
+                @DebugMonitor.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDebugMonitor;
+                @EscapeMenu.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEscapeMenu;
+                @EscapeMenu.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEscapeMenu;
+                @EscapeMenu.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEscapeMenu;
             }
             m_Wrapper.m_PlayerInputActionsCallbackInterface = instance;
             if (instance != null)
@@ -386,9 +411,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Shoot.started += instance.OnShoot;
                 @Shoot.performed += instance.OnShoot;
                 @Shoot.canceled += instance.OnShoot;
-                @ShowDebugMonitor.started += instance.OnShowDebugMonitor;
-                @ShowDebugMonitor.performed += instance.OnShowDebugMonitor;
-                @ShowDebugMonitor.canceled += instance.OnShowDebugMonitor;
+                @DebugMonitor.started += instance.OnDebugMonitor;
+                @DebugMonitor.performed += instance.OnDebugMonitor;
+                @DebugMonitor.canceled += instance.OnDebugMonitor;
+                @EscapeMenu.started += instance.OnEscapeMenu;
+                @EscapeMenu.performed += instance.OnEscapeMenu;
+                @EscapeMenu.canceled += instance.OnEscapeMenu;
             }
         }
     }
@@ -403,6 +431,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnShiftWalk(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
-        void OnShowDebugMonitor(InputAction.CallbackContext context);
+        void OnDebugMonitor(InputAction.CallbackContext context);
+        void OnEscapeMenu(InputAction.CallbackContext context);
     }
 }

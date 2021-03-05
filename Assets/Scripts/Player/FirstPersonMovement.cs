@@ -151,7 +151,7 @@ public class FirstPersonMovement : NetworkBehaviour
         UpdateCharacterHeight(true);
 
         GameObject ui = Instantiate(uIPrefab);
-        ui.GetComponentInChildren<DebugMonitor>().fpMov = this;
+        ui.GetComponentInChildren<DebugMonitor>().Initialize(this);
     }
 
     [ClientCallback]

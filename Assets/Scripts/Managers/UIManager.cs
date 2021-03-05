@@ -15,4 +15,9 @@ public class UIManager : MonoBehaviour
             debugMonitor.gameObject.SetActive(true);
         }
     }
+
+    public void toggleEscapeMenu()
+    {
+
+    }
 }

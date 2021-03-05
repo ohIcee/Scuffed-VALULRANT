@@ -69,6 +69,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         Debug.Log(newName);
     }
 
-    #endregion
+    public string getDisplayName()
+    {
+        return displayName;
+    }
 
+    #endregion
 }

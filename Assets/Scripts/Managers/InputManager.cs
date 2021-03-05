@@ -26,9 +26,6 @@ public class InputManager : NetworkBehaviour
 
     public void Initialize()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         uIManager = FindObjectOfType<UIManager>();
 
         controls = new PlayerControls();
@@ -37,7 +34,12 @@ public class InputManager : NetworkBehaviour
 
         playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
-        playerInput.ShowDebugMonitor.performed += _ => uIManager.toggleDebugMonitor();
+        playerInput.DebugMonitor.performed += _ => uIManager.toggleDebugMonitor();
+        playerInput.EscapeMenu.performed += _ =>
+        {
+            uIManager.toggleEscapeMenu();
+            toggleCursorLock(false);
+        };
 
         playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
         playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();
@@ -48,7 +50,11 @@ public class InputManager : NetworkBehaviour
         playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
         playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
 
-        playerInput.Shoot.started += _ => playerShooting.OnStartShooting();
+        playerInput.Shoot.started += _ =>
+        {
+            playerShooting.OnStartShooting();
+            toggleCursorLock(true);
+        };
         playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
 
         playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
@@ -68,5 +74,10 @@ public class InputManager : NetworkBehaviour
         if (!hasAuthority) return;
 
         controls.Disable();
+    }
+    private void toggleCursorLock(bool locked)
+    {
+        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !locked;
     }
 }

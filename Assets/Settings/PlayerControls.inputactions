@@ -70,9 +70,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "ShowDebugMonitor",
+                    "name": "DebugMonitor",
                     "type": "Button",
                     "id": "7eacb172-d519-40ee-bc51-039c028ba365",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "EscapeMenu",
+                    "type": "Button",
+                    "id": "62a482b4-7aff-4bf6-a17a-728b83235548",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -218,7 +226,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ShowDebugMonitor",
+                    "action": "DebugMonitor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3d08ff27-33b9-490b-aa3d-b41c2304e06e",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EscapeMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

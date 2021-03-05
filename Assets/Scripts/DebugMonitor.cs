@@ -5,8 +5,11 @@ using TMPro;
 
 public class DebugMonitor : MonoBehaviour
 {
-    public FirstPersonMovement fpMov;
+    private FirstPersonMovement fpMov;
+    private ValulrantNetworkPlayer networkPlayer;
 
+    [SerializeField] private TextMeshProUGUI playerNameText;
+    [SerializeField] private TextMeshProUGUI playerIDText;
     [SerializeField] private TextMeshProUGUI isGroundedText;
 
 
@@ -20,8 +23,16 @@ public class DebugMonitor : MonoBehaviour
      * speed?
      */
 
+    public void Initialize(FirstPersonMovement fpMov)
+    {
+        this.fpMov = fpMov;
+        networkPlayer = fpMov.GetComponent<ValulrantNetworkPlayer>();
+    }
+
     void Update()
     {
-        isGroundedText.text = $"IsGrounded : {fpMov.isGrounded}";
+       playerNameText.text = $" {networkPlayer.getDisplayName()}";
+       playerIDText.text = $"Player ID : {networkPlayer.netId}";
+       isGroundedText.text = $"IsGrounded : {fpMov.isGrounded}";
     }
 }
