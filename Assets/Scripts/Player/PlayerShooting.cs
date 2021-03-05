@@ -11,6 +11,8 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] private int shotDamage = 20;
     [SerializeField] private float fireRate;
 
+    [SerializeField] private AutomaticGunScriptLPFP gun;
+
     private bool isShooting = false;
 
     private WaitForSeconds shotDuration = new WaitForSeconds(0.07f);    // shot line show duration
@@ -31,6 +33,8 @@ public class PlayerShooting : NetworkBehaviour
         if (!hasAuthority || !isShooting || Time.time < nextFire) return;
 
         CmdTryShoot(playerCamera.transform.position, playerCamera.transform.forward);
+        gun.FireShot();
+
     }
 
     [Command]
@@ -55,6 +59,14 @@ public class PlayerShooting : NetworkBehaviour
                 }
             }
         }
+    }
+
+    public void OnStartAiming() {
+        gun.IsAiming = true;
+    }
+
+    public void OnStopAiming() {
+        gun.IsAiming = false;
     }
 
     public void OnStartShooting() {

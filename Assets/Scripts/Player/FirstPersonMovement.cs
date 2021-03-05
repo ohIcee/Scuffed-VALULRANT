@@ -90,6 +90,11 @@ public class FirstPersonMovement : NetworkBehaviour
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
+
+    public AutomaticGunScriptLPFP DEBUG_GUN;
+
+
+
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
 
@@ -154,12 +159,14 @@ public class FirstPersonMovement : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSuicide() {
+    private void CmdSuicide()
+    {
         health.DealDamage(9999);
     }
 
     [Command]
-    private void CmdTakeFallDamage(int damage) {
+    private void CmdTakeFallDamage(int damage)
+    {
         health.DealDamage(damage);
     }
 
@@ -455,7 +462,10 @@ public class FirstPersonMovement : NetworkBehaviour
     public void OnCrouchPressed() => SetCrouchingState(isCrouching, false);
     public void OnCrouchReleased() => SetCrouchingState(!isCrouching, false);
     public void ReceiveMovementInput(Vector2 movementInput) => this.movementInput = movementInput;
-    public void ReceiveMouseInput(Vector2 mouseInput) => this.mouseInput = mouseInput;
+    public void ReceiveMouseInput(Vector2 mouseInput) {
+        DEBUG_GUN.MouseInput = mouseInput;
+        this.mouseInput = mouseInput; 
+    }
 
     #endregion
 

@@ -67,7 +67,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Zoom"",
+                    ""name"": ""Aim"",
                     ""type"": ""Button"",
                     ""id"": ""66b52b31-95fb-4cfd-9a40-ee10abda2d6b"",
                     ""expectedControlType"": ""Button"",
@@ -217,7 +217,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Zoom"",
+                    ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -267,7 +267,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_PlayerInput_MouseY = m_PlayerInput.FindAction("MouseY", throwIfNotFound: true);
         m_PlayerInput_Crouch = m_PlayerInput.FindAction("Crouch", throwIfNotFound: true);
         m_PlayerInput_ShiftWalk = m_PlayerInput.FindAction("ShiftWalk", throwIfNotFound: true);
-        m_PlayerInput_Zoom = m_PlayerInput.FindAction("Zoom", throwIfNotFound: true);
+        m_PlayerInput_Aim = m_PlayerInput.FindAction("Aim", throwIfNotFound: true);
         m_PlayerInput_Shoot = m_PlayerInput.FindAction("Shoot", throwIfNotFound: true);
         m_PlayerInput_DebugMonitor = m_PlayerInput.FindAction("DebugMonitor", throwIfNotFound: true);
         m_PlayerInput_EscapeMenu = m_PlayerInput.FindAction("EscapeMenu", throwIfNotFound: true);
@@ -326,7 +326,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerInput_MouseY;
     private readonly InputAction m_PlayerInput_Crouch;
     private readonly InputAction m_PlayerInput_ShiftWalk;
-    private readonly InputAction m_PlayerInput_Zoom;
+    private readonly InputAction m_PlayerInput_Aim;
     private readonly InputAction m_PlayerInput_Shoot;
     private readonly InputAction m_PlayerInput_DebugMonitor;
     private readonly InputAction m_PlayerInput_EscapeMenu;
@@ -340,7 +340,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @MouseY => m_Wrapper.m_PlayerInput_MouseY;
         public InputAction @Crouch => m_Wrapper.m_PlayerInput_Crouch;
         public InputAction @ShiftWalk => m_Wrapper.m_PlayerInput_ShiftWalk;
-        public InputAction @Zoom => m_Wrapper.m_PlayerInput_Zoom;
+        public InputAction @Aim => m_Wrapper.m_PlayerInput_Aim;
         public InputAction @Shoot => m_Wrapper.m_PlayerInput_Shoot;
         public InputAction @DebugMonitor => m_Wrapper.m_PlayerInput_DebugMonitor;
         public InputAction @EscapeMenu => m_Wrapper.m_PlayerInput_EscapeMenu;
@@ -371,9 +371,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ShiftWalk.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShiftWalk;
                 @ShiftWalk.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShiftWalk;
                 @ShiftWalk.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShiftWalk;
-                @Zoom.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnZoom;
-                @Zoom.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnZoom;
-                @Zoom.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnZoom;
+                @Aim.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnAim;
                 @Shoot.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
                 @Shoot.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
                 @Shoot.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
@@ -405,9 +405,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ShiftWalk.started += instance.OnShiftWalk;
                 @ShiftWalk.performed += instance.OnShiftWalk;
                 @ShiftWalk.canceled += instance.OnShiftWalk;
-                @Zoom.started += instance.OnZoom;
-                @Zoom.performed += instance.OnZoom;
-                @Zoom.canceled += instance.OnZoom;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
                 @Shoot.started += instance.OnShoot;
                 @Shoot.performed += instance.OnShoot;
                 @Shoot.canceled += instance.OnShoot;
@@ -429,7 +429,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnMouseY(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnShiftWalk(InputAction.CallbackContext context);
-        void OnZoom(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnDebugMonitor(InputAction.CallbackContext context);
         void OnEscapeMenu(InputAction.CallbackContext context);

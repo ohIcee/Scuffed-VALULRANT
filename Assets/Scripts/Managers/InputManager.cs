@@ -47,6 +47,9 @@ public class InputManager : NetworkBehaviour
         playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
         playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
 
+        playerInput.Aim.started += _ => playerShooting.OnStartAiming();
+        playerInput.Aim.canceled += _ => playerShooting.OnStopAiming();
+
         playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
         playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
 

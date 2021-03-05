@@ -54,7 +54,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Zoom",
+                    "name": "Aim",
                     "type": "Button",
                     "id": "66b52b31-95fb-4cfd-9a40-ee10abda2d6b",
                     "expectedControlType": "Button",
@@ -204,7 +204,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Zoom",
+                    "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
