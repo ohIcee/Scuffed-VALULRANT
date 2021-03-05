@@ -248,8 +248,6 @@ public class AutomaticGunScriptLPFP : MonoBehaviour
         shootAudioSource.clip = SoundClips.shootSound;
         shootAudioSource.Play();
 
-        Debug.Log("pew " + currentAmmo);
-
         if (!isAiming) //if not aiming
         {
             anim.Play("Fire", 0, 0f);

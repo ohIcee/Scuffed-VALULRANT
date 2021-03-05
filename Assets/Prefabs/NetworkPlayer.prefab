@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 2036005858}
   - component: {fileID: 2036005857}
   - component: {fileID: 2036005856}
+  - component: {fileID: 1812722388311066190}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -201,6 +202,23 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
+--- !u!114 &1812722388311066190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036005854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 0.5
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1130725078037024
 GameObject:
   m_ObjectHideFlags: 0
@@ -12935,6 +12953,7 @@ GameObject:
   - component: {fileID: 4710802543775420695}
   - component: {fileID: 7891231476885191673}
   - component: {fileID: 5840844209503925772}
+  - component: {fileID: 6062230767564624682}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Player
@@ -13120,7 +13139,10 @@ MonoBehaviour:
   shootRange: 150
   shotDamage: 20
   fireRate: 0.1
+  shootShakeIntensity: 2
+  shootShakeTime: 0.2
   gun: {fileID: 9040539421977052106}
+  cameraShake: {fileID: 6062230767564624682}
 --- !u!114 &5840844209503925772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13136,6 +13158,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   maxHealth: 100
+--- !u!114 &6062230767564624682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773623360729482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d218f6b3bb7ce4e944e92d32e9464c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 1182025833}
 --- !u!1 &128420218056764001
 GameObject:
   m_ObjectHideFlags: 0

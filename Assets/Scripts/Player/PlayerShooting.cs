@@ -10,8 +10,11 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] private float shootRange;
     [SerializeField] private int shotDamage = 20;
     [SerializeField] private float fireRate;
+    [SerializeField] private float shootShakeIntensity;
+    [SerializeField] private float shootShakeTime;
 
     [SerializeField] private AutomaticGunScriptLPFP gun;
+    [SerializeField] private CameraShake cameraShake;
 
     private bool isShooting = false;
 
@@ -34,6 +37,7 @@ public class PlayerShooting : NetworkBehaviour
 
         CmdTryShoot(playerCamera.transform.position, playerCamera.transform.forward);
         gun.FireShot();
+        cameraShake.ShakeCamera(shootShakeIntensity, shootShakeTime);
 
     }
 
