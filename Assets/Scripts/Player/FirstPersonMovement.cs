@@ -11,7 +11,10 @@ public class FirstPersonMovement : NetworkBehaviour
     [Tooltip("Reference to the main camera used for the player")]
     public CinemachineVirtualCamera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
-    public AudioSource audioSource;
+    public AudioSource footstepAudioSource;
+    public AudioSource jumpAudioSource;
+    public AudioSource landAudioSource;
+    public AudioSource fallDamageAudioSource;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
@@ -127,6 +130,7 @@ public class FirstPersonMovement : NetworkBehaviour
         base.OnStartAuthority();
 
         playerCamera.enabled = true;
+        playerCamera.GetComponent<AudioListener>().enabled = true;
 
         // fetch components on the same gameObject
         m_Controller = GetComponent<CharacterController>();
@@ -152,8 +156,6 @@ public class FirstPersonMovement : NetworkBehaviour
     {
         if (!hasAuthority) return;
 
-        Debug.Log(movementInput);
-
         // check for Y kill
         if (!isDead && transform.position.y < killHeight)
         {
@@ -177,12 +179,12 @@ public class FirstPersonMovement : NetworkBehaviour
                 //m_Health.TakeDamage(dmgFromFall, null);
 
                 // fall damage SFX
-                audioSource.PlayOneShot(fallDamageSFX);
+                fallDamageAudioSource.PlayOneShot(fallDamageSFX);
             }
             else
             {
                 // land SFX
-                audioSource.PlayOneShot(landSFX);
+                landAudioSource.PlayOneShot(landSFX);
             }
         }
 
@@ -287,7 +289,7 @@ public class FirstPersonMovement : NetworkBehaviour
                         characterVelocity += Vector3.up * jumpForce;
 
                         // play sound
-                        audioSource.PlayOneShot(jumpSFX);
+                        jumpAudioSource.PlayOneShot(jumpSFX);
 
                         // remember last time we jumped because we need to prevent snapping to ground for a short time
                         m_LastTimeJumped = Time.time;
@@ -304,7 +306,11 @@ public class FirstPersonMovement : NetworkBehaviour
                 if (m_footstepDistanceCounter >= 1f / chosenFootstepSFXFrequency)
                 {
                     m_footstepDistanceCounter = 0f;
-                    audioSource.PlayOneShot(footstepSFX);
+
+                    if (!isCrouching)
+                    {
+                        footstepAudioSource.PlayOneShot(footstepSFX);
+                    }
                 }
 
                 // keep track of distance traveled for footsteps sound

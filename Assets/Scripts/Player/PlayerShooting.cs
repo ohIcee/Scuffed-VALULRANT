@@ -8,7 +8,7 @@ public class PlayerShooting : NetworkBehaviour
     [Header("Properties")]
     // these will be replaced with gun info
     [SerializeField] private float shootRange;
-    [SerializeField] private float shotDamage;
+    [SerializeField] private int shotDamage = 20;
     [SerializeField] private float fireRate;
 
     private bool isShooting = false;
@@ -32,13 +32,16 @@ public class PlayerShooting : NetworkBehaviour
     {
         if (!hasAuthority || !isShooting || Time.time < nextFire) return;
 
+        CmdTryShoot(playerCamera.transform.position, playerCamera.transform.forward);
+
         laserLine.SetPosition(0, playerCamera.transform.position);
 
         nextFire = Time.time + fireRate;
 
         StartCoroutine(ShotEffect());
 
-        Vector3 rayOrigin = playerCamera.ViewportToWorldPoint(new Vector3(.5f, .5f, 0f));
+        //Vector3 rayOrigin = playerCamera.ViewportToWorldPoint(new Vector3(.5f, .5f, 0f));
+        Vector3 rayOrigin = playerCamera.transform.position;
         RaycastHit hit;
 
         if (Physics.Raycast(rayOrigin, playerCamera.transform.forward, out hit, shootRange))
@@ -47,10 +50,22 @@ public class PlayerShooting : NetworkBehaviour
 
             // do damage
             Debug.Log($"Hit {hit.transform.name}");
+
+            if (hit.transform.CompareTag("Player")) {
+                Debug.Log($"hit player {hit.transform.name}");
+
+            }
         }
         else {
             laserLine.SetPosition(1, rayOrigin + (playerCamera.transform.forward * shootRange));
         }
+    }
+
+    [Command]
+    private void CmdTryShoot(Vector3 clientCameraPosition, Vector3 clientCameraForward) {
+        // Server side check
+
+        Ray ray = new Ray(clientCameraPosition, clientCameraForward * shootRange);
     }
 
     private IEnumerator ShotEffect() {
