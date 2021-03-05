@@ -5,9 +5,9 @@ using Cinemachine;
 
 public class FirstPersonMovement : NetworkBehaviour
 {
-    [SerializeField] GameObject uIPrefab;
-
     [Header("References")]
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private Health health;
     [Tooltip("Reference to the main camera used for the player")]
     public CinemachineVirtualCamera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
@@ -139,19 +139,23 @@ public class FirstPersonMovement : NetworkBehaviour
         //m_WeaponsManager = GetComponent<PlayerWeaponsManager>();
         //DebugUtility.HandleErrorIfNullGetComponent<PlayerWeaponsManager, PlayerCharacterController>(m_WeaponsManager, this, gameObject);
 
-        //m_Health = GetComponent<Health>();
-        //DebugUtility.HandleErrorIfNullGetComponent<Health, PlayerCharacterController>(m_Health, this, gameObject);
+        uiManager.gameObject.SetActive(true);
 
         m_Controller.enableOverlapRecovery = true;
-
-        //m_Health.onDie += OnDie;
 
         // force the crouch state to false when starting
         SetCrouchingState(false, true);
         UpdateCharacterHeight(true);
+    }
 
-        GameObject ui = Instantiate(uIPrefab);
-        ui.GetComponentInChildren<DebugMonitor>().Initialize(this);
+    [Command]
+    private void CmdSuicide() {
+        health.DealDamage(9999);
+    }
+
+    [Command]
+    private void CmdTakeFallDamage(int damage) {
+        health.DealDamage(damage);
     }
 
     [ClientCallback]
@@ -162,7 +166,7 @@ public class FirstPersonMovement : NetworkBehaviour
         // check for Y kill
         if (!isDead && transform.position.y < killHeight)
         {
-            //m_Health.Kill();
+            CmdSuicide();
         }
 
         hasJumpedThisFrame = false;
@@ -179,7 +183,7 @@ public class FirstPersonMovement : NetworkBehaviour
             if (recievesFallDamage && fallSpeedRatio > 0f)
             {
                 float dmgFromFall = Mathf.Lerp(fallDamageAtMinSpeed, fallDamageAtMaxSpeed, fallSpeedRatio);
-                //m_Health.TakeDamage(dmgFromFall, null);
+                CmdTakeFallDamage((int)dmgFromFall);
 
                 // fall damage SFX
                 fallDamageAudioSource.PlayOneShot(fallDamageSFX);

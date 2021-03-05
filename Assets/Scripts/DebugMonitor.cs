@@ -5,14 +5,12 @@ using TMPro;
 
 public class DebugMonitor : MonoBehaviour
 {
-    private FirstPersonMovement fpMov;
-    private ValulrantNetworkPlayer networkPlayer;
+    [SerializeField] private FirstPersonMovement fpMov;
+    [SerializeField] private ValulrantNetworkPlayer networkPlayer;
 
     [SerializeField] private TextMeshProUGUI playerNameText;
     [SerializeField] private TextMeshProUGUI playerIDText;
     [SerializeField] private TextMeshProUGUI isGroundedText;
-
-
 
     /* isgrounded
      * playedid

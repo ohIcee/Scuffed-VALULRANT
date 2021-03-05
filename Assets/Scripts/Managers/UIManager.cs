@@ -1,8 +1,10 @@
 using UnityEngine;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] DebugMonitor debugMonitor;
+    [SerializeField] PlayerHUD playerHUD;
 
     public void toggleDebugMonitor()
     {

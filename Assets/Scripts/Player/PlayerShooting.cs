@@ -46,8 +46,6 @@ public class PlayerShooting : NetworkBehaviour
 
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)) {
-            Debug.Log($"hit {hit.transform.name}");
-
             // if we hit a networked player
             if (hit.transform.TryGetComponent<NetworkIdentity>(out NetworkIdentity networkIdentity)) {
                 if (networkIdentity.connectionToClient == connectionToClient) return;
