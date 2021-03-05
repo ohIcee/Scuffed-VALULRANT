@@ -4,11 +4,21 @@ using UnityEngine;
 
 public class FirstPersonMovement : NetworkBehaviour
 {
-    [SerializeField] CharacterController controller;
+    [SerializeField] private CharacterController characterController;
+    [SerializeField] private Transform headCamera;  // Head to lower when we crouch
+    [SerializeField] private Transform body;
 
     [Header("Values")]
-    [SerializeField] float speed = 5f;
-    [SerializeField] float gravity = -30f; // Default: -9.81
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float gravity = -30f; // Default: -9.81
+
+    private Vector3 lastPosition;
+    private Vector3 playerVelocity;
+
+    [SerializeField] private float goingDownSlopesForce = 1f;
+    [SerializeField] private float slopeCheckOffsetMultiplier = .5f;
+    [SerializeField] private Vector3 slopeCheckOffset;
+    [SerializeField] private float slopeCheckDistance = 1f;
 
     [Header("Scripts")]
     [SerializeField] private GroundCheck groundCheck;
@@ -46,11 +56,6 @@ public class FirstPersonMovement : NetworkBehaviour
     #endregion
 
     #region crouching
-
-    [SerializeField] private CharacterController characterController;
-    [SerializeField] private Transform headCamera;  // Head to lower when we crouch
-    [SerializeField] private Transform body;
-
     public float crouchSpeed = 2;
     [SerializeField] private float crouchYLocalPosition = 1;
     [SerializeField] private float crouchedCapsuleHeight;
@@ -72,12 +77,17 @@ public class FirstPersonMovement : NetworkBehaviour
         defaultHeadYLocalPosition = headCamera.localPosition.y;
         defaultHeight = characterController.height;
         defaultCapsuleHeight = body.localScale.y;
+
+        lastPosition = transform.position;
     }
 
     [ClientCallback]
     void Update()
     {
         if (!hasAuthority) return;
+
+        playerVelocity = transform.position - lastPosition;
+        lastPosition = transform.position;
 
         Crouching();
 
@@ -98,7 +108,7 @@ public class FirstPersonMovement : NetworkBehaviour
         }
 
         Vector3 horizontalVelocity = (transform.right * movementInput.x + transform.forward * movementInput.y) * movingSpeed;
-        controller.Move(horizontalVelocity * Time.deltaTime);
+        //controller.Move(horizontalVelocity * Time.deltaTime);
 
         if (groundCheck.isGrounded)
         {
@@ -107,8 +117,34 @@ public class FirstPersonMovement : NetworkBehaviour
 
         Jumping();
 
-        verticalVelocity.y += gravity * Time.deltaTime;
-        controller.Move(verticalVelocity * Time.deltaTime);
+        if (groundCheck.isGrounded)
+        {
+            CheckSlope();
+        }
+
+        //if (groundCheck.isGrounded)
+        //{
+        //    // force down
+        //    verticalVelocity.y -= goingDownSlopesForce;
+        //}
+
+        verticalVelocity.y += gravity;
+        //controller.Move(verticalVelocity * Time.deltaTime);
+
+        characterController.Move(new Vector3(horizontalVelocity.x, verticalVelocity.y, horizontalVelocity.z) * Time.deltaTime);
+    }
+
+    private void CheckSlope() {
+        Vector3 rayOrigin = transform.position + slopeCheckOffset + characterController.velocity * slopeCheckOffsetMultiplier;
+        Debug.DrawRay(rayOrigin, -transform.up * slopeCheckDistance);
+
+        //Debug.Log();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(transform.position + slopeCheckOffset + characterController.velocity * slopeCheckOffsetMultiplier, .1f);
     }
 
     private void Crouching() {
@@ -158,7 +194,7 @@ public class FirstPersonMovement : NetworkBehaviour
             if (groundCheck.isGrounded)
             {
                 verticalVelocity.y = Mathf.Sqrt(-2f * JumpHeight * gravity);
-                controller.Move(verticalVelocity * Time.deltaTime);
+                //controller.Move(verticalVelocity * Time.deltaTime);
             }
             IsJumping = false;
         }
