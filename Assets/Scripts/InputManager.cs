@@ -3,9 +3,10 @@ using Mirror;
 
 public class InputManager : NetworkBehaviour
 {
+    [SerializeField] private float mouseSensitivityMultiplier = .5f;
+
     [Header("Scripts")]
     [SerializeField] private FirstPersonMovement fpMov;
-    [SerializeField] private FirstPersonLook fpLook;
     [SerializeField] private PlayerShooting playerShooting;
 
     PlayerControls controls;
@@ -23,6 +24,9 @@ public class InputManager : NetworkBehaviour
 
     public void Initialize()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         controls = new PlayerControls();
         controls.Enable();
         playerMovement = controls.GroundMovement;
@@ -30,9 +34,7 @@ public class InputManager : NetworkBehaviour
         playerMovement.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
         playerMovement.Jump.performed += _ => fpMov.OnJumpPressed();
-
-        playerMovement.Zoom.started += _ => fpLook.OnZoomPressed();
-        playerMovement.Zoom.canceled += _ => fpLook.OnZoomReleased();
+        playerMovement.Jump.canceled += _ => fpMov.OnJumpReleased();
 
         playerMovement.Crouch.started += _ => fpMov.OnCrouchPressed();
         playerMovement.Crouch.canceled += _ => fpMov.OnCrouchReleased();
@@ -52,7 +54,7 @@ public class InputManager : NetworkBehaviour
         if (!hasAuthority) return;
 
         fpMov.ReceiveMovementInput(movementInput);
-        fpLook.ReceiveInput(mouseInput);
+        fpMov.ReceiveMouseInput(mouseInput * mouseSensitivityMultiplier);
     }
 
     private void OnDestroy()
