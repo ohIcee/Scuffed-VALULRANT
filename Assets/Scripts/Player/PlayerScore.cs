@@ -5,63 +5,63 @@ using System.Collections;
 public class PlayerScore : MonoBehaviour
 {
 
-	int lastKills = 0;
-	int lastDeaths = 0;
+	//int lastKills = 0;
+	//int lastDeaths = 0;
 
-	Player player;
+	//Player player;
 
-	void Start()
-	{
-		player = GetComponent<Player>();
-		//StartCoroutine(SyncScoreLoop());
-	}
-
-	void OnDestroy()
-	{
-		//if (player != null)
-			//SyncNow();
-	}
-
-	//IEnumerator SyncScoreLoop()
+	//void Start()
 	//{
-	//	while (true)
-	//	{
-	//		yield return new WaitForSeconds(5f);
-
-	//		SyncNow();
-	//	}
+	//	player = GetComponent<Player>();
+	//	//StartCoroutine(SyncScoreLoop());
 	//}
 
-	//void SyncNow()
+	//void OnDestroy()
 	//{
-	//	if (UserAccountManager.IsLoggedIn)
-	//	{
-	//		UserAccountManager.instance.GetData(OnDataRecieved);
-	//	}
+	//	//if (player != null)
+	//		//SyncNow();
 	//}
 
-	void OnDataRecieved(string data)
-	{
-		if (player.kills <= lastKills && player.deaths <= lastDeaths)
-			return;
+	////IEnumerator SyncScoreLoop()
+	////{
+	////	while (true)
+	////	{
+	////		yield return new WaitForSeconds(5f);
 
-		int killsSinceLast = player.kills - lastKills;
-		int deathsSinceLast = player.deaths - lastDeaths;
+	////		SyncNow();
+	////	}
+	////}
 
-		int kills = DataTranslator.DataToKills(data);
-		int deaths = DataTranslator.DataToDeaths(data);
+	////void SyncNow()
+	////{
+	////	if (UserAccountManager.IsLoggedIn)
+	////	{
+	////		UserAccountManager.instance.GetData(OnDataRecieved);
+	////	}
+	////}
 
-		int newKills = killsSinceLast + kills;
-		int newDeaths = deathsSinceLast + deaths;
+	//void OnDataRecieved(string data)
+	//{
+	//	if (player.kills <= lastKills && player.deaths <= lastDeaths)
+	//		return;
 
-		string newData = DataTranslator.ValuesToData(newKills, newDeaths);
+	//	int killsSinceLast = player.kills - lastKills;
+	//	int deathsSinceLast = player.deaths - lastDeaths;
 
-		Debug.Log("Syncing: " + newData);
+	//	int kills = DataTranslator.DataToKills(data);
+	//	int deaths = DataTranslator.DataToDeaths(data);
 
-		lastKills = player.kills;
-		lastDeaths = player.deaths;
+	//	int newKills = killsSinceLast + kills;
+	//	int newDeaths = deathsSinceLast + deaths;
 
-		//UserAccountManager.instance.SendData(newData);
-	}
+	//	string newData = DataTranslator.ValuesToData(newKills, newDeaths);
+
+	//	Debug.Log("Syncing: " + newData);
+
+	//	lastKills = player.kills;
+	//	lastDeaths = player.deaths;
+
+	//	//UserAccountManager.instance.SendData(newData);
+	//}
 
 }

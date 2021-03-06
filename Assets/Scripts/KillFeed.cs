@@ -10,7 +10,7 @@ public class KillFeed : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		GameManager.instance.onPlayerKilledCallback += OnKill;
+		//GameManager.instance.onPlayerKilledCallback += OnKill;
 	}
 
 	public void OnKill(string player, string source)

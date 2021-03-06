@@ -14,8 +14,8 @@ public class PlayerShooting : NetworkBehaviour
     private LayerMask layerMask;
 
 	[SerializeField] private AudioSource shootingAudioSource;
-
 	[SerializeField] private WeaponRecoil weaponRecoil;
+	[SerializeField] private PlayerHealth playerHealth;
 
     private PlayerWeapon currentWeapon;
     private WeaponManager weaponManager;
@@ -32,19 +32,13 @@ public class PlayerShooting : NetworkBehaviour
         currentWeapon = weaponManager.GetCurrentWeapon();
     }
 
+	#region Server
+
 	//Is called on the server when a player shoots
 	[Command]
 	void CmdOnShoot()
 	{
 		RpcDoShootEffect();
-	}
-
-	//Is called on all clients when we need to to
-	// a shoot effect
-	[ClientRpc]
-	void RpcDoShootEffect()
-	{
-		weaponManager.GetCurrentGraphics().muzzleFlash.Play();
 	}
 
 	//Is called on the server when we hit something
@@ -53,6 +47,39 @@ public class PlayerShooting : NetworkBehaviour
 	void CmdOnHit(Vector3 _pos, Vector3 _normal)
 	{
 		RpcDoHitEffect(_pos, _normal);
+	}
+
+	[Command]
+	void CmdPlayerShot(NetworkIdentity _playerIdentity, int _damage)
+	{
+		Debug.Log(_playerIdentity.name + " has been shot.");
+		
+		RpcPlayerShot();
+
+		// Return if we hit our own unit
+		if (_playerIdentity.connectionToClient == connectionToClient) return;
+
+		if (_playerIdentity.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
+		{
+			//if (playerHealth.IsDead()) return;
+
+			playerHealth.DealDamage(_damage);
+		}
+
+		//Player _player = GameManager.GetPlayer(_playerID);
+		//_player.RpcTakeDamage(_damage, _sourceID);
+	}
+
+	#endregion
+
+	#region Client
+
+	//Is called on all clients when we need to to
+	// a shoot effect
+	[ClientRpc]
+	void RpcDoShootEffect()
+	{
+		weaponManager.GetCurrentGraphics().muzzleFlash.Play();
 	}
 
 	//Is called on all clients
@@ -67,7 +94,7 @@ public class PlayerShooting : NetworkBehaviour
 	[Client]
 	void Shoot()
 	{
-		if (!isLocalPlayer || weaponManager.isReloading)
+		if (!hasAuthority || weaponManager.isReloading)
 		{
 			return;
 		}
@@ -80,7 +107,7 @@ public class PlayerShooting : NetworkBehaviour
 
 		currentWeapon.bullets--;
 
-		Debug.Log("Remaining bullets: " + currentWeapon.bullets);
+		//Debug.Log("Remaining bullets: " + currentWeapon.bullets);
 
 		weaponRecoil.Fire();
 		shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
@@ -91,12 +118,12 @@ public class PlayerShooting : NetworkBehaviour
 		RaycastHit _hit;
 		if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out _hit, currentWeapon.range, layerMask))
 		{
-			if (_hit.collider.tag == PLAYER_TAG)
+			if (_hit.transform.TryGetComponent<NetworkIdentity>(out NetworkIdentity networkIdentity))
 			{
-				CmdPlayerShot(_hit.collider.name, currentWeapon.damage, transform.name);
+				CmdPlayerShot(networkIdentity, currentWeapon.damage);
 			}
 
-			// We hit something, call the OnHit method on the server
+			//// We hit something, call the OnHit method on the server
 			CmdOnHit(_hit.point, _hit.normal);
 		}
 
@@ -106,17 +133,18 @@ public class PlayerShooting : NetworkBehaviour
 		}
 
 	}
-	
-	[Command]
-	void CmdPlayerShot(string _playerID, int _damage, string _sourceID)
+
+	[ClientRpc]
+	void RpcPlayerShot()
 	{
-		Debug.Log(_playerID + " has been shot.");
+        //shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+    }
 
-		Player _player = GameManager.GetPlayer(_playerID);
-		_player.RpcTakeDamage(_damage, _sourceID);
-	}
+    #endregion
 
-	public void OnStartAiming() {
+    #region Inputs
+
+    public void OnStartAiming() {
         //gun.IsAiming = true;
     }
 
@@ -148,5 +176,7 @@ public class PlayerShooting : NetworkBehaviour
     public void OnStopShooting() {
         CancelInvoke(nameof(Shoot));
     }
+
+    #endregion
 
 }

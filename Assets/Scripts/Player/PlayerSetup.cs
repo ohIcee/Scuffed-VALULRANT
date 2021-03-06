@@ -1,124 +1,85 @@
-//-------------------------------------
-// Responsible for setting up the player.
-// This includes adding/removing him correctly on the network.
-//-------------------------------------
-
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(Player))]
 public class PlayerSetup : NetworkBehaviour
 {
+    public List<MonoBehaviour> ScriptsToEnable = new List<MonoBehaviour>();
+    public CharacterController characterController = null;
+    public Camera playerCamera = null;
+    public Camera playerWeaponCamera = null;
+    public AudioListener audioListener = null;
+    public GameObject playerHUD = null;
+    public PlayerHealth playerHealth = null;
 
-	[SerializeField]
-	Behaviour[] componentsToDisable;
+    [Header("Weapon shit")]
+    public GameObject weaponHolder = null;
+    public string weaponLayerName = "Weapon";
 
-	[SerializeField]
-	string remoteLayerName = "RemotePlayer";
+    public bool IsDisabled = false;
 
-	[SerializeField]
-	string dontDrawLayerName = "DontDraw";
-	[SerializeField]
-	GameObject playerGraphics;
+    #region Server
 
-	[SerializeField]
-	GameObject playerUIPrefab;
-	[HideInInspector]
-	public GameObject playerUIInstance;
+    [Command]
+    private void CmdResetHealth() {
+        playerHealth.ResetHealth();
+    }
 
-	void Start()
-	{
-		// Disable components that should only be
-		// active on the player that we control
-		if (!isLocalPlayer)
-		{
-			DisableComponents();
-			AssignRemoteLayer();
-		}
-		else
-		{
-			// Disable player graphics for local player
-			SetLayerRecursively(playerGraphics, LayerMask.NameToLayer(dontDrawLayerName));
+    #endregion
 
-			// Create PlayerUI
-			playerUIInstance = Instantiate(playerUIPrefab);
-			playerUIInstance.name = playerUIPrefab.name;
+    #region Client
 
-			// Configure PlayerUI
-			PlayerHUD ui = playerUIInstance.GetComponent<PlayerHUD>();
-			if (ui == null)
-				Debug.LogError("No PlayerHUD component on PlayerUI prefab.");
-			ui.SetPlayer(GetComponent<Player>());
+    public override void OnStartAuthority()
+    {
+        SetupPlayer();
+    }
 
-			GetComponent<Player>().SetupPlayer(ui);
+    public void SetupPlayer()
+    {
+        if (!hasAuthority) return;
 
-			string _username = "Loading...";
-			//if (UserAccountManager.IsLoggedIn)
-			//	_username = UserAccountManager.LoggedIn_Username;
-			//else
-			//	_username = transform.name;
+        IsDisabled = false;
 
-			//_username = transform.name;
+        characterController.enabled = true;
+        playerCamera.enabled = true;
+        playerWeaponCamera.enabled = true;
+        audioListener.enabled = true;
+        playerHUD.SetActive(true);
 
-			_username = RandomNames.GetRandomName();
+        CmdResetHealth();
 
-			CmdSetUsername(transform.name, _username);
-		}
-	}
+        foreach (MonoBehaviour script in ScriptsToEnable)
+        {
+            script.enabled = true;
+        }
 
-	[Command]
-	void CmdSetUsername(string playerID, string username)
-	{
-		Player player = GameManager.GetPlayer(playerID);
-		if (player != null)
-		{
-			Debug.Log(username + " has joined!");
-			player.username = username;
-		}
-	}
+        // TODO: Fix weapon camera shit
+        //weaponHolder.layer = 11;
 
-	void SetLayerRecursively(GameObject obj, int newLayer)
-	{
-		obj.layer = newLayer;
+        Debug.Log($"Player {transform.name} has been setup!");
+    }
 
-		foreach (Transform child in obj.transform)
-		{
-			SetLayerRecursively(child.gameObject, newLayer);
-		}
-	}
+    public void DisablePlayer() 
+    {
+        if (!hasAuthority) return;
 
-	public override void OnStartClient()
-	{
-		base.OnStartClient();
+        IsDisabled = true;
 
-		string _netID = GetComponent<NetworkIdentity>().netId.ToString();
-		Player _player = GetComponent<Player>();
+        characterController.enabled = false;
+        playerCamera.enabled = false;
+        playerWeaponCamera.enabled = false;
+        audioListener.enabled = false;
+        playerHUD.SetActive(false);
 
-		GameManager.RegisterPlayer(_netID, _player);
-	}
+        foreach (MonoBehaviour script in ScriptsToEnable)
+        {
+            script.enabled = false;
+        }
 
-	void AssignRemoteLayer()
-	{
-		gameObject.layer = LayerMask.NameToLayer(remoteLayerName);
-	}
+        Debug.Log($"Player {transform.name} has been disabled!");
+    }
 
-	void DisableComponents()
-	{
-		for (int i = 0; i < componentsToDisable.Length; i++)
-		{
-			componentsToDisable[i].enabled = false;
-		}
-	}
-
-	// When we are destroyed
-	void OnDisable()
-	{
-		Destroy(playerUIInstance);
-
-		if (isLocalPlayer)
-			GameManager.instance.SetSceneCameraActive(true);
-
-		GameManager.UnRegisterPlayer(transform.name);
-	}
+    #endregion
 
 }
