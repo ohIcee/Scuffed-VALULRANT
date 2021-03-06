@@ -150,10 +150,8 @@ public class Player : NetworkBehaviour
         if (!hasAuthority) return;
 
         // check for Y kill
-        //if (!isDead && transform.position.y < killHeight)
         if (transform.position.y < killHeight)
         {
-            //RpcTakeDamage(9999, transform.name);
             CmdDealDamage(9999);
         }
 

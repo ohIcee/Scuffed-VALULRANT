@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject lobbyPagePanel = null;
 
     [SerializeField] private TMP_InputField addressInput = null;
+    [SerializeField] private TMP_InputField usernameInput = null;
     [SerializeField] private Button joinButton = null;
 
     private void OnEnable()
@@ -30,7 +31,14 @@ public class MainMenu : MonoBehaviour
         landingPagePanel.SetActive(false);
         //lobbyPagePanel.SetActive(true);
 
+        SetUsername();
+
         NetworkManager.singleton.StartHost();
+    }
+
+    private void SetUsername()
+    {
+        PlayerPrefs.SetString("USERNAME", usernameInput.text.Length > 0 ? usernameInput.text : "XDDD POG");
     }
 
     public void Join()
@@ -38,6 +46,8 @@ public class MainMenu : MonoBehaviour
         string address = addressInput.text;
 
         if (address.Length <= 0) return;
+
+        SetUsername();
 
         NetworkManager.singleton.networkAddress = address;
         NetworkManager.singleton.StartClient();

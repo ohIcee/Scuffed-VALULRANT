@@ -10,7 +10,9 @@ public class ValulrantNetworkManager : NetworkManager
 
     [Header("Game settings")]
     [SerializeField] private float respawnTime = 2f;
-    [SerializeField] private int minPlayerCount = 2;
+    private int minPlayerCountToStart = 2;
+    public int GetMinPlayerCountToStart() => minPlayerCountToStart;
+
     public float GetRespawnTime() => respawnTime;
     [Space()]
 
@@ -21,7 +23,7 @@ public class ValulrantNetworkManager : NetworkManager
 
     private bool isGameInProgress = false;
 
-    public List<NetworkConnection> Players { get; } = new List<NetworkConnection>();
+    public List<ValulrantNetworkPlayer> Players { get; } = new List<ValulrantNetworkPlayer>();
 
     #region Server
 
@@ -34,7 +36,11 @@ public class ValulrantNetworkManager : NetworkManager
 
     public override void OnServerDisconnect(NetworkConnection conn)
     {
-        Players.Remove(conn);
+        if (conn.identity == null) return;
+
+        ValulrantNetworkPlayer player = conn.identity.GetComponent<ValulrantNetworkPlayer>();
+
+        Players.Remove(player);
 
         base.OnServerDisconnect(conn);
     }
@@ -48,7 +54,7 @@ public class ValulrantNetworkManager : NetworkManager
 
     public void StartGame()
     {
-        if (Players.Count < minPlayerCount) return;
+        if (Players.Count < minPlayerCountToStart) return;
 
         isGameInProgress = true;
 
@@ -62,16 +68,7 @@ public class ValulrantNetworkManager : NetworkManager
         // conn.identity grabs the Network Identity component of connected player
         ValulrantNetworkPlayer player = conn.identity.GetComponent<ValulrantNetworkPlayer>();
 
-        Players.Add(conn);
-
-        Debug.Log(player == null);
-
-        //player.SetDisplayName($"Player {numPlayers}");
-        //player.SetPlayerColor(new Color(
-        //    UnityEngine.Random.Range(0f, 1f),
-        //    UnityEngine.Random.Range(0f, 1f),
-        //    UnityEngine.Random.Range(0f, 1f)
-        //    ));
+        Players.Add(player);
 
         player.SetTeamColor(new Color(
                 UnityEngine.Random.Range(0f, 1f),
@@ -82,11 +79,6 @@ public class ValulrantNetworkManager : NetworkManager
         // If it's the first player, set him as party owner
         player.SetPartyOwner(Players.Count == 1);
 
-        //GameObject playerInstance
-        //            = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
-        //player.SetPlayerInstance(playerInstance);
-        //NetworkServer.Spawn(playerInstance, conn);
-
         Debug.Log($"Someone connected to the server! There are now {numPlayers} players!");
     }
 
@@ -94,15 +86,13 @@ public class ValulrantNetworkManager : NetworkManager
     {
         if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
         {
-            foreach (NetworkConnection conn in Players)
+            foreach (ValulrantNetworkPlayer player in Players)
             {
-                ValulrantNetworkPlayer networkPlayer = conn.identity.GetComponent<ValulrantNetworkPlayer>();
-
                 GameObject playerInstance
                     = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
 
-                NetworkServer.Spawn(playerInstance, networkPlayer.connectionToClient);
-                networkPlayer.SetPlayerInstance(playerInstance);
+                NetworkServer.Spawn(playerInstance, player.connectionToClient);
+                player.SetPlayerInstance(playerInstance);
             }
         }
     }

@@ -1,6 +1,7 @@
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,11 +10,31 @@ public class LobbyMenu : MonoBehaviour
 {
     [SerializeField] private GameObject lobbyUI = null;
     [SerializeField] private Button startGameButton = null;
+    [SerializeField] private TMP_Text[] playerNameTexts = new TMP_Text[4];
 
     private void Start()
     {
         ValulrantNetworkManager.ClientOnConnected += HandleClientConnected;
         ValulrantNetworkPlayer.AuthorityOnPartyOwnerStateUpdated += AuthorityHandlePartyOwnerStateUpdated;
+        ValulrantNetworkPlayer.ClientOnInfoUpdated += ClientHandleInfoUpdated;
+    }
+
+    private void ClientHandleInfoUpdated()
+    {
+        ValulrantNetworkManager networkManager = ((ValulrantNetworkManager)NetworkManager.singleton);
+        List<ValulrantNetworkPlayer> players = networkManager.Players;
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            playerNameTexts[i].text = players[i].GetDisplayName();
+        }
+
+        for (int i = players.Count; i < playerNameTexts.Length; i++)
+        {
+            playerNameTexts[i].text = "Waiting For Player...";
+        }
+
+        startGameButton.interactable = players.Count >= networkManager.GetMinPlayerCountToStart();
     }
 
     private void HandleClientConnected()
@@ -53,5 +74,6 @@ public class LobbyMenu : MonoBehaviour
     {
         ValulrantNetworkManager.ClientOnConnected -= HandleClientConnected;
         ValulrantNetworkPlayer.AuthorityOnPartyOwnerStateUpdated -= AuthorityHandlePartyOwnerStateUpdated;
+        ValulrantNetworkPlayer.ClientOnInfoUpdated -= ClientHandleInfoUpdated;
     }
 }

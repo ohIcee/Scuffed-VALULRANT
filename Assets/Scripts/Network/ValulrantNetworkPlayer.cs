@@ -21,22 +21,19 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [SerializeField] private Renderer playerColorRenderer = null;
     private PlayerHealth playerHealth = null;
 
-    [SyncVar(hook = nameof(HandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
+    [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
     [SyncVar(hook = nameof(HandlePlayerColorUpdated))] [SerializeField] private Color playerColor = Color.red;
 
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))] private bool isPartyOwner = false;
 
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
+    public static event Action ClientOnInfoUpdated;
 
     private Color teamColor = new Color();
     [SyncVar] private GameObject playerInstance = null;
 
+    public string GetDisplayName() => displayName;
     public bool GetIsPartyOwner() => isPartyOwner;
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
 
     #region Server
 
@@ -102,9 +99,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     private void CmdSetDisplayName(string newName)
     {
         // Do validation
-        if (newName.Length < 2 || newName.Length > 20) return;
-
-        // LMAO XDD
+        //if (newName.Length < 2 || newName.Length > 20) return;
 
         // All players will debug log the new name
         RpcLogNewName(newName);
@@ -129,8 +124,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         else {
             Debug.LogError("Could not get component PlayerSetup!");
         }
-
-        
     }
 
     [ClientRpc]
@@ -141,9 +134,9 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         playerSetup.DisablePlayer();
     }
 
-    private void HandleDisplayNameUpdated(string oldName, string newName)
+    private void ClientHandleDisplayNameUpdated(string oldName, string newName)
     {
-        //displayNameText.text = newName;
+        ClientOnInfoUpdated?.Invoke();
     }
 
     private void HandlePlayerColorUpdated(Color oldColor, Color newColor)
@@ -151,21 +144,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         playerColorRenderer.material.SetColor("_Color", newColor);
     }
 
-    [ContextMenu("SetMyName")]
-    private void SetMyName()
-    {
-        CmdSetDisplayName("M");
-    }
-
     [ClientRpc]
     private void RpcLogNewName(string newName)
     {
         Debug.Log(newName);
-    }
-
-    public string GetDisplayName()
-    {
-        return displayName;
     }
 
     private void AuthorityHandlePartyOwnerStateUpdated(bool oldState, bool newState)
@@ -176,20 +158,35 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         AuthorityOnPartyOwnerStateUpdated?.Invoke(newState);
     }
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+
+    }
+
+    public override void OnStartAuthority()
+    {
+        CmdSetDisplayName(PlayerPrefs.GetString("USERNAME"));
+    }
+
     public override void OnStartClient()
     {
         // Don't run on server
         if (NetworkServer.active) return;
 
-        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Add(this.connectionToServer);
+        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Add(this);
+
+        if (!hasAuthority) return;
     }
 
     public override void OnStopClient()
     {
+        ClientOnInfoUpdated?.Invoke();
+
         // Don't run on server
         if (!isClientOnly) return;
 
-        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Remove(this.connectionToServer);
+        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Remove(this);
 
         if (!hasAuthority) return;
 
