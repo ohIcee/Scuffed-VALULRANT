@@ -4,10 +4,12 @@ using Mirror;
 public class InputManager : NetworkBehaviour
 {
     [SerializeField] private float mouseSensitivityMultiplier = .5f;
+    [SerializeField] private float weaponSwaySensitivityMultiplier = .5f;
 
     [Header("Scripts")]
     [SerializeField] private Player fpMov;
     [SerializeField] private PlayerShooting playerShooting;
+    [SerializeField] WeaponSway weaponSway;
 
     private UIManager uIManager;
 
@@ -70,6 +72,7 @@ public class InputManager : NetworkBehaviour
 
         fpMov.ReceiveMovementInput(movementInput);
         fpMov.ReceiveMouseInput(mouseInput * mouseSensitivityMultiplier);
+        weaponSway.ReceiveInput(mouseInput * weaponSwaySensitivityMultiplier);
     }
 
     private void OnDestroy()

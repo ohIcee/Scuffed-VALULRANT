@@ -57,7 +57,10 @@ public class PlayerSetup : NetworkBehaviour
 			//	_username = UserAccountManager.LoggedIn_Username;
 			//else
 			//	_username = transform.name;
-			_username = transform.name;
+
+			//_username = transform.name;
+
+			_username = RandomNames.GetRandomName();
 
 			CmdSetUsername(transform.name, _username);
 		}
