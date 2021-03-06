@@ -45,7 +45,7 @@ public class WeaponManager : NetworkBehaviour
 		if (currentGraphics == null)
 			Debug.LogError("No WeaponGraphics component on the weapon object: " + _weaponIns.name);
 
-		if (isLocalPlayer)
+		if (hasAuthority)
 			Util.SetLayerRecursively(_weaponIns, LayerMask.NameToLayer(weaponLayerName));
 
 	}

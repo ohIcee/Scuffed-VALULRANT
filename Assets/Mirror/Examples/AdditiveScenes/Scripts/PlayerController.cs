@@ -18,7 +18,7 @@ namespace Mirror.Examples.Additive
 
         void Start()
         {
-            characterController.enabled = isLocalPlayer;
+            characterController.enabled = hasAuthority;
         }
 
         public override void OnStartLocalPlayer()
@@ -31,7 +31,7 @@ namespace Mirror.Examples.Additive
 
         void OnDisable()
         {
-            if (isLocalPlayer && Camera.main != null)
+            if (hasAuthority && Camera.main != null)
             {
                 Camera.main.orthographic = true;
                 Camera.main.transform.SetParent(null);
@@ -56,7 +56,7 @@ namespace Mirror.Examples.Additive
 
         void Update()
         {
-            if (!isLocalPlayer || !characterController.enabled)
+            if (!hasAuthority || !characterController.enabled)
                 return;
 
             horizontal = Input.GetAxis("Horizontal");
@@ -88,7 +88,7 @@ namespace Mirror.Examples.Additive
 
         void FixedUpdate()
         {
-            if (!isLocalPlayer || characterController == null)
+            if (!hasAuthority || characterController == null)
                 return;
 
             transform.Rotate(0f, turn * Time.fixedDeltaTime, 0f);

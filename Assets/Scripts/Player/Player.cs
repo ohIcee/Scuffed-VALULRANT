@@ -91,7 +91,7 @@ public class Player : NetworkBehaviour
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
-    [SerializeField] private PlayerNameplate playerNameplate;
+    [SerializeField] private PlayerHealth playerHealth;
 
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
@@ -139,7 +139,10 @@ public class Player : NetworkBehaviour
     [SerializeField]
     private GameObject spawnEffect;
 
-    private PlayerHUD playerHUD;
+    [Command]
+    private void CmdDealDamage(int damageAmount) {
+        playerHealth.DealDamage(damageAmount);
+    }
 
     [ClientCallback]
     void Update()
@@ -151,6 +154,7 @@ public class Player : NetworkBehaviour
         if (transform.position.y < killHeight)
         {
             //RpcTakeDamage(9999, transform.name);
+            CmdDealDamage(9999);
         }
 
         bool wasGrounded = isGrounded;

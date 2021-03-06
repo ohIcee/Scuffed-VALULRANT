@@ -305,8 +305,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 184500594}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 24.269476, y: 1.9345382, z: -25.130657}
-  m_LocalScale: {x: 121.36, y: 1, z: 121.36}
+  m_LocalPosition: {x: 24.269, y: 1.9345382, z: -25.131}
+  m_LocalScale: {x: 18.157883, y: 0.14962, z: 18.157883}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -422,13 +422,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1548856032}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.37984246, y: -0, z: -0, w: 0.9250512}
+  m_LocalPosition: {x: 23.39, y: 11.01, z: -37.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 44.648, y: 0, z: 0}
 --- !u!114 &1548856036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -534,7 +534,8 @@ MonoBehaviour:
   playerSpawnMethod: 1
   spawnPrefabs:
   - {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
-  MinPlayerCount: 1
+  respawnTimer: 2
+  minPlayerCount: 2
   clientPlayerPrefab: {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
 --- !u!4 &1985687828
 Transform:

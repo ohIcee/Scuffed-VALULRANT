@@ -101,7 +101,7 @@ namespace Mirror.Examples.Basic
             playerUI = Instantiate(playerUIPrefab, ((BasicNetManager)NetworkManager.singleton).playersPanel);
 
             // Set this player object in PlayerUI to wire up event handlers
-            playerUI.GetComponent<PlayerUI>().SetPlayer(this, isLocalPlayer);
+            playerUI.GetComponent<PlayerUI>().SetPlayer(this, hasAuthority);
 
             // Invoke all event handlers with the current data
             OnPlayerNumberChanged.Invoke(playerNumber);
@@ -119,7 +119,7 @@ namespace Mirror.Examples.Basic
             Destroy(playerUI);
 
             // Disable the main panel for local player
-            if (isLocalPlayer)
+            if (hasAuthority)
                 ((BasicNetManager)NetworkManager.singleton).mainPanel.gameObject.SetActive(false);
         }
     }

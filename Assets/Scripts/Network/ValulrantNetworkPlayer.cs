@@ -1,11 +1,12 @@
 using Mirror;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
 /*
 
-    [SyncVar]                       -> Synchronised variable between clients | Only if value is changed on server it is transmitted to all clients
+    [SyncVar]                       -> Synchronised variable between clients | Only if value is changed on server it is transmitted to all clients | Can only be changed on server!!!
     [Server]                        -> Can be run ONLY on the SERVER 
 
     [Command]   (CmdMethodName)     -> Clients calling a method on the server
@@ -18,6 +19,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 {
     [SerializeField] private TMP_Text displayNameText = null;
     [SerializeField] private Renderer playerColorRenderer = null;
+    private PlayerHealth playerHealth = null;
 
     [SyncVar(hook = nameof(HandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
     [SyncVar(hook = nameof(HandlePlayerColorUpdated))] [SerializeField] private Color playerColor = Color.red;
@@ -27,10 +29,44 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
 
     private Color teamColor = new Color();
+    private GameObject playerInstance = null;
 
     public bool GetIsPartyOwner() => isPartyOwner;
 
     #region Server
+
+    [Server]
+    public void SetPlayerInstance(GameObject player)
+    {
+        playerInstance = player;
+        playerHealth = playerInstance.GetComponent<PlayerHealth>();
+        playerHealth.ServerOnDie += ServerHandleDie;
+    }
+
+    public override void OnStopServer()
+    {
+        playerHealth.ServerOnDie -= ServerHandleDie;
+    }
+
+    [Server]
+    private void ServerHandleDie()
+    {
+        PlayerSetup playerSetup = playerInstance.GetComponent<PlayerSetup>();
+        playerSetup.DisablePlayer();
+        RpcDisablePlayer(playerSetup);
+        StartCoroutine(RespawnPlayerTimer(playerSetup));
+    }
+
+    IEnumerator RespawnPlayerTimer(PlayerSetup playerSetup)
+    {
+        ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
+        float respawnTime = networkManager.GetRespawnTime();
+        Debug.Log($"respawning {playerSetup.transform.name} in {respawnTime}");
+        yield return new WaitForSeconds(respawnTime);
+        Debug.Log($"Respawning {playerSetup.transform.name} now!");
+
+        RpcRespawnPlayer(playerSetup);
+    }
 
     [Server]
     public void SetPartyOwner(bool state)
@@ -75,6 +111,22 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     #endregion
 
     #region Client
+
+    [ClientRpc]
+    private void RpcRespawnPlayer(PlayerSetup playerSetup)
+    {
+        ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
+        playerSetup.transform.position = networkManager.GetStartPosition().position;
+        playerSetup.SetupPlayer();
+    }
+
+    [ClientRpc]
+    private void RpcDisablePlayer(PlayerSetup playerSetup)
+    {
+        if (isServer) return;
+
+        playerSetup.DisablePlayer();
+    }
 
     private void HandleDisplayNameUpdated(string oldName, string newName)
     {

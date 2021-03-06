@@ -8,8 +8,11 @@ using UnityEngine.SceneManagement;
 public class ValulrantNetworkManager : NetworkManager
 {
 
-    [SerializeField] private int MinPlayerCount = 2;
-    //[SerializeField] private GameObject playerPrefab;
+    [Header("Game settings")]
+    [SerializeField] private float respawnTime = 2f;
+    [SerializeField] private int minPlayerCount = 2;
+    public float GetRespawnTime() => respawnTime;
+    [Space()]
 
     [SerializeField] private GameObject clientPlayerPrefab;
 
@@ -47,7 +50,7 @@ public class ValulrantNetworkManager : NetworkManager
 
     public void StartGame()
     {
-        if (Players.Count < MinPlayerCount) return;
+        if (Players.Count < minPlayerCount) return;
 
         isGameInProgress = true;
 
@@ -81,6 +84,7 @@ public class ValulrantNetworkManager : NetworkManager
 
         GameObject playerInstance
                     = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
+        player.SetPlayerInstance(playerInstance);
         NetworkServer.Spawn(playerInstance, conn);
 
         Debug.Log($"Someone connected to the server! There are now {numPlayers} players!");
