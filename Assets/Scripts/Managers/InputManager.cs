@@ -21,14 +21,12 @@ public class InputManager : NetworkBehaviour
 
     public override void OnStartAuthority()
     {
-        base.OnStartAuthority();
-
         Initialize();
     }
 
     public void Initialize()
     {
-        uIManager = FindObjectOfType<UIManager>();
+        //uIManager = FindObjectOfType<UIManager>();
 
         controls = new PlayerControls();
         controls.Enable();
@@ -43,27 +41,35 @@ public class InputManager : NetworkBehaviour
             toggleCursorLock(false);
         };
 
-        playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
-        playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();
-
-        playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
-        playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
-
-        playerInput.Aim.started += _ => playerShooting.OnStartAiming();
-        playerInput.Aim.canceled += _ => playerShooting.OnStopAiming();
-
-        playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
-        playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
-
-        playerInput.Shoot.started += _ =>
+        if (fpMov != null)
         {
-            playerShooting.OnStartShooting();
-            toggleCursorLock(true);
-        };
-        playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
+            playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
+            playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();
 
-        playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
-        playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
+            playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
+            playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
+
+            playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
+            playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
+
+            playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
+            playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
+        }
+
+        if (playerShooting != null)
+        {
+            playerInput.Aim.started += _ => playerShooting.OnStartAiming();
+            playerInput.Aim.canceled += _ => playerShooting.OnStopAiming();
+
+            playerInput.Shoot.started += _ =>
+            {
+                Debug.Log("SHOOT");
+                playerShooting.OnStartShooting();
+                toggleCursorLock(true);
+            };
+            playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
+        }
+        
     }
 
     private void Update()

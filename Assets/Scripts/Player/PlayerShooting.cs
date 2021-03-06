@@ -67,7 +67,7 @@ public class PlayerShooting : NetworkBehaviour
 	[Client]
 	void Shoot()
 	{
-		if (!isLocalPlayer || weaponManager.isReloading)
+		if (!hasAuthority || weaponManager.isReloading)
 		{
 			return;
 		}
@@ -80,7 +80,7 @@ public class PlayerShooting : NetworkBehaviour
 
 		currentWeapon.bullets--;
 
-		Debug.Log("Remaining bullets: " + currentWeapon.bullets);
+		//Debug.Log("Remaining bullets: " + currentWeapon.bullets);
 
 		weaponRecoil.Fire();
 		shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
@@ -112,8 +112,8 @@ public class PlayerShooting : NetworkBehaviour
 	{
 		Debug.Log(_playerID + " has been shot.");
 
-		Player _player = GameManager.GetPlayer(_playerID);
-		_player.RpcTakeDamage(_damage, _sourceID);
+		//Player _player = GameManager.GetPlayer(_playerID);
+		//_player.RpcTakeDamage(_damage, _sourceID);
 	}
 
 	public void OnStartAiming() {

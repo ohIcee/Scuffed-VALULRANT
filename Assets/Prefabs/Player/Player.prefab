@@ -10,19 +10,16 @@ GameObject:
   m_Component:
   - component: {fileID: 4207293392497186}
   - component: {fileID: 7718639232595436120}
+  - component: {fileID: 8715293126439341}
   - component: {fileID: 114963311885979670}
   - component: {fileID: 8005298539887990908}
   - component: {fileID: -3964556893396428943}
-  - component: {fileID: -6831680668883263901}
   - component: {fileID: 4710802543775420695}
   - component: {fileID: 7891231476885191673}
-  - component: {fileID: 6062230767564624682}
-  - component: {fileID: 7139546704501096312}
   - component: {fileID: 8065292155948461042}
   - component: {fileID: 3869058434273637707}
-  - component: {fileID: 5060212304409512851}
   m_Layer: 8
-  m_Name: NetworkPlayer
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53,7 +50,7 @@ CharacterController:
   m_GameObject: {fileID: 1773623360729482}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Height: 1.85
   m_Radius: 0.35
@@ -62,7 +59,7 @@ CharacterController:
   m_SkinWidth: 0.001
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &114963311885979670
+--- !u!114 &8715293126439341
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -70,6 +67,30 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1773623360729482}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6c87cfb8fe84b46b5737b1eb4ae9e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  ScriptsToEnable:
+  - {fileID: 8005298539887990908}
+  - {fileID: 114963311885979670}
+  - {fileID: 7891231476885191673}
+  - {fileID: 3869058434273637707}
+  - {fileID: 1553515829648057978}
+  - {fileID: 4857733278312603309}
+  characterController: {fileID: 7718639232595436120}
+  playerCamera: {fileID: 3468326314818637523}
+  playerWeaponCamera: {fileID: 8383419313952761144}
+--- !u!114 &114963311885979670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773623360729482}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97fca36bd81de7c4cafce7bbf02ca611, type: 3}
   m_Name: 
@@ -114,19 +135,10 @@ MonoBehaviour:
   fallDamageAtMaxSpeed: 50
   playerNameplate: {fileID: 4898032054046502779}
   isPressingShift: 0
+  m_Controller: {fileID: 7718639232595436120}
   currentHeight: 0
-  kills: 0
-  deaths: 0
-  username: Loading...
-  disableOnDeath:
-  - {fileID: 114963311885979670}
-  - {fileID: 7891231476885191673}
-  disableGameObjectsOnDeath:
-  - {fileID: 550293882648271054}
-  - {fileID: 6206058644056453502}
   deathEffect: {fileID: 126342, guid: 61f1d72a1cbb48c4486d8ee7afcf3704, type: 3}
   spawnEffect: {fileID: 136626, guid: d61051166d1c1f14f9e4a3268379948a, type: 3}
-  maxHealth: 100
 --- !u!114 &8005298539887990908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,7 +146,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6c726a003497f7469770c52f3ca43d8, type: 3}
   m_Name: 
@@ -162,24 +174,6 @@ MonoBehaviour:
   serverOnly: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &-6831680668883263901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07d20ec86f4e86d409e611e76b55c73a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  displayNameText: {fileID: 8257226612159693545}
-  playerColorRenderer: {fileID: 8228892303569456721}
-  displayName: Missing Name
-  playerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &4710802543775420695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,45 +212,6 @@ MonoBehaviour:
     m_Bits: 7735
   shootingAudioSource: {fileID: 2367554308387808255}
   weaponRecoil: {fileID: 1553515829648057978}
---- !u!114 &6062230767564624682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45d218f6b3bb7ce4e944e92d32e9464c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerCamera: {fileID: 0}
---- !u!114 &7139546704501096312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf6c87cfb8fe84b46b5737b1eb4ae9e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  componentsToDisable:
-  - {fileID: 114963311885979670}
-  - {fileID: 3468326314818637523}
-  - {fileID: 2628381724639698159}
-  - {fileID: 8383419313952761144}
-  - {fileID: 5060212304409512851}
-  - {fileID: 8005298539887990908}
-  remoteLayerName: RemotePlayer
-  dontDrawLayerName: DontDraw
-  playerGraphics: {fileID: 550293882648271054}
-  playerUIPrefab: {fileID: 498742011011189321, guid: 9d81e3c7674712941ae61a0a478ea660, type: 3}
-  playerUIInstance: {fileID: 0}
 --- !u!114 &8065292155948461042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,18 +259,6 @@ MonoBehaviour:
     ShootSounds:
     - {fileID: 8300000, guid: e2859071f3692f14399d0c80ab750d4c, type: 3}
   isReloading: 0
---- !u!114 &5060212304409512851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1930b28d7b13ae34781984eaf27a3375, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &550293882648271054
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,7 +407,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071358040639122710}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6b3cb72ead4859488c5acf186a5b467, type: 3}
   m_Name: 
@@ -613,7 +556,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4722079825478431538}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3c7d6c9f76341142b400b1b6598c673, type: 3}
   m_Name: 
@@ -819,9 +762,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3107bca4450eb2f4b9037c2f3875ca1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameText: {fileID: 8257226612159693545}
-  healthBar: {fileID: 1933591819930323604}
-  player: {fileID: 114963311885979670}
 --- !u!114 &4314607543210422599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -876,7 +816,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6206058644056453502}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1097,7 +1037,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6960509925430787477}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}

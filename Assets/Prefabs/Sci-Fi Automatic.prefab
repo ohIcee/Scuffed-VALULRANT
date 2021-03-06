@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 434824}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 441184}
   - component: {fileID: 19889578}
   - component: {fileID: 19954090}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MuzzleFlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4845,7 +4845,7 @@ GameObject:
   - component: {fileID: 480056}
   - component: {fileID: 19872702}
   - component: {fileID: 19953318}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9622,7 +9622,7 @@ GameObject:
   - component: {fileID: 2379438}
   - component: {fileID: 11400432}
   - component: {fileID: 95000010327034326}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Sci-Fi Automatic
   m_TagString: Untagged
   m_Icon: {fileID: 0}

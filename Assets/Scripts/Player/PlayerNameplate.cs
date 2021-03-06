@@ -5,23 +5,23 @@ using TMPro;
 public class PlayerNameplate : MonoBehaviour
 {
 
-	[SerializeField]
-	private TextMeshProUGUI usernameText;
+	//[SerializeField]
+	//private TextMeshProUGUI usernameText;
 
-	[SerializeField]
-	private Image healthBar;
+	//[SerializeField]
+	//private Image healthBar;
 
-	[SerializeField]
-	private Player player;
+	//[SerializeField]
+	//private Player player;
 
-	private void Awake()
-	{
-		usernameText.text = player.username;
-	}
+	//private void Awake()
+	//{
+	//	usernameText.text = player.username;
+	//}
 
-	public void UpdateHealth(int currentHealth, int maxHealth)
-	{
-		healthBar.fillAmount = (float)currentHealth / maxHealth;
-	}
+	//public void UpdateHealth(int currentHealth, int maxHealth)
+	//{
+	//	healthBar.fillAmount = (float)currentHealth / maxHealth;
+	//}
 
 }
