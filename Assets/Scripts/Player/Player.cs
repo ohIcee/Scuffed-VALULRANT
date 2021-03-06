@@ -461,6 +461,10 @@ public class Player : NetworkBehaviour
                         // then, add the jumpSpeed value upwards
                         characterVelocity += Vector3.up * jumpForce;
 
+
+                        // reduce velocity if Shifting -> Jump
+                        characterVelocity = isShifting ? characterVelocity * 0.80f : characterVelocity;
+
                         // play sound
                         if (jumpAudioSource)
                             jumpAudioSource.PlayOneShot(jumpSFX);
