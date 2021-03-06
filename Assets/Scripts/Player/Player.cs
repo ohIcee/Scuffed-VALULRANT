@@ -38,7 +38,7 @@ public class Player : NetworkBehaviour
     [Tooltip("Acceleration speed when in the air")]
     [SerializeField] private float accelerationSpeedInAir = 25f;
     [Tooltip("Multiplicator for the sprint speed (based on grounded speed)")]
-    [SerializeField] private float sprintSpeedModifier = 2f;
+    [SerializeField] private float shiftSpeedModifier = 0.50f;
     [Tooltip("Height at which the player dies instantly when falling off the map")]
     [SerializeField] private float killHeight = -50f;
 
@@ -179,7 +179,8 @@ public class Player : NetworkBehaviour
 
     #endregion
 
-    public void SetupPlayer(PlayerHUD hud) {
+    public void SetupPlayer(PlayerHUD hud)
+    {
         if (isLocalPlayer)
             playerHUD = hud;
 
@@ -420,14 +421,14 @@ public class Player : NetworkBehaviour
         }
 
         // character movement handling
-        bool isSprinting = isPressingShift;
+        bool isShifting = isPressingShift;
         {
-            if (isSprinting)
+            if (isShifting)
             {
-                isSprinting = SetCrouchingState(false, false);
+                isShifting = SetCrouchingState(false, false);
             }
 
-            float speedModifier = isSprinting ? sprintSpeedModifier : 1f;
+            float speedModifier = isShifting ? shiftSpeedModifier : 1f;
 
             // converts move input to a worldspace vector based on our character's transform orientation
             Vector3 worldspaceMoveInput = transform.TransformVector(new Vector3(movementInput.x, 0f, movementInput.y));
@@ -437,6 +438,7 @@ public class Player : NetworkBehaviour
             {
                 // calculate the desired velocity from inputs, max speed, and current slope
                 Vector3 targetVelocity = worldspaceMoveInput * maxSpeedOnGround * speedModifier;
+
                 // reduce speed if crouching by crouch speed ratio
                 if (isCrouching)
                     targetVelocity *= maxSpeedCrouchedRatio;
@@ -473,7 +475,7 @@ public class Player : NetworkBehaviour
                 }
 
                 // footsteps sound
-                float chosenFootstepSFXFrequency = (isSprinting ? footstepSFXFrequencyWhileSprinting : footstepSFXFrequency);
+                float chosenFootstepSFXFrequency = (isShifting ? footstepSFXFrequencyWhileSprinting : footstepSFXFrequency);
                 if (m_footstepDistanceCounter >= 1f / chosenFootstepSFXFrequency)
                 {
                     m_footstepDistanceCounter = 0f;
@@ -491,13 +493,16 @@ public class Player : NetworkBehaviour
             // handle air movement
             else
             {
+                // lower A D effect by /2
+                worldspaceMoveInput = transform.TransformVector(new Vector3(movementInput.x / 2, 0f, movementInput.y));
+
                 // add air acceleration
                 characterVelocity += worldspaceMoveInput * accelerationSpeedInAir * Time.deltaTime;
 
                 // limit air speed to a maximum, but only horizontally
                 float verticalVelocity = characterVelocity.y;
                 Vector3 horizontalVelocity = Vector3.ProjectOnPlane(characterVelocity, Vector3.up);
-                horizontalVelocity = Vector3.ClampMagnitude(horizontalVelocity, maxSpeedInAir * speedModifier);
+                horizontalVelocity = Vector3.ClampMagnitude(horizontalVelocity, maxSpeedInAir);
                 characterVelocity = horizontalVelocity + (Vector3.up * verticalVelocity);
 
                 // apply the gravity to the velocity
@@ -572,7 +577,7 @@ public class Player : NetworkBehaviour
     // returns false if there was an obstruction
     bool SetCrouchingState(bool crouched, bool ignoreObstructions)
     {
-        // set appropriate heights
+        // set appropriate heights 
         if (crouched)
         {
             m_TargetCharacterHeight = capsuleHeightCrouching;
@@ -618,8 +623,9 @@ public class Player : NetworkBehaviour
     public void OnCrouchPressed() => SetCrouchingState(isCrouching, false);
     public void OnCrouchReleased() => SetCrouchingState(!isCrouching, false);
     public void ReceiveMovementInput(Vector2 movementInput) => this.movementInput = movementInput;
-    public void ReceiveMouseInput(Vector2 mouseInput) {
-        this.mouseInput = mouseInput; 
+    public void ReceiveMouseInput(Vector2 mouseInput)
+    {
+        this.mouseInput = mouseInput;
     }
 
     #endregion
