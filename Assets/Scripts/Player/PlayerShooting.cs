@@ -61,6 +61,8 @@ public class PlayerShooting : NetworkBehaviour
 
 		if (_playerIdentity.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
 		{
+			//if (playerHealth.IsDead()) return;
+
 			playerHealth.DealDamage(_damage);
 		}
 

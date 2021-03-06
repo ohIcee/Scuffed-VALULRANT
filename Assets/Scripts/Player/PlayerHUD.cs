@@ -34,7 +34,6 @@ public class PlayerHUD : MonoBehaviour
     }
 
     public void HandleHealthUpdated(int currentHealth, int maxHealth) {
-        Debug.Log($"Updating PlayerHUD Health with {currentHealth}/{maxHealth}");
         healthText.text = currentHealth.ToString();
         healthBarImage.fillAmount = (float)currentHealth / maxHealth;
     }

@@ -15,6 +15,8 @@ public class PlayerHealth : NetworkBehaviour
 
     public event Action<int, int> ClientOnHealthUpdated;
 
+    //public bool IsDead() => currentHealth <= 0f;
+
     #region Server
 
     public override void OnStartServer()
@@ -32,6 +34,8 @@ public class PlayerHealth : NetworkBehaviour
         currentHealth = Mathf.Max(currentHealth - damageAmount, 0);
 
         if (currentHealth > 0) return;
+
+        Debug.Log("Uh oh dead!!");
 
         // DIE
         ServerOnDie?.Invoke();

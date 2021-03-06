@@ -29,15 +29,21 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
 
     private Color teamColor = new Color();
-    private GameObject playerInstance = null;
+    [SyncVar] private GameObject playerInstance = null;
 
     public bool GetIsPartyOwner() => isPartyOwner;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
 
     #region Server
 
     [Server]
     public void SetPlayerInstance(GameObject player)
     {
+        Debug.Log($"Setting player instance {player.transform.name}");
         playerInstance = player;
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
@@ -45,7 +51,8 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        playerHealth.ServerOnDie -= ServerHandleDie;
+        if (playerHealth != null)
+            playerHealth.ServerOnDie -= ServerHandleDie;
     }
 
     [Server]
@@ -61,11 +68,8 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     {
         ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
         float respawnTime = networkManager.GetRespawnTime();
-        Debug.Log($"respawning {playerSetup.transform.name} in {respawnTime}");
         yield return new WaitForSeconds(respawnTime);
-        Debug.Log($"Respawning {playerSetup.transform.name} now!");
-
-        RpcRespawnPlayer(playerSetup);
+        RpcPlayerRespawn();
     }
 
     [Server]
@@ -113,11 +117,20 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     #region Client
 
     [ClientRpc]
-    private void RpcRespawnPlayer(PlayerSetup playerSetup)
+    private void RpcPlayerRespawn()
     {
         ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
-        playerSetup.transform.position = networkManager.GetStartPosition().position;
-        playerSetup.SetupPlayer();
+        Debug.Log(playerInstance == null);
+        if (playerInstance.transform.TryGetComponent<PlayerSetup>(out PlayerSetup playerSetup))
+        {
+            playerSetup.transform.position = networkManager.GetStartPosition().position;
+            playerSetup.SetupPlayer();
+        }
+        else {
+            Debug.LogError("Could not get component PlayerSetup!");
+        }
+
+        
     }
 
     [ClientRpc]
@@ -135,7 +148,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
     private void HandlePlayerColorUpdated(Color oldColor, Color newColor)
     {
-        //playerColorRenderer.material.SetColor("_Color", newColor);
+        playerColorRenderer.material.SetColor("_Color", newColor);
     }
 
     [ContextMenu("SetMyName")]
@@ -168,7 +181,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         // Don't run on server
         if (NetworkServer.active) return;
 
-        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Add(this);
+        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Add(this.connectionToServer);
     }
 
     public override void OnStopClient()
@@ -176,7 +189,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         // Don't run on server
         if (!isClientOnly) return;
 
-        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Remove(this);
+        ((ValulrantNetworkManager)NetworkManager.singleton).Players.Remove(this.connectionToServer);
 
         if (!hasAuthority) return;
 

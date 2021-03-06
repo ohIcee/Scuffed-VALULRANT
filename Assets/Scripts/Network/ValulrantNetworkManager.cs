@@ -21,7 +21,7 @@ public class ValulrantNetworkManager : NetworkManager
 
     private bool isGameInProgress = false;
 
-    public List<ValulrantNetworkPlayer> Players { get; } = new List<ValulrantNetworkPlayer>();
+    public List<NetworkConnection> Players { get; } = new List<NetworkConnection>();
 
     #region Server
 
@@ -34,9 +34,7 @@ public class ValulrantNetworkManager : NetworkManager
 
     public override void OnServerDisconnect(NetworkConnection conn)
     {
-        ValulrantNetworkPlayer player = conn.identity.GetComponent<ValulrantNetworkPlayer>();
-
-        Players.Remove(player);
+        Players.Remove(conn);
 
         base.OnServerDisconnect(conn);
     }
@@ -64,7 +62,9 @@ public class ValulrantNetworkManager : NetworkManager
         // conn.identity grabs the Network Identity component of connected player
         ValulrantNetworkPlayer player = conn.identity.GetComponent<ValulrantNetworkPlayer>();
 
-        Players.Add(player);
+        Players.Add(conn);
+
+        Debug.Log(player == null);
 
         //player.SetDisplayName($"Player {numPlayers}");
         //player.SetPlayerColor(new Color(
@@ -82,10 +82,10 @@ public class ValulrantNetworkManager : NetworkManager
         // If it's the first player, set him as party owner
         player.SetPartyOwner(Players.Count == 1);
 
-        GameObject playerInstance
-                    = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
-        player.SetPlayerInstance(playerInstance);
-        NetworkServer.Spawn(playerInstance, conn);
+        //GameObject playerInstance
+        //            = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
+        //player.SetPlayerInstance(playerInstance);
+        //NetworkServer.Spawn(playerInstance, conn);
 
         Debug.Log($"Someone connected to the server! There are now {numPlayers} players!");
     }
@@ -94,14 +94,15 @@ public class ValulrantNetworkManager : NetworkManager
     {
         if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
         {
-            // GameOverHandler idk neki video "Starting The Game"
-
-            foreach (ValulrantNetworkPlayer player in Players)
+            foreach (NetworkConnection conn in Players)
             {
+                ValulrantNetworkPlayer networkPlayer = conn.identity.GetComponent<ValulrantNetworkPlayer>();
+
                 GameObject playerInstance
                     = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
 
-                NetworkServer.Spawn(playerInstance, player.connectionToClient);
+                NetworkServer.Spawn(playerInstance, networkPlayer.connectionToClient);
+                networkPlayer.SetPlayerInstance(playerInstance);
             }
         }
     }
