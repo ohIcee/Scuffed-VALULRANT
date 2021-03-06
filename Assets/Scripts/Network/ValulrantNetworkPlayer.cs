@@ -8,7 +8,7 @@ using UnityEngine;
     [Server]                        -> Can be run ONLY on the SERVER 
 
     [Command]   (CmdMethodName)     -> Clients calling a method on the server
-    [ServerRpc] (RpcMethodName)     -> Server calling a method on ALL clients
+    [ClientRpc] (RpcMethodName)     -> Server calling a method on ALL clients
     [TargetRpc] (TargetMethodName)  -> Server calling a method on a SPECIFIC client
 
  */

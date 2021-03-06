@@ -6,7 +6,7 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private float mouseSensitivityMultiplier = .5f;
 
     [Header("Scripts")]
-    [SerializeField] private FirstPersonMovement fpMov;
+    [SerializeField] private Player fpMov;
     [SerializeField] private PlayerShooting playerShooting;
 
     private UIManager uIManager;
@@ -34,11 +34,11 @@ public class InputManager : NetworkBehaviour
 
         playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
-        playerInput.DebugMonitor.performed += _ => uIManager.ToggleDebugMonitor();
+        //playerInput.DebugMonitor.performed += _ => uIManager.ToggleDebugMonitor();
         playerInput.EscapeMenu.performed += _ =>
         {
-            uIManager.ToggleEscapeMenu();
-            ToggleCursorLock(false);
+            //uIManager.ToggleEscapeMenu();
+            toggleCursorLock(false);
         };
 
         playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
@@ -47,12 +47,7 @@ public class InputManager : NetworkBehaviour
         playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
         playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
 
-        playerInput.Aim.started += _ =>
-        {
-            playerShooting.OnStartAiming(); 
-            ToggleCursorLock(true);
-        };
-
+        playerInput.Aim.started += _ => playerShooting.OnStartAiming();
         playerInput.Aim.canceled += _ => playerShooting.OnStopAiming();
 
         playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
@@ -61,11 +56,9 @@ public class InputManager : NetworkBehaviour
         playerInput.Shoot.started += _ =>
         {
             playerShooting.OnStartShooting();
+            toggleCursorLock(true);
         };
-        playerInput.Shoot.canceled += _ =>
-        {
-            playerShooting.OnStopShooting();
-        };
+        playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
 
         playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
         playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
@@ -85,7 +78,7 @@ public class InputManager : NetworkBehaviour
 
         controls.Disable();
     }
-    private void ToggleCursorLock(bool locked)
+    private void toggleCursorLock(bool locked)
     {
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !locked;
