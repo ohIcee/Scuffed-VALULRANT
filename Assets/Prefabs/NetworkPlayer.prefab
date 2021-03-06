@@ -78,7 +78,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   uiManager: {fileID: 0}
-  health: {fileID: 5840844209503925772}
   playerCamera: {fileID: 3468326314818637523}
   footstepAudioSource: {fileID: 0}
   jumpAudioSource: {fileID: 0}
@@ -114,6 +113,7 @@ MonoBehaviour:
   maxSpeedForFallDamage: 30
   fallDamageAtMinSpeed: 10
   fallDamageAtMaxSpeed: 50
+  playerNameplate: {fileID: 4898032054046502779}
   isPressingShift: 0
   currentHeight: 0
   kills: 0
@@ -127,6 +127,7 @@ MonoBehaviour:
   - {fileID: 6206058644056453502}
   deathEffect: {fileID: 126342, guid: 61f1d72a1cbb48c4486d8ee7afcf3704, type: 3}
   spawnEffect: {fileID: 136626, guid: d61051166d1c1f14f9e4a3268379948a, type: 3}
+  maxHealth: 100
 --- !u!114 &8005298539887990908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,7 +663,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usernameText: {fileID: 8257226612159693545}
   healthBar: {fileID: 1933591819930323604}
-  health: {fileID: 5840844209503925772}
   player: {fileID: 114963311885979670}
 --- !u!114 &4314607543210422599
 MonoBehaviour:

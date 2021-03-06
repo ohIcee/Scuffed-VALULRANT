@@ -4,7 +4,6 @@ using TMPro;
 
 public class PlayerHUD : MonoBehaviour
 {
-    [SerializeField] private Health health = null;
     [SerializeField] private Image healthBarImage = null;
     [SerializeField] private TextMeshProUGUI healthText = null;
 
@@ -15,18 +14,9 @@ public class PlayerHUD : MonoBehaviour
     {
         player = _player;
         weaponManager = player.GetComponent<WeaponManager>();
-
-        health = player.GetComponent<Health>();
-
-        health.ClientOnHealthUpdated += HandleHealthUpdated;
     }
 
-    private void OnDestroy()
-    {
-        health.ClientOnHealthUpdated -= HandleHealthUpdated;
-    }
-
-    private void HandleHealthUpdated(int currentHealth, int maxHealth) {
+    public void UpdateHealth(int currentHealth, int maxHealth) {
         healthText.text = currentHealth.ToString();
         healthBarImage.fillAmount = (float)currentHealth / maxHealth;
     }

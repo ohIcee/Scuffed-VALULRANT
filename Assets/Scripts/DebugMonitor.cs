@@ -30,6 +30,6 @@ public class DebugMonitor : MonoBehaviour
         isShiftingText.text = $"Is Shifting: {fpMov.isPressingShift}";
         isCrouchingText.text = $"Is Crouching: {fpMov.IsCrouching}";
         isGroundedText.text = $"Is Grounded: {fpMov.IsGrounded}";
-        isDeadText.text = $"Is Dead: {fpMov.GetHealth().IsDead}";
+        isDeadText.text = $"Is Dead: {fpMov.currentHeight}";
     }
 }

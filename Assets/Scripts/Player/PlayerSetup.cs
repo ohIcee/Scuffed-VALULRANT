@@ -50,7 +50,7 @@ public class PlayerSetup : NetworkBehaviour
 				Debug.LogError("No PlayerHUD component on PlayerUI prefab.");
 			ui.SetPlayer(GetComponent<Player>());
 
-			GetComponent<Player>().SetupPlayer();
+			GetComponent<Player>().SetupPlayer(ui);
 
 			string _username = "Loading...";
 			//if (UserAccountManager.IsLoggedIn)

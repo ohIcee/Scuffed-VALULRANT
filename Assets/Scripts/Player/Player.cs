@@ -8,8 +8,6 @@ public class Player : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private Health health;
-    public Health GetHealth() => health;
 
     [Tooltip("Reference to the main camera used for the player")]
     [SerializeField] private Camera playerCamera;
@@ -49,7 +47,9 @@ public class Player : NetworkBehaviour
     [SerializeField] private float rotationSpeed = 200f;
     [Range(0.1f, 1f)]
     [Tooltip("Rotation speed multiplier when aiming")]
+#pragma warning disable 0414 // don't warn about unused variable
     [SerializeField] private float aimingRotationMultiplier = 0.4f;
+#pragma warning restore 0414
 
     [Header("Jump")]
     [Tooltip("Force applied upward when jumping")]
@@ -90,6 +90,8 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMinSpeed = 10f;
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
+
+    [SerializeField] private PlayerNameplate playerNameplate;
 
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
@@ -152,6 +154,38 @@ public class Player : NetworkBehaviour
     [SerializeField]
     private GameObject spawnEffect;
 
+    private PlayerHUD playerHUD;
+
+    #region HEALTH
+
+    [SyncVar]
+    private bool _isDead = false;
+    public bool isDead
+    {
+        get { return _isDead; }
+        protected set { _isDead = value; }
+    }
+
+    [SerializeField]
+    private int maxHealth = 100;
+
+    [SyncVar]
+    private int currentHealth;
+
+    public float GetHealthPct()
+    {
+        return (float)currentHealth / maxHealth;
+    }
+
+    #endregion
+
+    public void SetupPlayer(PlayerHUD hud) {
+        if (isLocalPlayer)
+            playerHUD = hud;
+
+        SetupPlayer();
+    }
+
     public void SetupPlayer()
     {
         if (isLocalPlayer)
@@ -165,21 +199,31 @@ public class Player : NetworkBehaviour
         CmdBroadCastNewPlayerSetup();
     }
 
-    #region Server
-
-    public override void OnStartServer()
+    [ClientRpc]
+    public void RpcTakeDamage(int _amount, string _sourceID)
     {
-        health.ServerOnDie += ServerHandleDie;
+        if (isDead)
+            return;
+
+        currentHealth -= _amount;
+
+        Debug.Log(transform.name + " now has " + currentHealth + " health.");
+
+        playerNameplate.UpdateHealth(currentHealth, maxHealth);
+
+        if (playerHUD != null)
+            playerHUD.UpdateHealth(currentHealth, maxHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die(_sourceID);
+        }
     }
 
-    public override void OnStopServer()
+    private void Die(string _sourceID)
     {
-        health.ServerOnDie -= ServerHandleDie;
-    }
+        isDead = true;
 
-    [Server]
-    private void ServerHandleDie(string _sourceID)
-    {
         Player sourcePlayer = GameManager.GetPlayer(_sourceID);
         if (sourcePlayer != null)
         {
@@ -217,7 +261,43 @@ public class Player : NetworkBehaviour
         StartCoroutine(Respawn());
     }
 
-    #endregion
+    private IEnumerator Respawn()
+    {
+        yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
+
+        Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
+        transform.position = _spawnPoint.position;
+        transform.rotation = _spawnPoint.rotation;
+
+        yield return new WaitForSeconds(0.1f);
+
+        SetupPlayer();
+
+        Debug.Log(transform.name + " respawned.");
+    }
+
+    public void SetDefaults()
+    {
+        isDead = false;
+
+        currentHealth = maxHealth;
+
+        //Enable the components
+        for (int i = 0; i < disableOnDeath.Length; i++)
+        {
+            disableOnDeath[i].enabled = wasEnabled[i];
+        }
+
+        //Enable the gameobjects
+        for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
+        {
+            disableGameObjectsOnDeath[i].SetActive(true);
+        }
+
+        //Create spawn effect
+        GameObject _gfxIns = (GameObject)Instantiate(spawnEffect, transform.position, Quaternion.identity);
+        Destroy(_gfxIns, 3f);
+    }
 
     [Command]
     private void CmdBroadCastNewPlayerSetup()
@@ -242,91 +322,15 @@ public class Player : NetworkBehaviour
         SetDefaults();
     }
 
-    private IEnumerator Respawn()
-    {
-        yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
-
-        Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
-        transform.position = _spawnPoint.position;
-        transform.rotation = _spawnPoint.rotation;
-
-        yield return new WaitForSeconds(0.1f);
-
-        SetupPlayer();
-
-        Debug.Log(transform.name + " respawned.");
-    }
-
-    public void SetDefaults()
-    {
-        health.ResetPlayer();
-
-        //Enable the components
-        for (int i = 0; i < disableOnDeath.Length; i++)
-        {
-            disableOnDeath[i].enabled = wasEnabled[i];
-        }
-
-        //Enable the gameobjects
-        for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
-        {
-            disableGameObjectsOnDeath[i].SetActive(true);
-        }
-
-        //Enable the collider
-        Collider _col = GetComponent<Collider>();
-        if (_col != null)
-            _col.enabled = true;
-
-        //Create spawn effect
-        GameObject _gfxIns = (GameObject)Instantiate(spawnEffect, transform.position, Quaternion.identity);
-        Destroy(_gfxIns, 3f);
-    }
-
-    //public override void OnStartAuthority()
-    //{
-    //    base.OnStartAuthority();
-
-    //    playerCamera.enabled = true;
-    //    playerCamera.GetComponent<AudioListener>().enabled = true;
-
-    //    // fetch components on the same gameObject
-    //    m_Controller = GetComponent<CharacterController>();
-    //    //DebugUtility.HandleErrorIfNullGetComponent<CharacterController, PlayerCharacterController>(m_Controller, this, gameObject);
-
-    //    //m_WeaponsManager = GetComponent<PlayerWeaponsManager>();
-    //    //DebugUtility.HandleErrorIfNullGetComponent<PlayerWeaponsManager, PlayerCharacterController>(m_WeaponsManager, this, gameObject);
-
-    //    uiManager.gameObject.SetActive(true);
-
-    //    m_Controller.enableOverlapRecovery = true;
-
-    //    // force the crouch state to false when starting
-    //    SetCrouchingState(false, true);
-    //    UpdateCharacterHeight(true);
-    //}
-
-    [Command]
-    private void CmdSuicide()
-    {
-        health.DealDamage(9999, transform.name);
-    }
-
-    [Command]
-    private void CmdTakeFallDamage(int damage)
-    {
-        health.DealDamage(damage, transform.name);
-    }
-
     [ClientCallback]
     void Update()
     {
         if (!hasAuthority) return;
 
         // check for Y kill
-        if (!health.IsDead && transform.position.y < killHeight)
+        if (!isDead && transform.position.y < killHeight)
         {
-            CmdSuicide();
+            RpcTakeDamage(9999, transform.name);
         }
 
         bool wasGrounded = isGrounded;
@@ -341,7 +345,7 @@ public class Player : NetworkBehaviour
             if (recievesFallDamage && fallSpeedRatio > 0f)
             {
                 float dmgFromFall = Mathf.Lerp(fallDamageAtMinSpeed, fallDamageAtMaxSpeed, fallSpeedRatio);
-                CmdTakeFallDamage((int)dmgFromFall);
+                RpcTakeDamage((int)dmgFromFall, transform.name);
 
                 // fall damage SFX
                 if (fallDamageAudioSource)
