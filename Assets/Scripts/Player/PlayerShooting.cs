@@ -13,6 +13,10 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField]
     private LayerMask layerMask;
 
+	[SerializeField] private AudioSource shootingAudioSource;
+
+	[SerializeField] private WeaponRecoil weaponRecoil;
+
     private PlayerWeapon currentWeapon;
     private WeaponManager weaponManager;
 
@@ -78,6 +82,9 @@ public class PlayerShooting : NetworkBehaviour
 
 		Debug.Log("Remaining bullets: " + currentWeapon.bullets);
 
+		weaponRecoil.Fire();
+		shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+
 		//We are shooting, call the OnShoot method on the server
 		CmdOnShoot();
 
@@ -99,7 +106,7 @@ public class PlayerShooting : NetworkBehaviour
 		}
 
 	}
-
+	
 	[Command]
 	void CmdPlayerShot(string _playerID, int _damage, string _sourceID)
 	{

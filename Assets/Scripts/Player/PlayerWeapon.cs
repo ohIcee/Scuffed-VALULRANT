@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class PlayerWeapon
@@ -19,9 +20,13 @@ public class PlayerWeapon
 
 	public GameObject graphics;
 
+	public List<AudioClip> ShootSounds;
+
 	public PlayerWeapon()
 	{
 		bullets = maxBullets;
 	}
+
+	public AudioClip GetRandomShotSound() => ShootSounds[Random.Range(0, ShootSounds.Count - 1)];
 
 }
