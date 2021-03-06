@@ -56,7 +56,7 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1.85
+  m_Height: 1.8
   m_Radius: 0.35
   m_SlopeLimit: 45
   m_StepOffset: 0.3
@@ -125,15 +125,15 @@ MonoBehaviour:
   maxSpeedCrouchedRatio: 0.5
   maxSpeedInAir: 5
   accelerationSpeedInAir: 25
-  sprintSpeedModifier: 0.5
+  shiftSpeedModifier: 0.5
   killHeight: -50
   rotationSpeed: 0.5
   aimingRotationMultiplier: 0.4
-  jumpForce: 9
+  jumpForce: 8
   cameraHeightRatio: 0.8
   capsuleHeightStanding: 1.8
-  capsuleHeightCrouching: 0.9
-  crouchingSharpness: 15
+  capsuleHeightCrouching: 1
+  crouchingSharpness: 25
   footstepSFXFrequency: 0.45
   footstepSFXFrequencyWhileSprinting: 0
   footstepSFX: {fileID: 8300000, guid: ea92d5e24673dd545ac17fd54aad0b93, type: 3}
