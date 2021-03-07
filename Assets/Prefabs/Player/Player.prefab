@@ -128,8 +128,9 @@ MonoBehaviour:
   accelerationSpeedInAir: 25
   shiftSpeedModifier: 0.5
   killHeight: -50
-  rotationSpeed: 0.15
-  aimingRotationMultiplier: 0.5
+  HoldShift: 0
+  HoldCrouch: 0
+  mouseSensitivity: 1
   jumpForce: 8
   cameraHeightRatio: 0.8
   capsuleHeightStanding: 1.8
@@ -164,7 +165,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  mouseSensitivityMultiplier: 0.5
   weaponSwaySensitivityMultiplier: 0.5
   fpMov: {fileID: 114963311885979670}
   playerShooting: {fileID: 7891231476885191673}

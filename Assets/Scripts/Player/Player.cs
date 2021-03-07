@@ -41,14 +41,16 @@ public class Player : NetworkBehaviour
     [SerializeField] private float shiftSpeedModifier = 0.50f;
     [Tooltip("Height at which the player dies instantly when falling off the map")]
     [SerializeField] private float killHeight = -50f;
+    [SerializeField] bool HoldShift = false;
+    [SerializeField] bool HoldCrouch = false;
 
     [Header("Rotation")]
     [Tooltip("Rotation speed for moving the camera")]
-    [SerializeField] private float rotationSpeed = 200f;
-    [Range(0.1f, 1f)]
-    [Tooltip("Rotation speed multiplier when aiming")]
+    [Range(0.01f, 10f)]
+    [SerializeField] float mouseSensitivity = 1f;
+    // [Tooltip("Rotation speed multiplier when aiming")]
 #pragma warning disable 0414 // don't warn about unused variable
-    [SerializeField] private float aimingRotationMultiplier = 0.4f;
+    //[SerializeField] private float aimingRotationMultiplier = 0.4f;
 #pragma warning restore 0414
 
     [Header("Jump")]
@@ -107,18 +109,6 @@ public class Player : NetworkBehaviour
     private Vector2 movementInput = Vector2.zero;
     private Vector2 mouseInput = Vector2.zero;
 
-    public float RotationMultiplier
-    {
-        get
-        {
-            //if (m_WeaponsManager.isAiming)
-            //{
-            //    return aimingRotationMultiplier;
-            //}
-
-            return 1f;
-        }
-    }
 
     [SerializeField] private CharacterController m_Controller;
     Vector3 m_GroundNormal;
@@ -139,7 +129,8 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdDealDamage(int damageAmount) {
+    private void CmdDealDamage(int damageAmount)
+    {
         playerHealth.DealDamage(damageAmount);
     }
 
@@ -222,7 +213,7 @@ public class Player : NetworkBehaviour
 
     public void ChangeSensitivity(float sens)
     {
-        rotationSpeed = sens;
+        mouseSensitivity = sens;
     }
 
     void HandleCharacterMovement()
@@ -230,13 +221,13 @@ public class Player : NetworkBehaviour
         // horizontal character rotation
         {
             // rotate the transform with the input speed around its local Y axis
-            transform.Rotate(new Vector3(0f, (mouseInput.x * rotationSpeed * RotationMultiplier), 0f), Space.Self);
+            transform.Rotate(new Vector3(0f, (mouseInput.x * mouseSensitivity), 0f), Space.Self);
         }
 
         // vertical camera rotation
         {
             // add vertical inputs to the camera's vertical angle
-            m_CameraVerticalAngle += -mouseInput.y * rotationSpeed * RotationMultiplier;
+            m_CameraVerticalAngle += -mouseInput.y * mouseSensitivity;
 
             // limit the camera's vertical angle to min/max
             m_CameraVerticalAngle = Mathf.Clamp(m_CameraVerticalAngle, -89f, 89f);
@@ -442,21 +433,64 @@ public class Player : NetworkBehaviour
         isCrouching = crouched;
         return true;
     }
-
     #region Inputs
 
     public void OnJumpPressed() => isPressingJump = true;
     public void OnJumpReleased() => isPressingJump = false;
-    public void OnShiftPressed() => isPressingShift = true;
-    public void OnShiftReleased() => isPressingShift = false;
-    public void OnCrouchPressed() => SetCrouchingState(isCrouching, false);
-    public void OnCrouchReleased() => SetCrouchingState(!isCrouching, false);
+    public void OnShiftPressed()
+    {
+        if (HoldShift)
+        {
+            isPressingShift = true;
+        }
+        else
+        {
+            if (isPressingShift)
+            {
+                isPressingShift = false;
+            }
+            else
+            {
+                isPressingShift = true;
+            }
+        }
+    }
+
+    public void OnShiftReleased()
+    {
+        if (HoldShift)
+        {
+            isPressingShift = false;
+        }
+    }
+    public void OnCrouchPressed()
+    {
+        /*if (HoldCrouch)
+        {
+            SetCrouchingState(!isCrouching, false);
+        }
+        else
+        {
+            SetCrouchingState(isCrouching, false);
+        }*/
+        SetCrouchingState(isCrouching, false);
+    }
+    public void OnCrouchReleased()
+    { /*
+        if (HoldCrouch)
+        {
+            SetCrouchingState(isCrouching, false);
+        }
+        else
+        {
+            SetCrouchingState(!isCrouching, false);
+        }*/
+        SetCrouchingState(!isCrouching, false);
+    }
     public void ReceiveMovementInput(Vector2 movementInput) => this.movementInput = movementInput;
     public void ReceiveMouseInput(Vector2 mouseInput)
     {
         this.mouseInput = mouseInput;
     }
-
     #endregion
-
 }
