@@ -10,7 +10,7 @@ public class PlayerHUD : MonoBehaviour
     
     [SerializeField] private GameObject escapeMenuPanel = null;
 
-    [SerializeField] private PlayerShooting playerShooting = null;
+    [SerializeField] private PlayerFiring playerShooting = null;
     [SerializeField] private TextMeshProUGUI ammoText = null;
 
     private bool isEscapeMenuOpen = false;

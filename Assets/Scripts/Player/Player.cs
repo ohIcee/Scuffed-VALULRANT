@@ -7,9 +7,6 @@ using System.Collections.Generic;
 
 public class Player : NetworkBehaviour
 {
-    [Header("References")]
-    [SerializeField] private UIManager uiManager;
-
     [Tooltip("Reference to the main camera used for the player")]
     [SerializeField] private Camera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
@@ -93,7 +90,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
     [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField, SyncVar] private ValulrantNetworkPlayer networkPlayer;
+    [SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
     public void SetNetworkPlayer(ValulrantNetworkPlayer player) => networkPlayer = player;
     public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;

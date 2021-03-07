@@ -64,7 +64,9 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
+  gameModeConfig: {fileID: 11400000, guid: ac0631882333fde4088b0266bd22f466, type: 2}
   respawnTime: 2
+  minPlayerCountToStart: 1
   clientPlayerPrefab: {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
 --- !u!114 &903864767627494906
 MonoBehaviour:

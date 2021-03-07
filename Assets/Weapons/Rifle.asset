@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b431548fd2bb8244598cd103b0a0f914, type: 3}
   m_Name: Rifle
   m_EditorClassIdentifier: 
-  weaponName: 
+  weaponName: Rifle
   weaponType: 0
   damage: 20
   range: 100
-  fireRate: 0.2
+  fireRate: 8
   maxBullets: 21
   bullets: 10
   reloadTime: 2

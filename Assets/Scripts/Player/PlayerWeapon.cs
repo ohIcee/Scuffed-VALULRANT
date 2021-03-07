@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 public enum WeaponTypes
 { 
@@ -137,10 +138,10 @@ public class PlayerWeaponEditor : Editor
 		}
 
 
-		GUILayout.Space(50f);
-
-		base.OnInspectorGUI();
-
+		if (GUI.changed)
+		{
+			EditorUtility.SetDirty(target);
+		}
 
 	}
 }

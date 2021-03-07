@@ -9,11 +9,11 @@ public class ValulrantNetworkManager : NetworkManager
 {
 
     [Header("Game settings")]
-    [SerializeField] private float respawnTime = 2f;
+    [SerializeField] private GameMode gameModeConfig;
     [SerializeField] private int minPlayerCountToStart = 2;
     public int GetMinPlayerCountToStart() => minPlayerCountToStart;
 
-    public float GetRespawnTime() => respawnTime;
+    public float GetRespawnTime() => gameModeConfig.RespawnTime;
     [Space()]
 
     [SerializeField] private GameObject clientPlayerPrefab;

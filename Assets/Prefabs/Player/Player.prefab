@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 4207293392497186}
   - component: {fileID: 7718639232595436120}
   - component: {fileID: 8715293126439341}
+  - component: {fileID: 3869058434273637707}
   - component: {fileID: 114963311885979670}
   - component: {fileID: 8005298539887990908}
   - component: {fileID: -3964556893396428943}
   - component: {fileID: 4710802543775420695}
   - component: {fileID: 7891231476885191673}
   - component: {fileID: 8065292155948461042}
-  - component: {fileID: 3869058434273637707}
   - component: {fileID: 3669967778086649156}
   - component: {fileID: 979597657727927707}
   - component: {fileID: 6395810594117800908}
@@ -99,6 +99,25 @@ MonoBehaviour:
   weaponHolder: {fileID: 1071358040639122710}
   weaponLayerName: Weapon
   IsDisabled: 0
+--- !u!114 &3869058434273637707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773623360729482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b22bc79563e9f448ec45a52917fdc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  weaponLayerName: Weapon
+  weaponHolder: {fileID: 5631001466818345725}
+  primaryWeapon: {fileID: 11400000, guid: 53bcf93d86b70144f8b6d907c576f229, type: 2}
+  playerShooting: {fileID: 7891231476885191673}
+  isReloading: 0
 --- !u!114 &114963311885979670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  uiManager: {fileID: 0}
   playerCamera: {fileID: 3468326314818637523}
   footstepAudioSource: {fileID: 5093947132795964647}
   jumpAudioSource: {fileID: 2146183577326757605}
@@ -181,7 +199,6 @@ MonoBehaviour:
   fallDamageAtMinSpeed: 10
   fallDamageAtMaxSpeed: 50
   playerHealth: {fileID: 3669967778086649156}
-  networkPlayer: {fileID: 0}
   isPressingShift: 0
   m_Controller: {fileID: 7718639232595436120}
   currentHeight: 0
@@ -201,7 +218,7 @@ MonoBehaviour:
   syncInterval: 0.1
   weaponSwaySensitivityMultiplier: 0.5
   player: {fileID: 114963311885979670}
-  playerShooting: {fileID: 7891231476885191673}
+  playerFiring: {fileID: 7891231476885191673}
   weaponSway: {fileID: 4857733278312603309}
 --- !u!114 &-3964556893396428943
 MonoBehaviour:
@@ -255,7 +272,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  shootingAudioSource: {fileID: 2367554308387808255}
+  firingAudioSource: {fileID: 2367554308387808255}
   weaponRecoil: {fileID: 1553515829648057978}
   playerHealth: {fileID: 3669967778086649156}
 --- !u!114 &8065292155948461042
@@ -277,25 +294,6 @@ MonoBehaviour:
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
   target: {fileID: 3673284692991207030}
---- !u!114 &3869058434273637707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773623360729482}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b22bc79563e9f448ec45a52917fdc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  weaponLayerName: Weapon
-  weaponHolder: {fileID: 5631001466818345725}
-  primaryWeapon: {fileID: 11400000, guid: 53bcf93d86b70144f8b6d907c576f229, type: 2}
-  playerShooting: {fileID: 7891231476885191673}
-  isReloading: 0
 --- !u!114 &3669967778086649156
 MonoBehaviour:
   m_ObjectHideFlags: 0

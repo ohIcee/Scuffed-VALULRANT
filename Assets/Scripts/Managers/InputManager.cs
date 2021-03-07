@@ -7,7 +7,7 @@ public class InputManager : NetworkBehaviour
 
     [Header("Scripts")]
     [SerializeField] private Player player;
-    [SerializeField] private PlayerShooting playerShooting;
+    [SerializeField] private PlayerFiring playerFiring;
     [SerializeField] WeaponSway weaponSway;
 
     private PlayerHUD playerHUD;
@@ -68,25 +68,25 @@ public class InputManager : NetworkBehaviour
             playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
         }
 
-        if (playerShooting != null)
+        if (playerFiring != null)
         {
-            playerInput.Aim.started += _ => playerShooting.OnStartAiming();
-            playerInput.Aim.canceled += _ => playerShooting.OnStopAiming();
+            playerInput.Aim.started += _ => playerFiring.OnStartAiming();
+            playerInput.Aim.canceled += _ => playerFiring.OnStopAiming();
 
-            playerInput.Shoot.started += _ =>
+            playerInput.Fire.started += _ =>
             {
                 if (playerHUD.GetIsEscapeMenuOpen()) return;
 
-                playerShooting.OnStartShooting();
+                playerFiring.OnStartFiring();
                 toggleCursorLock(true);
             };
-            playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
+            playerInput.Fire.canceled += _ => playerFiring.OnStopFiring();
 
             playerInput.Reload.performed += _ =>
             {
                 if (playerHUD.GetIsEscapeMenuOpen()) return;
 
-                playerShooting.OnPressReload();
+                playerFiring.OnPressReload();
             };
         }
 
@@ -119,8 +119,8 @@ public class InputManager : NetworkBehaviour
         player.ReceiveMovementInput(Vector2.zero);
         player.ReceiveMouseInput(Vector2.zero);
         weaponSway.ReceiveInput(Vector2.zero);
-        playerShooting.OnStopShooting();
-        playerShooting.OnStopAiming();
+        playerFiring.OnStopFiring();
+        playerFiring.OnStopAiming();
     }
 
     private void OnDestroy()

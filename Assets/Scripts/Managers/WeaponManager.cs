@@ -16,7 +16,7 @@ public class WeaponManager : NetworkBehaviour
 
 	private PlayerWeapon currentWeapon;
 	private WeaponGraphics currentGraphics;
-	[SerializeField] private PlayerShooting playerShooting;
+	[SerializeField] private PlayerFiring playerShooting;
 
 	public bool isReloading = false;
 
@@ -41,6 +41,8 @@ public class WeaponManager : NetworkBehaviour
 
 		GameObject _weaponIns = (GameObject)Instantiate(_weapon.graphics, weaponHolder.position, weaponHolder.rotation);
 		_weaponIns.transform.SetParent(weaponHolder);
+
+		currentWeapon.bullets = currentWeapon.maxBullets;
 
 		currentGraphics = _weaponIns.GetComponent<WeaponGraphics>();
 		if (currentGraphics == null)

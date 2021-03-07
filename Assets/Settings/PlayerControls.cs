@@ -75,7 +75,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Shoot"",
+                    ""name"": ""Fire"",
                     ""type"": ""Button"",
                     ""id"": ""efec4be8-00f0-422f-ba03-9f443a9d3946"",
                     ""expectedControlType"": ""Button"",
@@ -244,7 +244,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Shoot"",
+                    ""action"": ""Fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -306,7 +306,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_PlayerInput_Crouch = m_PlayerInput.FindAction("Crouch", throwIfNotFound: true);
         m_PlayerInput_ShiftWalk = m_PlayerInput.FindAction("ShiftWalk", throwIfNotFound: true);
         m_PlayerInput_Aim = m_PlayerInput.FindAction("Aim", throwIfNotFound: true);
-        m_PlayerInput_Shoot = m_PlayerInput.FindAction("Shoot", throwIfNotFound: true);
+        m_PlayerInput_Fire = m_PlayerInput.FindAction("Fire", throwIfNotFound: true);
         m_PlayerInput_DebugMonitor = m_PlayerInput.FindAction("DebugMonitor", throwIfNotFound: true);
         m_PlayerInput_EscapeMenu = m_PlayerInput.FindAction("EscapeMenu", throwIfNotFound: true);
         m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
@@ -367,7 +367,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerInput_Crouch;
     private readonly InputAction m_PlayerInput_ShiftWalk;
     private readonly InputAction m_PlayerInput_Aim;
-    private readonly InputAction m_PlayerInput_Shoot;
+    private readonly InputAction m_PlayerInput_Fire;
     private readonly InputAction m_PlayerInput_DebugMonitor;
     private readonly InputAction m_PlayerInput_EscapeMenu;
     private readonly InputAction m_PlayerInput_Reload;
@@ -383,7 +383,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Crouch => m_Wrapper.m_PlayerInput_Crouch;
         public InputAction @ShiftWalk => m_Wrapper.m_PlayerInput_ShiftWalk;
         public InputAction @Aim => m_Wrapper.m_PlayerInput_Aim;
-        public InputAction @Shoot => m_Wrapper.m_PlayerInput_Shoot;
+        public InputAction @Fire => m_Wrapper.m_PlayerInput_Fire;
         public InputAction @DebugMonitor => m_Wrapper.m_PlayerInput_DebugMonitor;
         public InputAction @EscapeMenu => m_Wrapper.m_PlayerInput_EscapeMenu;
         public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
@@ -418,9 +418,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnAim;
                 @Aim.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnAim;
                 @Aim.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnAim;
-                @Shoot.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
-                @Shoot.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
-                @Shoot.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnShoot;
+                @Fire.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnFire;
+                @Fire.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnFire;
+                @Fire.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnFire;
                 @DebugMonitor.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDebugMonitor;
                 @DebugMonitor.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDebugMonitor;
                 @DebugMonitor.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDebugMonitor;
@@ -458,9 +458,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
-                @Shoot.started += instance.OnShoot;
-                @Shoot.performed += instance.OnShoot;
-                @Shoot.canceled += instance.OnShoot;
+                @Fire.started += instance.OnFire;
+                @Fire.performed += instance.OnFire;
+                @Fire.canceled += instance.OnFire;
                 @DebugMonitor.started += instance.OnDebugMonitor;
                 @DebugMonitor.performed += instance.OnDebugMonitor;
                 @DebugMonitor.canceled += instance.OnDebugMonitor;
@@ -486,7 +486,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnShiftWalk(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
-        void OnShoot(InputAction.CallbackContext context);
+        void OnFire(InputAction.CallbackContext context);
         void OnDebugMonitor(InputAction.CallbackContext context);
         void OnEscapeMenu(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
