@@ -60,52 +60,6 @@ public class PlayerSetup : NetworkBehaviour
         Debug.Log($"Player {transform.name} has been setup!");
     }
 
-    [ClientRpc]
-    public void RpcEnablePlayer()
-    {
-        characterController.enabled = true;
-        bodyMeshRenderer.enabled = true;
-
-        foreach (MonoBehaviour script in ScriptsToEnable)
-        {
-            script.enabled = true;
-        }
-
-        if (!hasAuthority) return;
-
-        playerCamera.enabled = true;
-        playerHUD.SetActive(true);
-        playerWeaponCamera.gameObject.SetActive(true);
-        playerWeaponCamera.enabled = true;
-        audioListener.enabled = true;
-
-        IsDisabled = false;
-        CmdResetHealth();
-
-        Debug.Log($"Player {transform.name} has been enabled!");
-    }
-
-    [ClientRpc]
-    public void RpcDisablePlayer()
-    {
-        IsDisabled = true;
-
-        characterController.enabled = false;
-        playerCamera.enabled = false;
-        playerWeaponCamera.enabled = false;
-        playerWeaponCamera.gameObject.SetActive(false);
-        audioListener.enabled = false;
-        playerHUD.SetActive(false);
-        bodyMeshRenderer.enabled = false;
-
-        foreach (MonoBehaviour script in ScriptsToEnable)
-        {
-            script.enabled = false;
-        }
-
-        Debug.Log($"Player {transform.name} has been disabled!");
-    }
-
     #endregion
 
 }

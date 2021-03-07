@@ -55,8 +55,11 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     private void ServerHandleDie()
     {
         PlayerSetup playerSetup = playerInstance.GetComponent<PlayerSetup>();
-        playerSetup.RpcDisablePlayer();
-        RpcDisablePlayer(playerSetup);
+
+        // DESTROY PLAYER
+        playerHealth.ServerOnDie -= ServerHandleDie;
+        NetworkServer.Destroy(playerInstance);
+
         StartCoroutine(RespawnPlayerTimer(playerSetup));
     }
 
@@ -65,7 +68,14 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
         float respawnTime = networkManager.GetRespawnTime();
         yield return new WaitForSeconds(respawnTime);
-        RpcPlayerRespawn();
+
+        GameObject playerInstance = Instantiate(
+            networkManager.GetClientPlayerPrefab(),
+            networkManager.GetStartPosition().position,
+            Quaternion.identity
+            );
+        NetworkServer.Spawn(playerInstance, connectionToClient);
+        SetPlayerInstance(playerInstance);
     }
 
     [Server]
@@ -109,27 +119,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     #endregion
 
     #region Client
-
-    [ClientRpc]
-    private void RpcPlayerRespawn()
-    {
-        ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
-        Debug.Log(playerInstance == null);
-        if (playerInstance.transform.TryGetComponent<PlayerSetup>(out PlayerSetup playerSetup))
-        {
-            playerSetup.transform.position = networkManager.GetStartPosition().position;
-            playerSetup.RpcEnablePlayer();
-        }
-        else {
-            Debug.LogError("Could not get component PlayerSetup!");
-        }
-    }
-
-    [ClientRpc]
-    private void RpcDisablePlayer(PlayerSetup playerSetup)
-    {
-        playerSetup.RpcDisablePlayer();
-    }
 
     private void ClientHandleDisplayNameUpdated(string oldName, string newName)
     {

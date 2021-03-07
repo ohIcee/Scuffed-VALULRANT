@@ -17,6 +17,7 @@ public class ValulrantNetworkManager : NetworkManager
     [Space()]
 
     [SerializeField] private GameObject clientPlayerPrefab;
+    public GameObject GetClientPlayerPrefab() => clientPlayerPrefab;
 
     public static event Action ClientOnConnected;
     public static event Action ClientOnDisconnected;
