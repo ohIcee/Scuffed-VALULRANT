@@ -84,6 +84,12 @@ public class MainMenu : MonoBehaviour
         joinButton.interactable = false;
     }
 
+    public void OnSettingsClose()
+    {
+        PlayerPrefs.Save();
+        Debug.Log("Saved prefs");
+    }
+
     private void HandleClientConnected()
     {
         joinButton.interactable = true;

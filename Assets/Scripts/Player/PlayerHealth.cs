@@ -15,6 +15,8 @@ public class PlayerHealth : NetworkBehaviour
 
     public event Action<int, int> ClientOnHealthUpdated;
 
+    public event Action<string, string> ClientOnPlayerKilled;
+
     //public bool IsDead() => currentHealth <= 0f;
 
     #region Server
@@ -35,6 +37,11 @@ public class PlayerHealth : NetworkBehaviour
 
         if (currentHealth > 0) return;
 
+        Debug.Log($"This: {GetComponent<Player>().GetNetworkPlayer() == null} ; That: {killerPlayer == null}");
+
+        RpcPlayerKilled(GetComponent<Player>().GetNetworkPlayer().GetDisplayName(), killerPlayer.GetDisplayName());
+        ClientOnPlayerKilled?.Invoke(GetComponent<Player>().GetNetworkPlayer().GetDisplayName(), killerPlayer.GetDisplayName());
+
         // DIE
         ServerOnDie?.Invoke();
     }
@@ -53,6 +60,12 @@ public class PlayerHealth : NetworkBehaviour
     private void HandleHealthUpdated(int oldHealth, int newHealth)
     {
         ClientOnHealthUpdated?.Invoke(newHealth, maxHealth);
+    }
+
+    [ClientRpc]
+    private void RpcPlayerKilled(string killed, string killer)
+    {
+        //ClientOnPlayerKilled?.Invoke(killed, killer);
     }
 
     #endregion

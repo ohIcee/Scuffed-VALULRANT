@@ -52,8 +52,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
 
-        if (PlayerPrefs.HasKey("MOUSE_SENS")) { 
-            playerInstance.GetComponent<Player>().ChangeSensitivity(PlayerPrefs.GetFloat("MOUSE_SENS"));
+        if (PlayerPrefs.HasKey("MOUSE_SENS")) {
+            float sens = PlayerPrefs.GetFloat("MOUSE_SENS");
+            playerInstance.GetComponent<Player>().ChangeSensitivity(sens);
+            Debug.LogWarning($"MOUSE SENS: {sens}");
         }
     }
 

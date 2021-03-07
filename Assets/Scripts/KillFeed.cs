@@ -4,19 +4,29 @@ using System.Collections;
 public class KillFeed : MonoBehaviour
 {
 
-	[SerializeField]
-	GameObject killfeedItemPrefab;
+	[SerializeField] private GameObject killfeedItemPrefab;
+
+	[SerializeField] private Transform killfeedItemParent;
+
+	[SerializeField] private PlayerHealth playerHealth;
 
 	// Use this for initialization
-	void Start()
+	private void Start()
 	{
-		//GameManager.instance.onPlayerKilledCallback += OnKill;
+		playerHealth.ClientOnPlayerKilled += HandleOnPlayerKilled;
 	}
 
-	public void OnKill(string player, string source)
+	private void OnDestroy()
+    {
+		playerHealth.ClientOnPlayerKilled -= HandleOnPlayerKilled;
+	}
+
+	public void HandleOnPlayerKilled(string killedPlayer, string killerPlayer)
 	{
-		GameObject go = (GameObject)Instantiate(killfeedItemPrefab, this.transform);
-		go.GetComponent<KillFeedItem>().Setup(player, source);
+		Debug.Log($"Handle on player killed:: {killedPlayer}/{killerPlayer}");
+
+		GameObject go = Instantiate(killfeedItemPrefab, killfeedItemParent);
+		go.GetComponent<KillFeedItem>().Setup(killedPlayer, killerPlayer);
 
 		Destroy(go, 4f);
 	}

@@ -204,7 +204,6 @@ public class Player : NetworkBehaviour
             // if we're grounded, collect info about the ground normal with a downward capsule cast representing our character capsule
             if (Physics.CapsuleCast(GetCapsuleBottomHemisphere(), GetCapsuleTopHemisphere(m_Controller.height), m_Controller.radius, Vector3.down, out RaycastHit hit, chosenGroundCheckDistance, groundCheckLayers, QueryTriggerInteraction.Ignore))
             {
-                Debug.Log("B");
 
                 // storing the upward direction for the surface found
                 m_GroundNormal = hit.normal;

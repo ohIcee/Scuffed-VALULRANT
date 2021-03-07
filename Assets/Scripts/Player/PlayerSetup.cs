@@ -13,6 +13,7 @@ public class PlayerSetup : NetworkBehaviour
     public GameObject playerHUD = null;
     public PlayerHealth playerHealth = null;
     public MeshRenderer bodyMeshRenderer = null;
+    public GameObject playerNamePlate;
 
     [Header("Weapon shit")]
     public GameObject weaponHolder = null;
@@ -43,6 +44,8 @@ public class PlayerSetup : NetworkBehaviour
 
         CmdResetHealth();
         IsDisabled = false;
+
+        playerNamePlate.SetActive(false);
 
         characterController.enabled = true;
         bodyMeshRenderer.enabled = true;
