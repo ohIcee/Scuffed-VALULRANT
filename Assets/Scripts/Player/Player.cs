@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Cinemachine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : NetworkBehaviour
 {
@@ -71,13 +72,13 @@ public class Player : NetworkBehaviour
     [Tooltip("Amount of footstep sounds played when moving one meter while sprinting")]
     [SerializeField] private float footstepSFXFrequencyWhileSprinting = 1f;
     [Tooltip("Sound played for footsteps")]
-    [SerializeField] private AudioClip footstepSFX;
+    [SerializeField] private List<AudioClip> footstepSFXs;
     [Tooltip("Sound played when jumping")]
-    [SerializeField] private AudioClip jumpSFX;
+    [SerializeField] private List<AudioClip> jumpSFXs;
     [Tooltip("Sound played when landing")]
-    [SerializeField] private AudioClip landSFX;
+    [SerializeField] private List<AudioClip> landSFXs;
     [Tooltip("Sound played when taking damage froma fall")]
-    [SerializeField] private AudioClip fallDamageSFX;
+    [SerializeField] private List<AudioClip> fallDamageSFXs;
 
     [Header("Fall Damage")]
     [Tooltip("Whether the player will recieve damage when hitting the ground at high speed")]
@@ -173,8 +174,8 @@ public class Player : NetworkBehaviour
                 //RpcTakeDamage((int)dmgFromFall, transform.name);
 
                 // fall damage SFX
-                if (fallDamageAudioSource)
-                    fallDamageAudioSource.PlayOneShot(fallDamageSFX);
+                if (fallDamageAudioSource) CmdPlayFallDamageSound();
+                    //fallDamageAudioSource.PlayOneShot(fallDamageSFXs);
             }
             else
             {
@@ -369,7 +370,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcPlayFootstepSound()
     {
-        footstepAudioSource.PlayOneShot(footstepSFX);
+        footstepAudioSource.PlayOneShot(footstepSFXs[Random.Range(0, footstepSFXs.Count - 1)]);
     }
 
     [Command]
@@ -381,7 +382,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcPlayJumpSound()
     {
-        footstepAudioSource.PlayOneShot(jumpSFX);
+        jumpAudioSource.PlayOneShot(jumpSFXs[Random.Range(0, jumpSFXs.Count - 1)]);
     }
 
     [Command]
@@ -393,7 +394,19 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcPlayLandSound()
     {
-        footstepAudioSource.PlayOneShot(landSFX);
+        landAudioSource.PlayOneShot(landSFXs[Random.Range(0, landSFXs.Count - 1)]);
+    }
+
+    [Command]
+    private void CmdPlayFallDamageSound()
+    {
+        RpcPlayFallDamageSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayFallDamageSound()
+    { 
+        fallDamageAudioSource.PlayOneShot(fallDamageSFXs[Random.Range(0, fallDamageSFXs.Count - 1)]);
     }
 
     // Returns true if the slope angle represented by the given normal is under the slope angle limit of the character controller

@@ -80,8 +80,9 @@ public class PlayerShooting : NetworkBehaviour
 	void RpcDoShootEffect(PlayerShooting shootingPlayer)
 	{
 		weaponManager.GetCurrentGraphics().muzzleFlash.Play();
-		//shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
-		shootingPlayer.shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+
+		if (currentWeapon.UseSounds.Count > 0)
+			shootingPlayer.shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
 
 		Debug.Log($"Playing sound effect on {transform.name}");
 	}

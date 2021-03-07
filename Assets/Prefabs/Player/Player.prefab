@@ -140,10 +140,41 @@ MonoBehaviour:
   crouchingSharpness: 25
   footstepSFXFrequency: 0.45
   footstepSFXFrequencyWhileSprinting: 0
-  footstepSFX: {fileID: 8300000, guid: ea92d5e24673dd545ac17fd54aad0b93, type: 3}
-  jumpSFX: {fileID: 8300000, guid: 3888a1e1c52793144a6d07b8c508772e, type: 3}
-  landSFX: {fileID: 8300000, guid: 9fcb6dc763cd0354da305b5de2091287, type: 3}
-  fallDamageSFX: {fileID: 8300000, guid: 5aabfa2354dc2a1479e1f8bc5a3dfefe, type: 3}
+  footstepSFXs:
+  - {fileID: 8300000, guid: 77144cb994e780446b555baf4c0aefe5, type: 3}
+  - {fileID: 8300000, guid: 8f4b4a389f436f94588c2dd5aaf2f1eb, type: 3}
+  - {fileID: 8300000, guid: cfe04805f2ed2074287710f8f5ed20bb, type: 3}
+  - {fileID: 8300000, guid: cedafccec4b71b34b89d66ae3fe1fcc4, type: 3}
+  - {fileID: 8300000, guid: 07901a87859739147adb3d0902025c87, type: 3}
+  - {fileID: 8300000, guid: a4ae5c55299aaeb40b085cdad581262f, type: 3}
+  - {fileID: 8300000, guid: 4d32661412f3cb04a95186cb29d097ac, type: 3}
+  - {fileID: 8300000, guid: 16d59fa1b0a66cb41afdae6bcbd1a584, type: 3}
+  - {fileID: 8300000, guid: 9e40c8e1a82b0a64e9e186bbda915bd0, type: 3}
+  - {fileID: 8300000, guid: e9710102d7354f749ac508f83722ed44, type: 3}
+  - {fileID: 8300000, guid: 6b3cc24f6e17ae74b80a90ab17aade33, type: 3}
+  - {fileID: 8300000, guid: 9a4dfc49a99d244469a796e98db28e4c, type: 3}
+  - {fileID: 8300000, guid: 0ddaf350f98d46441a3fa5c49df8aabc, type: 3}
+  - {fileID: 8300000, guid: bb39f0390ac327343818be917ea40acf, type: 3}
+  - {fileID: 8300000, guid: 1b7f303145ba1bf42b9bde9d3b9af4c6, type: 3}
+  - {fileID: 8300000, guid: c723bd8ba293b9d47953bce6a617379e, type: 3}
+  - {fileID: 8300000, guid: 99ff81f8b92b30f419523d768b365f9c, type: 3}
+  - {fileID: 8300000, guid: 4a64c5f556b27264d908132610810b65, type: 3}
+  - {fileID: 8300000, guid: 236ae5ddcd638e948923b35abf6e4f1f, type: 3}
+  - {fileID: 8300000, guid: 11a058efedfcffe47b40598523d02724, type: 3}
+  - {fileID: 8300000, guid: 127bfbf94cc8fee4c89c72cc12d0864f, type: 3}
+  jumpSFXs:
+  - {fileID: 8300000, guid: 3888a1e1c52793144a6d07b8c508772e, type: 3}
+  - {fileID: 8300000, guid: 5b26cf3cd5f6b914a80e6d3476caaf86, type: 3}
+  - {fileID: 8300000, guid: b16dc74b7376aca46bd0c6be96c940fa, type: 3}
+  landSFXs:
+  - {fileID: 8300000, guid: 9292bb7a2c300c94bbfde1a2097ffafd, type: 3}
+  - {fileID: 8300000, guid: d7c046e3c6ecaa048a2a02897e74bb26, type: 3}
+  - {fileID: 8300000, guid: 1725d71bcf9053444a7d3f8614839238, type: 3}
+  - {fileID: 8300000, guid: 4e72a07a6ce5c4243be410709baf50fd, type: 3}
+  - {fileID: 8300000, guid: 69c7f999a142fec4c96a6ff6f2d98cea, type: 3}
+  - {fileID: 8300000, guid: 66cc6f79b5634f9419a71898f1baaf31, type: 3}
+  fallDamageSFXs:
+  - {fileID: 8300000, guid: 5aabfa2354dc2a1479e1f8bc5a3dfefe, type: 3}
   recievesFallDamage: 0
   minSpeedForFallDamage: 10
   maxSpeedForFallDamage: 30
@@ -262,17 +293,7 @@ MonoBehaviour:
   syncInterval: 0.1
   weaponLayerName: Weapon
   weaponHolder: {fileID: 5631001466818345725}
-  primaryWeapon:
-    name: Blaster
-    damage: 20
-    range: 100
-    fireRate: 10
-    maxBullets: 20
-    bullets: 20
-    reloadTime: 1
-    graphics: {fileID: 199728, guid: 7df8fa1ba77f22d43870139b6d073e9b, type: 3}
-    ShootSounds:
-    - {fileID: 8300000, guid: e2859071f3692f14399d0c80ab750d4c, type: 3}
+  primaryWeapon: {fileID: 11400000, guid: 53bcf93d86b70144f8b6d907c576f229, type: 2}
   playerShooting: {fileID: 7891231476885191673}
   isReloading: 0
 --- !u!114 &3669967778086649156
@@ -662,7 +683,7 @@ AudioSource:
   m_GameObject: {fileID: 2169333578965989660}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -8640390960324331607, guid: f71c186bda64bfb45a9c9284b319fb80, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.535
@@ -825,7 +846,7 @@ AudioSource:
   m_GameObject: {fileID: 3086474291451152403}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 1020646687556007845, guid: f71c186bda64bfb45a9c9284b319fb80, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.535
@@ -988,7 +1009,7 @@ AudioSource:
   m_GameObject: {fileID: 4439517439123698958}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -2169356062176549641, guid: f71c186bda64bfb45a9c9284b319fb80, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.535
@@ -1150,14 +1171,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4722079825478431538}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3c7d6c9f76341142b400b1b6598c673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: 15
   returnSpeed: 25
-  RecoilRotation: {x: 4, y: 4, z: 4}
+  RecoilRotation: {x: 10, y: 20, z: 20}
   RecoilRotationAiming: {x: 0.5, y: 0.5, z: 0.5}
   aiming: 0
 --- !u!1 &5764712407567062268
@@ -1679,14 +1700,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7180748736594819920}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: 0.571, y: 0.253, z: 0.831}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4776393119031614160}
   m_Father: {fileID: 3673284692991207030}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 180, z: 0}
 --- !u!1 &8174827350916731066
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,8 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
+/[Aa]ssets/Universal\ Sound\ FX
+
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 
