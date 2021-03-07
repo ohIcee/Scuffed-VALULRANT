@@ -133,6 +133,11 @@ public class Player : NetworkBehaviour
     const float k_JumpGroundingPreventionTime = 0.2f;
     const float k_GroundCheckDistanceInAir = 0.07f;
 
+    private void Awake()
+    {
+        SetCrouchingState(false, false);
+    }
+
     [Command]
     private void CmdDealDamage(int damageAmount) {
         playerHealth.DealDamage(damageAmount);
