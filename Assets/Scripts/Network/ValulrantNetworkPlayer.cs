@@ -88,8 +88,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [Server]
     private void ServerHandleDie()
     {
-        PlayerSetup playerSetup = playerInstance.GetComponent<PlayerSetup>();
-
         RpcDoPlayerDeathEffect(playerInstance.transform.position);
 
         deaths++;
@@ -101,14 +99,17 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
         NetworkServer.Destroy(playerInstance);
 
-        StartCoroutine(RespawnPlayerTimer(playerSetup));
-    }
-
-    IEnumerator RespawnPlayerTimer(PlayerSetup playerSetup)
-    {
         ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
         float respawnTime = networkManager.GetRespawnTime();
-        yield return new WaitForSeconds(respawnTime);
+
+        if (respawnTime < 0f) return;
+
+        StartCoroutine(RespawnPlayerTimer(networkManager));
+    }
+
+    IEnumerator RespawnPlayerTimer(ValulrantNetworkManager networkManager)
+    {
+        yield return new WaitForSeconds(networkManager.GetRespawnTime());
 
         GameObject playerInstance = Instantiate(
             networkManager.GetClientPlayerPrefab(),

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: FreeForAll
   m_EditorClassIdentifier: 
   gameMode: 0
-  RespawnTime: 0
+  RespawnTime: 2
