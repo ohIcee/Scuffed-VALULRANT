@@ -3,7 +3,6 @@ using Mirror;
 
 public class InputManager : NetworkBehaviour
 {
-    [SerializeField] private float mouseSensitivityMultiplier = .5f;
     [SerializeField] private float weaponSwaySensitivityMultiplier = .5f;
 
     [Header("Scripts")]
@@ -11,13 +10,15 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private PlayerShooting playerShooting;
     [SerializeField] WeaponSway weaponSway;
 
-    private UIManager uIManager;
+    private PlayerHUD playerHUD;
 
     private PlayerControls controls;
     private PlayerControls.PlayerInputActions playerInput;
 
     private Vector2 movementInput;
     private Vector2 mouseInput;
+
+    private float mouseSensitivity = 1f;
 
     public override void OnStartAuthority()
     {
@@ -26,7 +27,8 @@ public class InputManager : NetworkBehaviour
 
     public void Initialize()
     {
-        //uIManager = FindObjectOfType<UIManager>();
+        playerHUD = GetComponent<PlayerHUD>();
+        mouseSensitivity = PlayerPrefs.GetFloat("MOUSE_SENS");
 
         controls = new PlayerControls();
         controls.Enable();
@@ -34,22 +36,32 @@ public class InputManager : NetworkBehaviour
 
         playerInput.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
 
-        //playerInput.DebugMonitor.performed += _ => uIManager.ToggleDebugMonitor();
         playerInput.EscapeMenu.performed += _ =>
         {
-            //uIManager.ToggleEscapeMenu();
-            toggleCursorLock(false);
+            playerHUD.ToggleEscapeMenu();
         };
 
         if (fpMov != null)
         {
-            playerInput.Jump.performed += _ => fpMov.OnJumpPressed();
+            playerInput.Jump.performed += _ => {
+                if (playerHUD.GetIsEscapeMenuOpen()) return;
+
+                fpMov.OnJumpPressed();
+            };
             playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();
 
-            playerInput.Crouch.started += _ => fpMov.OnCrouchPressed();
+            playerInput.Crouch.started += _ => {
+                if (playerHUD.GetIsEscapeMenuOpen()) return;
+
+                fpMov.OnCrouchPressed();
+            };
             playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
 
-            playerInput.ShiftWalk.started += _ => fpMov.OnShiftPressed();
+            playerInput.ShiftWalk.started += _ => {
+                if (playerHUD.GetIsEscapeMenuOpen()) return;
+
+                fpMov.OnShiftPressed();
+            };
             playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
 
             playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
@@ -63,11 +75,19 @@ public class InputManager : NetworkBehaviour
 
             playerInput.Shoot.started += _ =>
             {
-                Debug.Log("SHOOT");
+                if (playerHUD.GetIsEscapeMenuOpen()) return;
+
                 playerShooting.OnStartShooting();
                 toggleCursorLock(true);
             };
             playerInput.Shoot.canceled += _ => playerShooting.OnStopShooting();
+
+            playerInput.Reload.performed += _ =>
+            {
+                if (playerHUD.GetIsEscapeMenuOpen()) return;
+
+                playerShooting.OnPressReload();
+            };
         }
         
     }
@@ -76,9 +96,25 @@ public class InputManager : NetworkBehaviour
     {
         if (!hasAuthority) return;
 
+        // disable input if escape menu is open
+        if (playerHUD.GetIsEscapeMenuOpen())
+        {
+            OnEscapeMenu();
+            return;
+        }
+
         fpMov.ReceiveMovementInput(movementInput);
-        fpMov.ReceiveMouseInput(mouseInput * mouseSensitivityMultiplier);
-        weaponSway.ReceiveInput(mouseInput * weaponSwaySensitivityMultiplier);
+        fpMov.ReceiveMouseInput(mouseInput);
+        weaponSway.ReceiveInput(mouseInput * mouseSensitivity * weaponSwaySensitivityMultiplier);
+    }
+
+    private void OnEscapeMenu()
+    {
+        fpMov.ReceiveMovementInput(Vector2.zero);
+        fpMov.ReceiveMouseInput(Vector2.zero);
+        weaponSway.ReceiveInput(Vector2.zero);
+        playerShooting.OnStopShooting();
+        playerShooting.OnStopAiming();
     }
 
     private void OnDestroy()
@@ -87,9 +123,11 @@ public class InputManager : NetworkBehaviour
 
         controls.Disable();
     }
+
     private void toggleCursorLock(bool locked)
     {
+        if (playerHUD.GetIsEscapeMenuOpen()) return;
+
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = !locked;
     }
 }

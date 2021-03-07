@@ -16,6 +16,7 @@ public class WeaponManager : NetworkBehaviour
 
 	private PlayerWeapon currentWeapon;
 	private WeaponGraphics currentGraphics;
+	[SerializeField] private PlayerShooting playerShooting;
 
 	public bool isReloading = false;
 
@@ -69,6 +70,8 @@ public class WeaponManager : NetworkBehaviour
 		yield return new WaitForSeconds(currentWeapon.reloadTime);
 
 		currentWeapon.bullets = currentWeapon.maxBullets;
+
+		playerShooting.OnReloadComplete();
 
 		isReloading = false;
 	}

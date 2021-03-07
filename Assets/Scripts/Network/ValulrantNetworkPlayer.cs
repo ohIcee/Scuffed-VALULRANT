@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /*
 
@@ -46,6 +47,8 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     {
         Debug.Log($"Setting player instance {player.transform.name}");
         playerInstance = player;
+        playerInstance.GetComponent<Player>().SetNetworkPlayer(this);
+        
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
 
@@ -88,6 +91,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
             networkManager.GetStartPosition().position,
             Quaternion.identity
             );
+        playerInstance.GetComponent<Player>().SetNetworkPlayer(this);
         NetworkServer.Spawn(playerInstance, connectionToClient);
 
         GameObject spawnFx = Instantiate(spawnEffect, playerInstance.transform.position, Quaternion.identity);
@@ -169,6 +173,17 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     private void RpcLogNewName(string newName)
     {
         Debug.Log(newName);
+    }
+
+    public void DisconnectFromServer()
+    {
+        if (isServer)
+        {
+            ((ValulrantNetworkManager)NetworkManager.singleton).StopHost();
+            return;
+        }
+
+        ((ValulrantNetworkManager)NetworkManager.singleton).StopClient();
     }
 
     private void AuthorityHandlePartyOwnerStateUpdated(bool oldState, bool newState)

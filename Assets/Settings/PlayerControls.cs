@@ -97,6 +97,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""a816c5b8-fc6c-4cd1-a06a-a1a5f2b75d39"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -253,6 +261,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""EscapeMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f865104c-9a84-41d9-8031-0afc06b78c16"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -271,6 +290,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_PlayerInput_Shoot = m_PlayerInput.FindAction("Shoot", throwIfNotFound: true);
         m_PlayerInput_DebugMonitor = m_PlayerInput.FindAction("DebugMonitor", throwIfNotFound: true);
         m_PlayerInput_EscapeMenu = m_PlayerInput.FindAction("EscapeMenu", throwIfNotFound: true);
+        m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -330,6 +350,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerInput_Shoot;
     private readonly InputAction m_PlayerInput_DebugMonitor;
     private readonly InputAction m_PlayerInput_EscapeMenu;
+    private readonly InputAction m_PlayerInput_Reload;
     public struct PlayerInputActions
     {
         private @PlayerControls m_Wrapper;
@@ -344,6 +365,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Shoot => m_Wrapper.m_PlayerInput_Shoot;
         public InputAction @DebugMonitor => m_Wrapper.m_PlayerInput_DebugMonitor;
         public InputAction @EscapeMenu => m_Wrapper.m_PlayerInput_EscapeMenu;
+        public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -383,6 +405,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @EscapeMenu.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEscapeMenu;
                 @EscapeMenu.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEscapeMenu;
                 @EscapeMenu.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEscapeMenu;
+                @Reload.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnReload;
+                @Reload.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnReload;
+                @Reload.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnReload;
             }
             m_Wrapper.m_PlayerInputActionsCallbackInterface = instance;
             if (instance != null)
@@ -417,6 +442,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @EscapeMenu.started += instance.OnEscapeMenu;
                 @EscapeMenu.performed += instance.OnEscapeMenu;
                 @EscapeMenu.canceled += instance.OnEscapeMenu;
+                @Reload.started += instance.OnReload;
+                @Reload.performed += instance.OnReload;
+                @Reload.canceled += instance.OnReload;
             }
         }
     }
@@ -433,5 +461,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnShoot(InputAction.CallbackContext context);
         void OnDebugMonitor(InputAction.CallbackContext context);
         void OnEscapeMenu(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
     }
 }

@@ -92,11 +92,15 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private ValulrantNetworkPlayer networkPlayer;
+
+    public void SetNetworkPlayer(ValulrantNetworkPlayer player) => networkPlayer = player;
+    public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;
 
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
 
-    private bool isGrounded { get; set; }
+    private bool isGrounded { get; set; } = true;
     public bool IsGrounded => isGrounded;
 
     private bool isCrouching { get; set; }
@@ -133,14 +137,14 @@ public class Player : NetworkBehaviour
     const float k_JumpGroundingPreventionTime = 0.2f;
     const float k_GroundCheckDistanceInAir = 0.07f;
 
-    private void Awake()
+    private void Start()
     {
         SetCrouchingState(false, false);
     }
 
     [Command]
     private void CmdDealDamage(int damageAmount) {
-        playerHealth.DealDamage(damageAmount);
+        playerHealth.DealDamage(damageAmount, networkPlayer);
     }
 
     [ClientCallback]
@@ -200,6 +204,8 @@ public class Player : NetworkBehaviour
             // if we're grounded, collect info about the ground normal with a downward capsule cast representing our character capsule
             if (Physics.CapsuleCast(GetCapsuleBottomHemisphere(), GetCapsuleTopHemisphere(m_Controller.height), m_Controller.radius, Vector3.down, out RaycastHit hit, chosenGroundCheckDistance, groundCheckLayers, QueryTriggerInteraction.Ignore))
             {
+                Debug.Log("B");
+
                 // storing the upward direction for the surface found
                 m_GroundNormal = hit.normal;
 
@@ -449,8 +455,8 @@ public class Player : NetworkBehaviour
     public void OnJumpReleased() => isPressingJump = false;
     public void OnShiftPressed() => isPressingShift = true;
     public void OnShiftReleased() => isPressingShift = false;
-    public void OnCrouchPressed() => SetCrouchingState(isCrouching, false);
-    public void OnCrouchReleased() => SetCrouchingState(!isCrouching, false);
+    public void OnCrouchPressed() => SetCrouchingState(true, false);
+    public void OnCrouchReleased() => SetCrouchingState(false, false);
     public void ReceiveMovementInput(Vector2 movementInput) => this.movementInput = movementInput;
     public void ReceiveMouseInput(Vector2 mouseInput)
     {

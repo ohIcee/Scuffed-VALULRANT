@@ -26,8 +26,8 @@ public class PlayerHealth : NetworkBehaviour
         currentHealth = maxHealth;
     }
 
-    [Server]
-    public void DealDamage(int damageAmount)
+    [Server]    // killerPlayer is NULL when it's a suicide
+    public void DealDamage(int damageAmount, ValulrantNetworkPlayer killerPlayer)
     {
         if (currentHealth <= 0) return;
 

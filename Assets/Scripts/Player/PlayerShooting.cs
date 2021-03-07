@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using Mirror;
+using System;
 
 public class PlayerShooting : NetworkBehaviour
 {
@@ -17,8 +18,11 @@ public class PlayerShooting : NetworkBehaviour
 	[SerializeField] private WeaponRecoil weaponRecoil;
 	[SerializeField] private PlayerHealth playerHealth;
 
+	public event Action<int, int> ClientOnAmmoUpdated;
+
     private PlayerWeapon currentWeapon;
     private WeaponManager weaponManager;
+	private Player player;
 
     void Start()
     {
@@ -28,9 +32,12 @@ public class PlayerShooting : NetworkBehaviour
             this.enabled = false;
         }
 
+		player = GetComponent<Player>();
         weaponManager = GetComponent<WeaponManager>();
         currentWeapon = weaponManager.GetCurrentWeapon();
-    }
+
+		ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
+	}
 
 	#region Server
 
@@ -61,11 +68,8 @@ public class PlayerShooting : NetworkBehaviour
 		{
 			//if (playerHealth.IsDead()) return;
 
-			playerHealth.DealDamage(_damage);
+			playerHealth.DealDamage(_damage, player.GetNetworkPlayer());
 		}
-
-		//Player _player = GameManager.GetPlayer(_playerID);
-		//_player.RpcTakeDamage(_damage, _sourceID);
 	}
 
 	#endregion
@@ -104,6 +108,7 @@ public class PlayerShooting : NetworkBehaviour
 		}
 
 		currentWeapon.bullets--;
+		ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
 
 		//Debug.Log("Remaining bullets: " + currentWeapon.bullets);
 
@@ -130,6 +135,11 @@ public class PlayerShooting : NetworkBehaviour
 			weaponManager.Reload();
 		}
 
+	}
+
+	public void OnReloadComplete()
+	{
+		ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
 	}
 
 	[ClientRpc]
