@@ -215,6 +215,11 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public void ChangeSensitivity(float sens)
+    {
+        rotationSpeed = sens;
+    }
+
     void HandleCharacterMovement()
     {
         // horizontal character rotation

@@ -11,12 +11,20 @@ public class MainMenu : MonoBehaviour
 
     [SerializeField] private TMP_InputField addressInput = null;
     [SerializeField] private TMP_InputField usernameInput = null;
+    [SerializeField] private TMP_InputField mouseSensInput = null;
+    [SerializeField] private Scrollbar mouseSensScrollbar = null;
     [SerializeField] private Button joinButton = null;
 
     private void OnEnable()
     {
         ValulrantNetworkManager.ClientOnConnected += HandleClientConnected;
         ValulrantNetworkManager.ClientOnDisconnected += HandleClientDisconnected;
+
+        if (PlayerPrefs.HasKey("MOUSE_SENS"))
+        {
+            float sens = PlayerPrefs.GetFloat("MOUSE_SENS");
+            OnMouseSensitivityChanged(sens);
+        }    
     }
 
     private void OnDisable()
@@ -32,6 +40,29 @@ public class MainMenu : MonoBehaviour
         SetUsername();
 
         NetworkManager.singleton.StartHost();
+    }
+
+    public void OnMouseSensitivityChangedInput()
+    {
+        if (mouseSensInput.text.EndsWith(".")) return;
+
+        if (float.TryParse(mouseSensInput.text, out float sens))
+        {
+            OnMouseSensitivityChanged(sens);
+            return;
+        }
+
+        Debug.LogWarning($"Incorrect mouse sensitivity input: {mouseSensInput.text}");
+    }
+
+    public void OnMouseSensitivityChangedScroll() => OnMouseSensitivityChanged(mouseSensScrollbar.value);
+
+    private void OnMouseSensitivityChanged(float newSens)
+    {
+        mouseSensInput.text = newSens.ToString();
+        mouseSensScrollbar.value = newSens;
+
+        PlayerPrefs.SetFloat("MOUSE_SENS", newSens);
     }
 
     private void SetUsername()

@@ -128,8 +128,8 @@ MonoBehaviour:
   accelerationSpeedInAir: 25
   shiftSpeedModifier: 0.5
   killHeight: -50
-  rotationSpeed: 0.5
-  aimingRotationMultiplier: 0.4
+  rotationSpeed: 0.15
+  aimingRotationMultiplier: 0.5
   jumpForce: 8
   cameraHeightRatio: 0.8
   capsuleHeightStanding: 1.8
@@ -150,8 +150,6 @@ MonoBehaviour:
   isPressingShift: 0
   m_Controller: {fileID: 7718639232595436120}
   currentHeight: 0
-  deathEffect: {fileID: 126342, guid: 61f1d72a1cbb48c4486d8ee7afcf3704, type: 3}
-  spawnEffect: {fileID: 136626, guid: d61051166d1c1f14f9e4a3268379948a, type: 3}
 --- !u!114 &8005298539887990908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1300,6 +1298,10 @@ PrefabInstance:
     - target: {fileID: 498742011011189321, guid: 9d81e3c7674712941ae61a0a478ea660, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 498742011011189323, guid: 9d81e3c7674712941ae61a0a478ea660, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 498742011011189325, guid: 9d81e3c7674712941ae61a0a478ea660, type: 3}
       propertyPath: m_Pivot.x

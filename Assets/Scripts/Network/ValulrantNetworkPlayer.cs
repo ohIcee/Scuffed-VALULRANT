@@ -25,6 +25,9 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
     [SyncVar(hook = nameof(HandlePlayerColorUpdated))] [SerializeField] private Color playerColor = Color.red;
 
+    [SyncVar(hook = nameof(ClientHandleKillCountUpdated))] private int kills;
+    [SyncVar(hook = nameof(ClientHandleDeathCountUpdated))] private int deaths;
+
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))] private bool isPartyOwner = false;
 
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
@@ -45,6 +48,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         playerInstance = player;
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
+
+        if (PlayerPrefs.HasKey("MOUSE_SENS")) { 
+            playerInstance.GetComponent<Player>().ChangeSensitivity(PlayerPrefs.GetFloat("MOUSE_SENS"));
+        }
     }
 
     public override void OnStopServer()
@@ -58,7 +65,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     {
         PlayerSetup playerSetup = playerInstance.GetComponent<PlayerSetup>();
 
-        RpcDoPlayerDeathEffect();
+        RpcDoPlayerDeathEffect(playerInstance.transform.position);
+
+        deaths++;
+        Debug.Log($"Player {displayName} now has {deaths} deaths!");
 
         // DESTROY PLAYER
         playerHealth.ServerOnDie -= ServerHandleDie;
@@ -129,15 +139,25 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     #region Client
 
     [ClientRpc]
-    private void RpcDoPlayerDeathEffect()
+    private void RpcDoPlayerDeathEffect(Vector3 position)
     {
-        GameObject fx = (GameObject)Instantiate(deathEffect, playerInstance.transform.position, Quaternion.identity);
+        GameObject fx = (GameObject)Instantiate(deathEffect, position, Quaternion.identity);
         Destroy(fx, 3f);
     }
 
     private void ClientHandleDisplayNameUpdated(string oldName, string newName)
     {
         ClientOnInfoUpdated?.Invoke();
+    }
+
+    private void ClientHandleKillCountUpdated(int oldKills, int newKills)
+    { 
+        // update HUD
+    }
+
+    private void ClientHandleDeathCountUpdated(int oldDeaths, int newDeaths)
+    { 
+        // update HUD
     }
 
     private void HandlePlayerColorUpdated(Color oldColor, Color newColor)
@@ -168,6 +188,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public override void OnStartAuthority()
     {
         CmdSetDisplayName(PlayerPrefs.GetString("USERNAME"));
+        
     }
 
     public override void OnStartClient()
