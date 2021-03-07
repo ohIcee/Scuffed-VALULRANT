@@ -179,8 +179,8 @@ public class Player : NetworkBehaviour
             else
             {
                 // land SFX
-                if (landAudioSource)
-                    landAudioSource.PlayOneShot(landSFX);
+                if (landAudioSource) CmdPlayLandSound();
+                    //landAudioSource.PlayOneShot(landSFX);
             }
         }
 
@@ -296,8 +296,8 @@ public class Player : NetworkBehaviour
                         characterVelocity = isShifting ? characterVelocity * 0.80f : characterVelocity;
 
                         // play sound
-                        if (jumpAudioSource)
-                            jumpAudioSource.PlayOneShot(jumpSFX);
+                        if (jumpAudioSource) CmdPlayJumpSound();
+                            //jumpAudioSource.PlayOneShot(jumpSFX);
 
                         // remember last time we jumped because we need to prevent snapping to ground for a short time
                         m_LastTimeJumped = Time.time;
@@ -317,7 +317,7 @@ public class Player : NetworkBehaviour
                     if (!isCrouching)
                     {
                         if (footstepAudioSource)
-                            footstepAudioSource.PlayOneShot(footstepSFX);
+                            CmdPlayFootstepSound();
                     }
                 }
 
@@ -358,6 +358,42 @@ public class Player : NetworkBehaviour
 
             characterVelocity = Vector3.ProjectOnPlane(characterVelocity, hit.normal);
         }
+    }
+
+    [Command]
+    private void CmdPlayFootstepSound()
+    {
+        RpcPlayFootstepSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayFootstepSound()
+    {
+        footstepAudioSource.PlayOneShot(footstepSFX);
+    }
+
+    [Command]
+    private void CmdPlayJumpSound()
+    {
+        RpcPlayJumpSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayJumpSound()
+    {
+        footstepAudioSource.PlayOneShot(jumpSFX);
+    }
+
+    [Command]
+    private void CmdPlayLandSound()
+    {
+        RpcPlayLandSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayLandSound()
+    {
+        footstepAudioSource.PlayOneShot(landSFX);
     }
 
     // Returns true if the slope angle represented by the given normal is under the slope angle limit of the character controller

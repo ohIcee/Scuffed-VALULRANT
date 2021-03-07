@@ -43,9 +43,9 @@ public class PlayerShooting : NetworkBehaviour
 
 	//Is called on the server when a player shoots
 	[Command]
-	void CmdOnShoot()
+	void CmdOnShoot(PlayerShooting shootingPlayer)
 	{
-		RpcDoShootEffect();
+		RpcDoShootEffect(shootingPlayer);
 	}
 
 	//Is called on the server when we hit something
@@ -66,8 +66,6 @@ public class PlayerShooting : NetworkBehaviour
 
 		if (_playerIdentity.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
 		{
-			//if (playerHealth.IsDead()) return;
-
 			playerHealth.DealDamage(_damage, player.GetNetworkPlayer());
 		}
 	}
@@ -79,9 +77,13 @@ public class PlayerShooting : NetworkBehaviour
 	//Is called on all clients when we need to to
 	// a shoot effect
 	[ClientRpc]
-	void RpcDoShootEffect()
+	void RpcDoShootEffect(PlayerShooting shootingPlayer)
 	{
 		weaponManager.GetCurrentGraphics().muzzleFlash.Play();
+		//shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+		shootingPlayer.shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+
+		Debug.Log($"Playing sound effect on {transform.name}");
 	}
 
 	//Is called on all clients
@@ -113,10 +115,10 @@ public class PlayerShooting : NetworkBehaviour
 		//Debug.Log("Remaining bullets: " + currentWeapon.bullets);
 
 		weaponRecoil.Fire();
-		shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+		//shootingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
 
 		//We are shooting, call the OnShoot method on the server
-		CmdOnShoot();
+		CmdOnShoot(this);
 
 		RaycastHit _hit;
 		if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out _hit, currentWeapon.range, layerMask))
