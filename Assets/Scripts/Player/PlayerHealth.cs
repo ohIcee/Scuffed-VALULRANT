@@ -35,8 +35,6 @@ public class PlayerHealth : NetworkBehaviour
 
         if (currentHealth > 0) return;
 
-        Debug.Log("Uh oh dead!!");
-
         // DIE
         ServerOnDie?.Invoke();
     }

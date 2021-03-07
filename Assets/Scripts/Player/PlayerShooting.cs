@@ -52,8 +52,6 @@ public class PlayerShooting : NetworkBehaviour
 	[Command]
 	void CmdPlayerShot(NetworkIdentity _playerIdentity, int _damage)
 	{
-		Debug.Log(_playerIdentity.name + " has been shot.");
-		
 		RpcPlayerShot();
 
 		// Return if we hit our own unit

@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel = null;
-    [SerializeField] private GameObject lobbyPagePanel = null;
 
     [SerializeField] private TMP_InputField addressInput = null;
     [SerializeField] private TMP_InputField usernameInput = null;
@@ -29,7 +28,6 @@ public class MainMenu : MonoBehaviour
     public void HostLobby()
     {
         landingPagePanel.SetActive(false);
-        //lobbyPagePanel.SetActive(true);
 
         SetUsername();
 

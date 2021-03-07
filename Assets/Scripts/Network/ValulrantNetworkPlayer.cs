@@ -17,7 +17,6 @@ using UnityEngine;
 
 public class ValulrantNetworkPlayer : NetworkBehaviour
 {
-    [SerializeField] private TMP_Text displayNameText = null;
     [SerializeField] private Renderer playerColorRenderer = null;
     private PlayerHealth playerHealth = null;
 
@@ -56,7 +55,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     private void ServerHandleDie()
     {
         PlayerSetup playerSetup = playerInstance.GetComponent<PlayerSetup>();
-        playerSetup.DisablePlayer();
+        playerSetup.RpcDisablePlayer();
         RpcDisablePlayer(playerSetup);
         StartCoroutine(RespawnPlayerTimer(playerSetup));
     }
@@ -119,7 +118,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         if (playerInstance.transform.TryGetComponent<PlayerSetup>(out PlayerSetup playerSetup))
         {
             playerSetup.transform.position = networkManager.GetStartPosition().position;
-            playerSetup.SetupPlayer();
+            playerSetup.RpcEnablePlayer();
         }
         else {
             Debug.LogError("Could not get component PlayerSetup!");
@@ -129,9 +128,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [ClientRpc]
     private void RpcDisablePlayer(PlayerSetup playerSetup)
     {
-        if (isServer) return;
-
-        playerSetup.DisablePlayer();
+        playerSetup.RpcDisablePlayer();
     }
 
     private void ClientHandleDisplayNameUpdated(string oldName, string newName)

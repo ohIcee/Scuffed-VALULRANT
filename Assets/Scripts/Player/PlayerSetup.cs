@@ -12,6 +12,7 @@ public class PlayerSetup : NetworkBehaviour
     public AudioListener audioListener = null;
     public GameObject playerHUD = null;
     public PlayerHealth playerHealth = null;
+    public MeshRenderer bodyMeshRenderer = null;
 
     [Header("Weapon shit")]
     public GameObject weaponHolder = null;
@@ -22,7 +23,8 @@ public class PlayerSetup : NetworkBehaviour
     #region Server
 
     [Command]
-    private void CmdResetHealth() {
+    private void CmdResetHealth()
+    {
         playerHealth.ResetHealth();
     }
 
@@ -35,42 +37,66 @@ public class PlayerSetup : NetworkBehaviour
         SetupPlayer();
     }
 
-    public void SetupPlayer()
+    private void SetupPlayer()
     {
         if (!hasAuthority) return;
 
+        CmdResetHealth();
         IsDisabled = false;
 
         characterController.enabled = true;
+        bodyMeshRenderer.enabled = true;
         playerCamera.enabled = true;
+        playerHUD.SetActive(true);
+        playerWeaponCamera.gameObject.SetActive(true);
         playerWeaponCamera.enabled = true;
         audioListener.enabled = true;
-        playerHUD.SetActive(true);
-
-        CmdResetHealth();
 
         foreach (MonoBehaviour script in ScriptsToEnable)
         {
             script.enabled = true;
         }
 
-        // TODO: Fix weapon camera shit
-        //weaponHolder.layer = 11;
-
         Debug.Log($"Player {transform.name} has been setup!");
     }
 
-    public void DisablePlayer() 
+    [ClientRpc]
+    public void RpcEnablePlayer()
     {
+        characterController.enabled = true;
+        bodyMeshRenderer.enabled = true;
+
+        foreach (MonoBehaviour script in ScriptsToEnable)
+        {
+            script.enabled = true;
+        }
+
         if (!hasAuthority) return;
 
+        playerCamera.enabled = true;
+        playerHUD.SetActive(true);
+        playerWeaponCamera.gameObject.SetActive(true);
+        playerWeaponCamera.enabled = true;
+        audioListener.enabled = true;
+
+        IsDisabled = false;
+        CmdResetHealth();
+
+        Debug.Log($"Player {transform.name} has been enabled!");
+    }
+
+    [ClientRpc]
+    public void RpcDisablePlayer()
+    {
         IsDisabled = true;
 
         characterController.enabled = false;
         playerCamera.enabled = false;
         playerWeaponCamera.enabled = false;
+        playerWeaponCamera.gameObject.SetActive(false);
         audioListener.enabled = false;
         playerHUD.SetActive(false);
+        bodyMeshRenderer.enabled = false;
 
         foreach (MonoBehaviour script in ScriptsToEnable)
         {
