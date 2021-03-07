@@ -21,6 +21,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [SerializeField] private Renderer playerColorRenderer = null;
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject spawnEffect;
+    [SerializeField] private KillFeed killFeed;
     private PlayerHealth playerHealth = null;
 
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
@@ -45,24 +46,33 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [Server]
     public void SetPlayerInstance(GameObject player)
     {
-        Debug.Log($"Setting player instance {player.transform.name}");
         playerInstance = player;
+        
+        Debug.Log($"Setting player instance {player.transform.name}");
         playerInstance.GetComponent<Player>().SetNetworkPlayer(this);
         
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
+        playerHealth.ServerOnPlayerKilled += ServerHandlePlayerKilled;
 
         if (PlayerPrefs.HasKey("MOUSE_SENS")) {
             float sens = PlayerPrefs.GetFloat("MOUSE_SENS");
             playerInstance.GetComponent<Player>().ChangeSensitivity(sens);
-            Debug.LogWarning($"MOUSE SENS: {sens}");
         }
     }
 
     public override void OnStopServer()
     {
-        if (playerHealth != null)
+        if (playerHealth != null) {
             playerHealth.ServerOnDie -= ServerHandleDie;
+            playerHealth.ServerOnPlayerKilled -= ServerHandlePlayerKilled;
+        }
+    }
+
+    [Server]
+    private void ServerHandlePlayerKilled(string killedName, string killerName)
+    {
+        RpcPlayerKilled(killedName, killerName);
     }
 
     [Server]
@@ -77,6 +87,8 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
         // DESTROY PLAYER
         playerHealth.ServerOnDie -= ServerHandleDie;
+        playerHealth.ServerOnPlayerKilled -= ServerHandlePlayerKilled;
+
         NetworkServer.Destroy(playerInstance);
 
         StartCoroutine(RespawnPlayerTimer(playerSetup));
@@ -145,9 +157,16 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     #region Client
 
     [ClientRpc]
+    private void RpcPlayerKilled(string killedName, string killerName)
+    {
+        killFeed.HandleOnPlayerKilled(killedName, killerName);
+    }
+
+    [ClientRpc]
     private void RpcDoPlayerDeathEffect(Vector3 position)
     {
         GameObject fx = (GameObject)Instantiate(deathEffect, position, Quaternion.identity);
+
         Destroy(fx, 3f);
     }
 
@@ -179,6 +198,9 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
     public void DisconnectFromServer()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (isServer)
         {
             ((ValulrantNetworkManager)NetworkManager.singleton).StopHost();
@@ -205,7 +227,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public override void OnStartAuthority()
     {
         CmdSetDisplayName(PlayerPrefs.GetString("USERNAME"));
-        
     }
 
     public override void OnStartClient()
@@ -228,8 +249,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         ((ValulrantNetworkManager)NetworkManager.singleton).Players.Remove(this);
 
         if (!hasAuthority) return;
-
-        // Subscribe to events
     }
 
     #endregion

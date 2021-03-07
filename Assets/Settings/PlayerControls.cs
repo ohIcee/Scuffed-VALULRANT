@@ -105,6 +105,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Suicide"",
+                    ""type"": ""Button"",
+                    ""id"": ""6cd20dca-2e19-4bde-9944-73dcc6ec1ce1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -272,6 +280,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01f44fed-fb7f-4f94-b886-ef465c9a9659"",
+                    ""path"": ""<Keyboard>/numpad9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Suicide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -291,6 +310,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_PlayerInput_DebugMonitor = m_PlayerInput.FindAction("DebugMonitor", throwIfNotFound: true);
         m_PlayerInput_EscapeMenu = m_PlayerInput.FindAction("EscapeMenu", throwIfNotFound: true);
         m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
+        m_PlayerInput_Suicide = m_PlayerInput.FindAction("Suicide", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -351,6 +371,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerInput_DebugMonitor;
     private readonly InputAction m_PlayerInput_EscapeMenu;
     private readonly InputAction m_PlayerInput_Reload;
+    private readonly InputAction m_PlayerInput_Suicide;
     public struct PlayerInputActions
     {
         private @PlayerControls m_Wrapper;
@@ -366,6 +387,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @DebugMonitor => m_Wrapper.m_PlayerInput_DebugMonitor;
         public InputAction @EscapeMenu => m_Wrapper.m_PlayerInput_EscapeMenu;
         public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
+        public InputAction @Suicide => m_Wrapper.m_PlayerInput_Suicide;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -408,6 +430,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Reload.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnReload;
                 @Reload.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnReload;
                 @Reload.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnReload;
+                @Suicide.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnSuicide;
+                @Suicide.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnSuicide;
+                @Suicide.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnSuicide;
             }
             m_Wrapper.m_PlayerInputActionsCallbackInterface = instance;
             if (instance != null)
@@ -445,6 +470,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Reload.started += instance.OnReload;
                 @Reload.performed += instance.OnReload;
                 @Reload.canceled += instance.OnReload;
+                @Suicide.started += instance.OnSuicide;
+                @Suicide.performed += instance.OnSuicide;
+                @Suicide.canceled += instance.OnSuicide;
             }
         }
     }
@@ -462,5 +490,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnDebugMonitor(InputAction.CallbackContext context);
         void OnEscapeMenu(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
+        void OnSuicide(InputAction.CallbackContext context);
     }
 }

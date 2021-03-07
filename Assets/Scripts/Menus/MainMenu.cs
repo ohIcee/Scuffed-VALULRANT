@@ -59,6 +59,8 @@ public class MainMenu : MonoBehaviour
 
     private void OnMouseSensitivityChanged(float newSens)
     {
+        newSens = Mathf.Clamp(newSens, 0, 1);
+
         mouseSensInput.text = newSens.ToString();
         mouseSensScrollbar.value = newSens;
 
@@ -74,7 +76,7 @@ public class MainMenu : MonoBehaviour
     {
         string address = addressInput.text;
 
-        if (address.Length <= 0) return;
+        if (address.Length <= 0) address = "localhost";
 
         SetUsername();
 
@@ -87,7 +89,6 @@ public class MainMenu : MonoBehaviour
     public void OnSettingsClose()
     {
         PlayerPrefs.Save();
-        Debug.Log("Saved prefs");
     }
 
     private void HandleClientConnected()

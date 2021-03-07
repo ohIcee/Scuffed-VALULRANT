@@ -92,7 +92,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
     [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField] private ValulrantNetworkPlayer networkPlayer;
+    [SerializeField, SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
     public void SetNetworkPlayer(ValulrantNetworkPlayer player) => networkPlayer = player;
     public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;
@@ -143,7 +143,7 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdDealDamage(int damageAmount) {
+    public void CmdDealDamage(int damageAmount) {
         playerHealth.DealDamage(damageAmount, networkPlayer);
     }
 

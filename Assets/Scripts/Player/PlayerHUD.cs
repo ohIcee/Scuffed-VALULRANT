@@ -50,6 +50,7 @@ public class PlayerHUD : MonoBehaviour
     {
         Player player = GetComponent<Player>();
         ValulrantNetworkPlayer networkPlayer = player.GetNetworkPlayer();
+        Debug.Log($"networkplayer: {networkPlayer == null}");
         networkPlayer.DisconnectFromServer();
     }
 

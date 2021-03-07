@@ -6,7 +6,7 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private float weaponSwaySensitivityMultiplier = .5f;
 
     [Header("Scripts")]
-    [SerializeField] private Player fpMov;
+    [SerializeField] private Player player;
     [SerializeField] private PlayerShooting playerShooting;
     [SerializeField] WeaponSway weaponSway;
 
@@ -41,28 +41,28 @@ public class InputManager : NetworkBehaviour
             playerHUD.ToggleEscapeMenu();
         };
 
-        if (fpMov != null)
+        if (player != null)
         {
             playerInput.Jump.performed += _ => {
                 if (playerHUD.GetIsEscapeMenuOpen()) return;
 
-                fpMov.OnJumpPressed();
+                player.OnJumpPressed();
             };
-            playerInput.Jump.canceled += _ => fpMov.OnJumpReleased();
+            playerInput.Jump.canceled += _ => player.OnJumpReleased();
 
             playerInput.Crouch.started += _ => {
                 if (playerHUD.GetIsEscapeMenuOpen()) return;
 
-                fpMov.OnCrouchPressed();
+                player.OnCrouchPressed();
             };
-            playerInput.Crouch.canceled += _ => fpMov.OnCrouchReleased();
+            playerInput.Crouch.canceled += _ => player.OnCrouchReleased();
 
             playerInput.ShiftWalk.started += _ => {
                 if (playerHUD.GetIsEscapeMenuOpen()) return;
 
-                fpMov.OnShiftPressed();
+                player.OnShiftPressed();
             };
-            playerInput.ShiftWalk.canceled += _ => fpMov.OnShiftReleased();
+            playerInput.ShiftWalk.canceled += _ => player.OnShiftReleased();
 
             playerInput.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
             playerInput.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
@@ -89,6 +89,12 @@ public class InputManager : NetworkBehaviour
                 playerShooting.OnPressReload();
             };
         }
+
+        playerInput.Suicide.performed += _ => {
+            if (playerHUD.GetIsEscapeMenuOpen()) return;
+
+            player.CmdDealDamage(9999);
+        };
         
     }
 
@@ -103,15 +109,15 @@ public class InputManager : NetworkBehaviour
             return;
         }
 
-        fpMov.ReceiveMovementInput(movementInput);
-        fpMov.ReceiveMouseInput(mouseInput);
+        player.ReceiveMovementInput(movementInput);
+        player.ReceiveMouseInput(mouseInput);
         weaponSway.ReceiveInput(mouseInput * mouseSensitivity * weaponSwaySensitivityMultiplier);
     }
 
     private void OnEscapeMenu()
     {
-        fpMov.ReceiveMovementInput(Vector2.zero);
-        fpMov.ReceiveMouseInput(Vector2.zero);
+        player.ReceiveMovementInput(Vector2.zero);
+        player.ReceiveMouseInput(Vector2.zero);
         weaponSway.ReceiveInput(Vector2.zero);
         playerShooting.OnStopShooting();
         playerShooting.OnStopAiming();
