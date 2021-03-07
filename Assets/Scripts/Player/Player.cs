@@ -133,12 +133,6 @@ public class Player : NetworkBehaviour
     const float k_JumpGroundingPreventionTime = 0.2f;
     const float k_GroundCheckDistanceInAir = 0.07f;
 
-    [SerializeField]
-    private GameObject deathEffect;
-
-    [SerializeField]
-    private GameObject spawnEffect;
-
     [Command]
     private void CmdDealDamage(int damageAmount) {
         playerHealth.DealDamage(damageAmount);

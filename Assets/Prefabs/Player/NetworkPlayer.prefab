@@ -62,7 +62,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  displayNameText: {fileID: 0}
   playerColorRenderer: {fileID: 0}
+  deathEffect: {fileID: 126342, guid: 61f1d72a1cbb48c4486d8ee7afcf3704, type: 3}
+  spawnEffect: {fileID: 136626, guid: d61051166d1c1f14f9e4a3268379948a, type: 3}
   displayName: Missing Name
   playerColor: {r: 1, g: 0, b: 0, a: 1}

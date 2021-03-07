@@ -18,6 +18,8 @@ using UnityEngine;
 public class ValulrantNetworkPlayer : NetworkBehaviour
 {
     [SerializeField] private Renderer playerColorRenderer = null;
+    [SerializeField] private GameObject deathEffect;
+    [SerializeField] private GameObject spawnEffect;
     private PlayerHealth playerHealth = null;
 
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
@@ -56,6 +58,8 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     {
         PlayerSetup playerSetup = playerInstance.GetComponent<PlayerSetup>();
 
+        RpcDoPlayerDeathEffect();
+
         // DESTROY PLAYER
         playerHealth.ServerOnDie -= ServerHandleDie;
         NetworkServer.Destroy(playerInstance);
@@ -75,6 +79,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
             Quaternion.identity
             );
         NetworkServer.Spawn(playerInstance, connectionToClient);
+
+        GameObject spawnFx = Instantiate(spawnEffect, playerInstance.transform.position, Quaternion.identity);
+        Destroy(spawnFx, 3f);
+
         SetPlayerInstance(playerInstance);
     }
 
@@ -119,6 +127,13 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     #endregion
 
     #region Client
+
+    [ClientRpc]
+    private void RpcDoPlayerDeathEffect()
+    {
+        GameObject fx = (GameObject)Instantiate(deathEffect, playerInstance.transform.position, Quaternion.identity);
+        Destroy(fx, 3f);
+    }
 
     private void ClientHandleDisplayNameUpdated(string oldName, string newName)
     {
