@@ -12,14 +12,18 @@ public class PlayerFiring : NetworkBehaviour
     private LayerMask layerMask;
 
     [SerializeField] private AudioSource firingAudioSource;
-    [SerializeField] private WeaponRecoil weaponRecoil;
+    [SerializeField] private WeaponProceduralFireFakeRecoil weaponRecoil;
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private CameraShake cameraShake;
 
     public event Action<int, int> ClientOnAmmoUpdated;
+    public event Action ClientOnFired;
 
     private PlayerWeapon currentWeapon;
     private WeaponManager weaponManager;
     private Player player;
+
+    public PlayerWeapon GetCurrentWeapon() => currentWeapon;
 
     private float nextFireTime;
     private Coroutine automaticFireCoroutine;
@@ -83,8 +87,6 @@ public class PlayerFiring : NetworkBehaviour
 
         if (currentWeapon.UseSounds.Count > 0)
             firingPlayer.firingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
-
-        Debug.Log($"Playing sound effect on {transform.name}");
     }
 
     //Is called on all clients
@@ -114,6 +116,8 @@ public class PlayerFiring : NetworkBehaviour
 
         nextFireTime = Time.time + 1f / currentWeapon.fireRate;
 
+        ClientOnFired?.Invoke();
+
         currentWeapon.bullets--;
         ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
 
@@ -121,6 +125,9 @@ public class PlayerFiring : NetworkBehaviour
 
         weaponRecoil.Fire();
         //firingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
+
+        if (cameraShake && cameraShake.isActiveAndEnabled)
+            cameraShake.ShakeCamera(currentWeapon.fireCameraShakeIntensity, currentWeapon.fireCameraShakeTime);
 
         //We are firing, call the OnFire method on the server
         CmdOnFire(this);

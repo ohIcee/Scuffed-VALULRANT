@@ -18,7 +18,7 @@ MonoBehaviour:
   range: 100
   fireRate: 8
   maxBullets: 21
-  bullets: 10
+  bullets: 21
   reloadTime: 2
   explosionRange: 1
   graphics: {fileID: 1935268962224560791, guid: ff3a7d3fe87437240bb5dc7cc0f7bac1, type: 3}
@@ -27,3 +27,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 27acb850fac72d844b8978c9c6840dc2, type: 3}
   - {fileID: 8300000, guid: 88a1d20fafe80284289b6389d995bf97, type: 3}
   - {fileID: 8300000, guid: 53e7c1071dfe12840aaad6dfe56b0e2e, type: 3}
+  fireCameraShakeIntensity: 2.5
+  fireCameraShakeTime: 0.3
+  verticalRecoilPerShot: 1
+  maxVerticalRecoil: 10
+  horizontalRecoilPerShot: {x: -5, y: 5}
+  horizontalRecoilAfterMaxVerticalRecoil: 2
+  recoilRecoveryTime: 1

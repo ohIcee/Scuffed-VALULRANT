@@ -56,7 +56,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
         RpcUpdatePlayerName(displayName);
 
-        Debug.Log($"Setting player instance {displayName}");
         playerInstance.transform.name = displayName;
 
         playerInstance.GetComponent<Player>().SetNetworkPlayer(this);
@@ -158,7 +157,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         //if (newName.Length < 2 || newName.Length > 20) return;
 
         // All players will debug log the new name
-        RpcLogNewName(newName);
+        //RpcLogNewName(newName);
 
         SetDisplayName(newName);
     }

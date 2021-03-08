@@ -8,7 +8,8 @@ using System.Collections.Generic;
 public class Player : NetworkBehaviour
 {
     [Tooltip("Reference to the main camera used for the player")]
-    [SerializeField] private Camera playerCamera;
+    [SerializeField] private CinemachineVirtualCamera playerCamera;
+    [SerializeField] private Transform cameraRecoilParent;
     [Tooltip("Audio source for footsteps, jump, etc...")]
     [SerializeField] private AudioSource footstepAudioSource;
     [SerializeField] private AudioSource jumpAudioSource;
@@ -90,6 +91,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private PlayerFiring playerFiring;
     [SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
     public void SetNetworkPlayer(ValulrantNetworkPlayer player) => networkPlayer = player;
@@ -246,6 +248,7 @@ public class Player : NetworkBehaviour
 
             // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
             playerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+            //cameraRecoilParent.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
         }
 
         // character movement handling
@@ -358,6 +361,8 @@ public class Player : NetworkBehaviour
         }
     }
 
+    #region Networking Audio Sources
+
     [Command]
     private void CmdPlayFootstepSound()
     {
@@ -406,6 +411,10 @@ public class Player : NetworkBehaviour
         fallDamageAudioSource.PlayOneShot(fallDamageSFXs[Random.Range(0, fallDamageSFXs.Count - 1)]);
     }
 
+    #endregion
+
+    #region Helper Functions
+
     // Returns true if the slope angle represented by the given normal is under the slope angle limit of the character controller
     bool IsNormalUnderSlopeLimit(Vector3 normal)
     {
@@ -430,6 +439,10 @@ public class Player : NetworkBehaviour
         Vector3 directionRight = Vector3.Cross(direction, transform.up);
         return Vector3.Cross(slopeNormal, directionRight).normalized;
     }
+
+    #endregion
+
+    #region Crouching Functions
 
     void UpdateCharacterHeight(bool force)
     {
@@ -493,6 +506,8 @@ public class Player : NetworkBehaviour
         isCrouching = crouched;
         return true;
     }
+
+    #endregion
 
     #region Inputs
 
