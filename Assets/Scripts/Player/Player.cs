@@ -94,6 +94,8 @@ public class Player : NetworkBehaviour
     [SerializeField] private PlayerFiring playerFiring;
     [SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
+    public NetworkIdentity GetNetworkIdentity() => netIdentity;
+
     public void SetNetworkPlayer(ValulrantNetworkPlayer player) => networkPlayer = player;
     public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;
 
