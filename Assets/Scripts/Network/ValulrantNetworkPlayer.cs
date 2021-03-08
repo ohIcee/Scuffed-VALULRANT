@@ -41,20 +41,12 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public string GetDisplayName() => displayName;
     public bool GetIsPartyOwner() => isPartyOwner;
 
-    [ClientRpc]
-    private void RpcUpdatePlayerName(string name)
-    {
-        playerInstance.transform.name = name;
-    }
-
     #region Server
 
     [Server]
     public void SetPlayerInstance(GameObject player)
     {
         playerInstance = player;
-
-        RpcUpdatePlayerName(displayName);
 
         playerInstance.transform.name = displayName;
 
