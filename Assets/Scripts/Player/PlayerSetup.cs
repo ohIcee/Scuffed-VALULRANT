@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Cinemachine;
 
 public class PlayerSetup : NetworkBehaviour
 {
     public List<MonoBehaviour> ScriptsToEnable = new List<MonoBehaviour>();
     public CharacterController characterController = null;
+    public CinemachineVirtualCamera playerVirtualCamera = null;
     public Camera playerCamera = null;
     public Camera playerWeaponCamera = null;
     public AudioListener audioListener = null;
@@ -49,6 +51,8 @@ public class PlayerSetup : NetworkBehaviour
 
         characterController.enabled = true;
         bodyMeshRenderer.enabled = true;
+        playerVirtualCamera.enabled = true;
+        playerCamera.gameObject.SetActive(true);
         playerCamera.enabled = true;
         playerHUD.SetActive(true);
         playerWeaponCamera.gameObject.SetActive(true);
@@ -59,8 +63,6 @@ public class PlayerSetup : NetworkBehaviour
         {
             script.enabled = true;
         }
-
-        Debug.Log($"Player {transform.name} has been setup!");
     }
 
     #endregion
