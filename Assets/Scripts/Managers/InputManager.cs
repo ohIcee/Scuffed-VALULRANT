@@ -38,27 +38,40 @@ public class InputManager : NetworkBehaviour
 
         playerInput.EscapeMenu.performed += _ =>
         {
+            if (playerHUD.GetIsBuyMenuOpen()) {
+                playerHUD.ToggleBuyMenu();
+                return;
+            }
+
             playerHUD.ToggleEscapeMenu();
+        };
+
+        playerInput.BuyMenu.performed += _ => {
+            if (playerHUD.GetIsEscapeMenuOpen()) return;
+
+            // is game in buy stage
+
+            playerHUD.ToggleBuyMenu();
         };
 
         if (player != null)
         {
             playerInput.Jump.performed += _ => {
-                if (playerHUD.GetIsEscapeMenuOpen()) return;
+                if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 player.OnJumpPressed();
             };
             playerInput.Jump.canceled += _ => player.OnJumpReleased();
 
             playerInput.Crouch.started += _ => {
-                if (playerHUD.GetIsEscapeMenuOpen()) return;
+                if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 player.OnCrouchPressed();
             };
             playerInput.Crouch.canceled += _ => player.OnCrouchReleased();
 
             playerInput.ShiftWalk.started += _ => {
-                if (playerHUD.GetIsEscapeMenuOpen()) return;
+                if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 player.OnShiftPressed();
             };
@@ -75,7 +88,7 @@ public class InputManager : NetworkBehaviour
 
             playerInput.Fire.started += _ =>
             {
-                if (playerHUD.GetIsEscapeMenuOpen()) return;
+                if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 playerFiring.OnStartFiring();
                 toggleCursorLock(true);
@@ -84,14 +97,14 @@ public class InputManager : NetworkBehaviour
 
             playerInput.Reload.performed += _ =>
             {
-                if (playerHUD.GetIsEscapeMenuOpen()) return;
+                if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 playerFiring.OnPressReload();
             };
         }
 
         playerInput.Suicide.performed += _ => {
-            if (playerHUD.GetIsEscapeMenuOpen()) return;
+            if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
             player.CmdDealDamage(9999);
         };
@@ -103,9 +116,9 @@ public class InputManager : NetworkBehaviour
         if (!hasAuthority) return;
 
         // disable input if escape menu is open
-        if (playerHUD.GetIsEscapeMenuOpen())
+        if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen())
         {
-            OnEscapeMenu();
+            OnBlockingUIOpen();
             return;
         }
 
@@ -114,7 +127,7 @@ public class InputManager : NetworkBehaviour
         weaponSway.ReceiveInput(mouseInput * mouseSensitivity * weaponSwaySensitivityMultiplier);
     }
 
-    private void OnEscapeMenu()
+    private void OnBlockingUIOpen()
     {
         player.ReceiveMovementInput(Vector2.zero);
         player.ReceiveMouseInput(Vector2.zero);
@@ -132,7 +145,7 @@ public class InputManager : NetworkBehaviour
 
     private void toggleCursorLock(bool locked)
     {
-        if (playerHUD.GetIsEscapeMenuOpen()) return;
+        if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
     }

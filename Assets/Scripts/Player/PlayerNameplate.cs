@@ -21,9 +21,13 @@ public class PlayerNameplate : MonoBehaviour
     {
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
 
-        //usernameText.text = player.username;
-        usernameText.text = transform.name;
+        usernameText.text = player.GetNetworkPlayer().GetDisplayName();
     }
+
+    //private void UpdateUsername(string username)
+    //{
+    //    usernameText.text = username;
+    //}
 
     private void OnDestroy()
     {

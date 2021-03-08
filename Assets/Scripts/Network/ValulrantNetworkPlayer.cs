@@ -1,6 +1,7 @@
 using Mirror;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,23 +26,57 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     private PlayerHealth playerHealth = null;
 
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
-    [SyncVar(hook = nameof(HandlePlayerColorUpdated))] [SerializeField] private Color playerColor = Color.red;
+    [SyncVar] [SerializeField] private Color playerColor = Color.red;
 
     [SyncVar(hook = nameof(ClientHandleKillCountUpdated))] private int kills;
     [SyncVar(hook = nameof(ClientHandleDeathCountUpdated))] private int deaths;
+    [SyncVar(hook = nameof(ClientHandleMoneyUpdated))] private int money;
 
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))] private bool isPartyOwner = false;
+
+    [SerializeField] private List<ScoreboardScoreEntry> scoreboardScoreEntries = null;
 
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
     public static event Action ClientOnInfoUpdated;
 
+    public static event Action<int> ClientOnMoneyUpdated;
+
     private Color teamColor = new Color();
     [SyncVar] private GameObject playerInstance = null;
 
+    public int GetKills() => kills;
+    public int GetDeaths() => deaths;
     public string GetDisplayName() => displayName;
     public bool GetIsPartyOwner() => isPartyOwner;
+    public Color GetPlayerColor() => playerColor;
 
     #region Server
+
+    [Server]
+    public void UpdateKillCount(int killsToAdd)
+    {
+        kills += killsToAdd;
+    }
+
+    [Server]
+    private void AddMoney(int moneyToAdd)
+    {
+        money += moneyToAdd;
+
+        Debug.Log($"Player {displayName} now has {money} money!");
+
+        playerInstance.GetComponent<PlayerHUD>().UpdateMoneyText(money);   
+    }
+
+    [Server]
+    public void SubtractMoney(int moneyToSubtract)
+    {
+        money -= moneyToSubtract;
+
+        Debug.Log($"Player {displayName} now has {money} money!");
+
+        playerInstance.GetComponent<PlayerHUD>().UpdateMoneyText(money);
+    }
 
     [Server]
     public void SetPlayerInstance(GameObject player)
@@ -50,8 +85,9 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
         playerInstance.transform.name = displayName;
 
-        playerInstance.GetComponent<Player>().SetNetworkPlayer(this);
-        
+        Player playerPlayerScript = playerInstance.GetComponent<Player>();
+        playerPlayerScript.SetNetworkPlayer(this);
+
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
         playerHealth.ServerOnPlayerKilled += ServerHandlePlayerKilled;
@@ -71,9 +107,14 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     }
 
     [Server]
-    private void ServerHandlePlayerKilled(string killedName, string killerName)
+    private void ServerHandlePlayerKilled(ValulrantNetworkPlayer killedPlayer, ValulrantNetworkPlayer killerPlayer)
     {
-        RpcPlayerKilled(killedName, killerName);
+        if (killerPlayer == killedPlayer) return;
+
+        killerPlayer.UpdateKillCount(1);
+        killerPlayer.AddMoney(500); // replace with money reward
+
+        RpcPlayerKilled(killedPlayer.displayName, killerPlayer.displayName);
     }
 
     [Server]
@@ -145,18 +186,14 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     [Command]
     private void CmdSetDisplayName(string newName)
     {
-        // Do validation
-        //if (newName.Length < 2 || newName.Length > 20) return;
-
-        // All players will debug log the new name
-        //RpcLogNewName(newName);
-
         SetDisplayName(newName);
     }
 
     #endregion
 
     #region Client
+
+    public int GetMoney() => money;
 
     [ClientRpc]
     private void RpcPlayerKilled(string killedName, string killerName)
@@ -187,9 +224,9 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         // update HUD
     }
 
-    private void HandlePlayerColorUpdated(Color oldColor, Color newColor)
-    {
-        playerColorRenderer.material.SetColor("_Color", newColor);
+    private void ClientHandleMoneyUpdated(int oldMoney, int newMoney)
+    { 
+        // update HUD
     }
 
     [ClientRpc]

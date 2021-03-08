@@ -8,13 +8,14 @@ using System.Collections.Generic;
 public class Player : NetworkBehaviour
 {
     [Tooltip("Reference to the main camera used for the player")]
-    [SerializeField] private CinemachineVirtualCamera playerCamera;
-    [SerializeField] private Transform cameraRecoilParent;
+    [SerializeField] private Camera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
     [SerializeField] private AudioSource footstepAudioSource;
     [SerializeField] private AudioSource jumpAudioSource;
     [SerializeField] private AudioSource landAudioSource;
     [SerializeField] private AudioSource fallDamageAudioSource;
+
+    [SerializeField] private Renderer bodyRenderer;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
@@ -360,6 +361,11 @@ public class Player : NetworkBehaviour
 
             characterVelocity = Vector3.ProjectOnPlane(characterVelocity, hit.normal);
         }
+    }
+
+    public void UpdateRendererColor(Color color)
+    {
+        bodyRenderer.material.SetColor("_BaseColor", color);
     }
 
     #region Networking Audio Sources

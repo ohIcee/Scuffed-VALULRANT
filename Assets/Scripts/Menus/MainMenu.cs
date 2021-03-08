@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
 public class MainMenu : MonoBehaviour
 {
@@ -15,10 +16,28 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Scrollbar mouseSensScrollbar = null;
     [SerializeField] private Button joinButton = null;
 
+    [SerializeField] private RenderPipelineAsset[] qualityLevels;
+    [SerializeField] private TMP_Dropdown graphicsSettingDropdown = null;
+
     private void OnEnable()
     {
         ValulrantNetworkManager.ClientOnConnected += HandleClientConnected;
         ValulrantNetworkManager.ClientOnDisconnected += HandleClientDisconnected;
+
+        if (PlayerPrefs.HasKey("QUALITY_LEVEL"))
+        {
+            int level = PlayerPrefs.GetInt("QUALITY_LEVEL");
+
+            Debug.Log($"loaded quality level {level}");
+            
+            graphicsSettingDropdown.value = level;
+            ChangeGraphicsQuality(level);
+        }
+        else
+        {
+            graphicsSettingDropdown.value = QualitySettings.GetQualityLevel();
+        }
+
 
         if (PlayerPrefs.HasKey("MOUSE_SENS"))
         {
@@ -40,6 +59,18 @@ public class MainMenu : MonoBehaviour
         SetUsername();
 
         NetworkManager.singleton.StartHost();
+    }
+
+    #region SettingsPage
+
+    public void ChangeGraphicsQuality(int value)
+    {
+        QualitySettings.SetQualityLevel(value);
+        QualitySettings.renderPipeline = qualityLevels[value];
+
+        Debug.Log($"saved quality level {value}");
+
+        PlayerPrefs.SetInt("QUALITY_LEVEL", value);
     }
 
     public void OnMouseSensitivityChangedInput()
@@ -67,6 +98,8 @@ public class MainMenu : MonoBehaviour
         PlayerPrefs.SetFloat("MOUSE_SENS", newSens);
     }
 
+    #endregion
+
     private void SetUsername()
     {
         PlayerPrefs.SetString("USERNAME", usernameInput.text.Length > 0 ? usernameInput.text : "XDDD POG");
@@ -74,7 +107,7 @@ public class MainMenu : MonoBehaviour
 
     public void Join()
     {
-        string address = addressInput.text;
+        string address = addressInput.text.Trim();
 
         if (address.Length <= 0) address = "localhost";
 

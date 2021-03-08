@@ -6,13 +6,14 @@ using Cinemachine;
 
 public class PlayerSetup : NetworkBehaviour
 {
+    public Player player;
     public List<MonoBehaviour> ScriptsToEnable = new List<MonoBehaviour>();
     public CharacterController characterController = null;
-    public CinemachineVirtualCamera playerVirtualCamera = null;
     public Camera playerCamera = null;
     public Camera playerWeaponCamera = null;
     public AudioListener audioListener = null;
-    public GameObject playerHUD = null;
+    public GameObject playerHUDCanvas = null;
+    public PlayerHUD playerHUD = null;
     public PlayerHealth playerHealth = null;
     public MeshRenderer bodyMeshRenderer = null;
     public GameObject playerNamePlate;
@@ -31,9 +32,19 @@ public class PlayerSetup : NetworkBehaviour
         playerHealth.ResetHealth();
     }
 
+    [Command]
+    private void CmdSetPlayerColor() => RpcSetPlayerColor();
+
     #endregion
 
     #region Client
+
+    [ClientRpc]
+    private void RpcSetPlayerColor()
+    {
+        player.UpdateRendererColor(player.GetNetworkPlayer().GetPlayerColor());
+        Debug.Log($"Setting player color {player.GetNetworkPlayer().GetPlayerColor()}");
+    }
 
     public override void OnStartAuthority()
     {
@@ -44,6 +55,13 @@ public class PlayerSetup : NetworkBehaviour
     {
         if (!hasAuthority) return;
 
+        //- Get players and update scoreboard
+        //List<ValulrantNetworkPlayer> players = ((ValulrantNetworkManager)NetworkManager.singleton).Players;
+        //foreach (ValulrantNetworkPlayer player in players)
+        //{
+        //    playerHUD.Ge
+        //}
+
         CmdResetHealth();
         IsDisabled = false;
 
@@ -51,13 +69,15 @@ public class PlayerSetup : NetworkBehaviour
 
         characterController.enabled = true;
         bodyMeshRenderer.enabled = true;
-        playerVirtualCamera.enabled = true;
-        playerCamera.gameObject.SetActive(true);
         playerCamera.enabled = true;
-        playerHUD.SetActive(true);
+        playerHUDCanvas.SetActive(true);
         playerWeaponCamera.gameObject.SetActive(true);
         playerWeaponCamera.enabled = true;
         audioListener.enabled = true;
+
+        playerHUD.UpdateMoneyText( GetComponent<Player>().GetNetworkPlayer().GetMoney() );
+
+        CmdSetPlayerColor();
 
         foreach (MonoBehaviour script in ScriptsToEnable)
         {

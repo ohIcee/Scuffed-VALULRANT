@@ -15,7 +15,7 @@ public class PlayerHealth : NetworkBehaviour
 
     public event Action<int, int> ClientOnHealthUpdated;
 
-    public event Action<string, string> ServerOnPlayerKilled;
+    public event Action<ValulrantNetworkPlayer, ValulrantNetworkPlayer> ServerOnPlayerKilled;
 
     //public bool IsDead() => currentHealth <= 0f;
 
@@ -37,11 +37,8 @@ public class PlayerHealth : NetworkBehaviour
 
         if (currentHealth > 0) return;
 
-        string killedName = GetComponent<Player>().GetNetworkPlayer().GetDisplayName();
-        string killerName = killerPlayer.GetDisplayName();
-
         // DIE
-        ServerOnPlayerKilled?.Invoke(killedName, killerName);
+        ServerOnPlayerKilled?.Invoke(GetComponent<Player>().GetNetworkPlayer(), killerPlayer);
         ServerOnDie?.Invoke();
     }
 

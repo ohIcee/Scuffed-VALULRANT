@@ -1,20 +1,32 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class PlayerHUD : MonoBehaviour
 {
+    [Header("Health")]
     [SerializeField] private PlayerHealth playerHealth = null;
     [SerializeField] private Image healthBarImage = null;
     [SerializeField] private TextMeshProUGUI healthText = null;
     
+    [Header("Escape Menu")]
     [SerializeField] private GameObject escapeMenuPanel = null;
 
-    [SerializeField] private PlayerFiring playerShooting = null;
+    [Header("Shooting & Ammo")]
+    [SerializeField] private PlayerFiring playerFiring = null;
     [SerializeField] private TextMeshProUGUI ammoText = null;
 
-    private bool isEscapeMenuOpen = false;
-    public bool GetIsEscapeMenuOpen() => isEscapeMenuOpen;
+    [Header("Money & Buy Menu")]
+    [SerializeField] private PlayerEquipment playerEquipment = null;
+    [SerializeField] private TextMeshProUGUI moneyText = null;
+    [SerializeField] private GameObject buyMenuPanel = null;
+
+    [Header("Scoreboard")]
+    [SerializeField] private GameObject scoreBoardPanel = null;
+
+    public bool GetIsEscapeMenuOpen() => escapeMenuPanel.activeSelf;
+    public bool GetIsBuyMenuOpen() => buyMenuPanel.activeSelf;
 
     private Player player;
     private WeaponManager weaponManager;
@@ -28,13 +40,17 @@ public class PlayerHUD : MonoBehaviour
     private void Awake()
     {
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
-        playerShooting.ClientOnAmmoUpdated += HandleAmmoUpdated;
+        playerFiring.ClientOnAmmoUpdated += HandleAmmoUpdated;
+
+        playerEquipment.ClientOnHelmetDurabilityUpdated += HandleHelmetDurabilityUpdated;
+        playerEquipment.ClientOnKevlarDurabilityUpdated += HandleKevlarDurabilityUpdated;
+
     }
 
     private void OnDestroy()
     {
         playerHealth.ClientOnHealthUpdated -= HandleHealthUpdated;
-        playerShooting.ClientOnAmmoUpdated -= HandleAmmoUpdated;
+        playerFiring.ClientOnAmmoUpdated -= HandleAmmoUpdated;
     }
 
     public void ToggleEscapeMenu()
@@ -43,7 +59,6 @@ public class PlayerHUD : MonoBehaviour
 
         Cursor.lockState = escapeMenuPanel.activeSelf ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = escapeMenuPanel.activeSelf;
-        isEscapeMenuOpen = escapeMenuPanel.activeSelf;
     }
 
     public void OnDisconnectButton()
@@ -53,10 +68,31 @@ public class PlayerHUD : MonoBehaviour
         networkPlayer.DisconnectFromServer();
     }
 
-    public void SetPlayer(Player _player)
+    public void ToggleBuyMenu()
     {
-        player = _player;
-        weaponManager = player.GetComponent<WeaponManager>();
+        buyMenuPanel.SetActive(!buyMenuPanel.activeSelf);
+
+        Cursor.lockState = buyMenuPanel.activeSelf ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = buyMenuPanel.activeSelf;
+    }
+
+    public void BuyItem(string itemToBuy)
+    {
+        switch (itemToBuy)
+        {
+            case "HELMET":
+                playerEquipment.TryBuyHelmet();
+                break;
+            case "KEVLAR":
+                playerEquipment.TryBuyKevlar();
+                break;
+            case "HELMETKEVLAR":
+                playerEquipment.TryBuyKevlarAndHelmet();
+                break;
+            default:
+                Debug.LogWarning($"Incorrect item to purchase: {itemToBuy}");
+                break;
+        }
     }
 
     public void HandleAmmoUpdated(int currentAmmo, int maxAmmo)
@@ -64,8 +100,23 @@ public class PlayerHUD : MonoBehaviour
         ammoText.text = $"{currentAmmo} / {maxAmmo}";
     }
 
+    public void UpdateMoneyText(int money)
+    {
+        moneyText.text = $"${money}";
+    }
+
     public void HandleHealthUpdated(int currentHealth, int maxHealth) {
         healthText.text = currentHealth.ToString();
         healthBarImage.fillAmount = (float)currentHealth / maxHealth;
+    }
+
+    private void HandleHelmetDurabilityUpdated(int durability)
+    { 
+    
+    }
+
+    private void HandleKevlarDurabilityUpdated(int durability)
+    { 
+        
     }
 }

@@ -9,7 +9,6 @@ public class WeaponRecoil : MonoBehaviour
     private float lastFireTime;
 
     [SerializeField] private PlayerFiring playerFiring;
-    [SerializeField] private Transform playerCameraRecoilWrapper;
     [SerializeField] private Transform playerCamera;
 
     private float currentVerticalRecoil = 0f;

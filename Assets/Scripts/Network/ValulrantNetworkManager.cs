@@ -77,6 +77,12 @@ public class ValulrantNetworkManager : NetworkManager
                 UnityEngine.Random.Range(0f, 1f)
             ));
 
+        player.SetPlayerColor(new Color(
+                UnityEngine.Random.Range(0f, 1f),
+                UnityEngine.Random.Range(0f, 1f),
+                UnityEngine.Random.Range(0f, 1f)
+            ));
+
         // If it's the first player, set him as party owner
         player.SetPartyOwner(Players.Count == 1);
 

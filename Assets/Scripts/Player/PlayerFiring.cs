@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Mirror;
 using System;
+using System.Linq;
 
 public class PlayerFiring : NetworkBehaviour
 {
@@ -121,34 +122,39 @@ public class PlayerFiring : NetworkBehaviour
         currentWeapon.bullets--;
         ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
 
-        //Debug.Log("Remaining bullets: " + currentWeapon.bullets);
-
         weaponRecoil.Fire();
-        //firingAudioSource.PlayOneShot(currentWeapon.GetRandomShotSound());
 
-        if (cameraShake && cameraShake.isActiveAndEnabled)
-            cameraShake.ShakeCamera(currentWeapon.fireCameraShakeIntensity, currentWeapon.fireCameraShakeTime);
+        //if (cameraShake && cameraShake.isActiveAndEnabled)
+        //    cameraShake.ShakeCamera(currentWeapon.fireCameraShakeIntensity, currentWeapon.fireCameraShakeTime);
 
         //We are firing, call the OnFire method on the server
         CmdOnFire(this);
 
-        RaycastHit[] hits = Physics.RaycastAll(playerCamera.transform.position, playerCamera.transform.forward, currentWeapon.range, layerMask);
+        RaycastHit[] hits = Physics.RaycastAll(playerCamera.transform.position, playerCamera.transform.forward, currentWeapon.range, layerMask).OrderBy(h => h.distance).ToArray();
         if (hits != null && hits.Length > 0)
         {
-            foreach (RaycastHit hit in hits)
+            for (int i = 0; i < hits.Length; i++)
             {
+                RaycastHit hit = hits[i];
+
                 if (hit.transform.TryGetComponent<PlayerLimb>(out PlayerLimb hitLimb))
                 {
+                    // If we hit our own limb, skip to the next hit
+                    if (hitLimb.GetOwningPlayer() == player) continue;
+
+                    CmdOnHit(hit.point, hit.normal);
                     CmdPlayerShot(hitLimb.GetOwningPlayer().GetNetworkIdentity(), (int)(currentWeapon.damage * hitLimb.GetDamageMultiplier()));
                     break;
                 }
+                else
+                {
+                    // If it's not a player, play the hit FX and
+                    // stop checking (no wallbangs)
+                    CmdOnHit(hit.point, hit.normal);
+                    break;
+                }
             }
-
-            //// We hit something, call the OnHit method on the server
-            CmdOnHit(hits[0].point, hits[0].normal);
         }
-
-        
 
         if (currentWeapon.bullets <= 0)
         {
