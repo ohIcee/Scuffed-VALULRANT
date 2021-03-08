@@ -132,18 +132,6 @@ public class PlayerFiring : NetworkBehaviour
         //We are firing, call the OnFire method on the server
         CmdOnFire(this);
 
-        //RaycastHit _hit;
-        //if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out _hit, currentWeapon.range, layerMask))
-        //{
-        //    if (_hit.transform.TryGetComponent<NetworkIdentity>(out NetworkIdentity networkIdentity))
-        //    {
-        //        CmdPlayerShot(networkIdentity, currentWeapon.damage);
-        //    }
-
-        //    //// We hit something, call the OnHit method on the server
-        //    CmdOnHit(_hit.point, _hit.normal);
-        //}
-
         RaycastHit[] hits = Physics.RaycastAll(playerCamera.transform.position, playerCamera.transform.forward, currentWeapon.range, layerMask);
         if (hits != null && hits.Length > 0)
         {
@@ -152,6 +140,7 @@ public class PlayerFiring : NetworkBehaviour
                 if (hit.transform.TryGetComponent<PlayerLimb>(out PlayerLimb hitLimb))
                 {
                     CmdPlayerShot(hitLimb.GetOwningPlayer().GetNetworkIdentity(), (int)(currentWeapon.damage * hitLimb.GetDamageMultiplier()));
+                    break;
                 }
             }
 
