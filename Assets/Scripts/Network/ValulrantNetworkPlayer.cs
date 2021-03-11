@@ -106,6 +106,9 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
         killerPlayer.UpdateKillCount(1);
         killerPlayer.AddMoney(500); // replace with money reward
+
+        ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
+        networkManager.GetGameMode().OnKilledPlayer(killerPlayer);
     }
 
     [Server]
@@ -114,7 +117,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         RpcDoPlayerDeathEffect(playerInstance.transform.position);
 
         deaths++;
-        //Debug.Log($"Player {displayName} now has {deaths} deaths!");
 
         // DESTROY PLAYER
         playerHealth.ServerOnDie -= ServerHandleDie;
@@ -123,16 +125,18 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         NetworkServer.Destroy(playerInstance);
 
         ValulrantNetworkManager networkManager = (ValulrantNetworkManager)NetworkManager.singleton;
-        float respawnTime = networkManager.GetRespawnTime();
 
-        if (respawnTime < 0f) return;
+        networkManager.GetGameMode().OnDeath(this); 
+    }
 
-        StartCoroutine(RespawnPlayerTimer(networkManager));
+    [Server]
+    public void StartRespawning(ValulrantNetworkManager manager) {
+        StartCoroutine(RespawnPlayerTimer(manager));
     }
 
     IEnumerator RespawnPlayerTimer(ValulrantNetworkManager networkManager)
     {
-        yield return new WaitForSeconds(networkManager.GetRespawnTime());
+        yield return new WaitForSeconds(networkManager.GetGameMode().RespawnTime);
 
         GameObject playerInstance = Instantiate(
             networkManager.GetClientPlayerPrefab(),

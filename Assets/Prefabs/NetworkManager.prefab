@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 903864767627494901}
   - component: {fileID: 903864767627494907}
   - component: {fileID: 903864767627494906}
+  - component: {fileID: 4949231400439773131}
+  - component: {fileID: 440978216}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -48,7 +50,7 @@ MonoBehaviour:
   runInBackground: 1
   autoStartServerBuild: 1
   showDebugMessages: 0
-  serverTickRate: 60
+  serverTickRate: 128
   serverBatching: 0
   serverBatchInterval: 0
   offlineScene: Assets/Scenes/Lobby.unity
@@ -64,10 +66,9 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
-  gameModeConfig: {fileID: 11400000, guid: ac0631882333fde4088b0266bd22f466, type: 2}
-  respawnTime: 2
+  selectedGameMode: {fileID: 4949231400439773131}
   minPlayerCountToStart: 1
-  clientPlayerPrefab: {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
+  ClientPlayerPrefab: {fileID: 1773623360729482, guid: 2cccd1dbedb69534a9cdadc480b95092, type: 3}
 --- !u!114 &903864767627494906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,3 +91,39 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
+--- !u!114 &4949231400439773131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903864767627494900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dd35ea462f28ea4b81fcbf00b082699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ALLSpawnLocationsParentName: SPAWNS
+  hasRespawning: 1
+  respawnTime: 2
+  gamemodeSpawnLocationsParentName: SPAWNS_FFA
+  healthOnKill: 50
+  networkManager: {fileID: 903864767627494907}
+--- !u!114 &440978216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903864767627494900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a58167ae5f17a7345b23e6a82b9de632, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ALLSpawnLocationsParentName: SPAWNS
+  hasRespawning: 0
+  respawnTime: 0
+  gamemodeSpawnLocationsParentName: SPAWNS_BOMB
+  healthOnKill: 0
+  networkManager: {fileID: 903864767627494907}

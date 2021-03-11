@@ -9,15 +9,16 @@ public class ValulrantNetworkManager : NetworkManager
 {
 
     [Header("Game settings")]
-    [SerializeField] private GameMode gameModeConfig;
+    [SerializeField] private GameMode selectedGameMode;
     [SerializeField] private int minPlayerCountToStart = 2;
-    public int GetMinPlayerCountToStart() => minPlayerCountToStart;
 
-    public float GetRespawnTime() => gameModeConfig.RespawnTime;
+    public GameMode GetGameMode() => selectedGameMode;
+
+    public int GetMinPlayerCountToStart() => minPlayerCountToStart;
     [Space()]
 
-    [SerializeField] private GameObject clientPlayerPrefab;
-    public GameObject GetClientPlayerPrefab() => clientPlayerPrefab;
+    public GameObject ClientPlayerPrefab;
+    public GameObject GetClientPlayerPrefab() => ClientPlayerPrefab;
 
     public static event Action ClientOnConnected;
     public static event Action ClientOnDisconnected;
@@ -27,6 +28,8 @@ public class ValulrantNetworkManager : NetworkManager
     public List<ValulrantNetworkPlayer> Players { get; } = new List<ValulrantNetworkPlayer>();
 
     #region Server
+
+    public void SelectGamemode(GameMode gameMode) => selectedGameMode = gameMode;
 
     public override void OnServerConnect(NetworkConnection conn)
     {
@@ -93,14 +96,7 @@ public class ValulrantNetworkManager : NetworkManager
     {
         if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
         {
-            foreach (ValulrantNetworkPlayer player in Players)
-            {
-                GameObject playerInstance
-                    = Instantiate(clientPlayerPrefab, GetStartPosition().position, Quaternion.identity);
-
-                NetworkServer.Spawn(playerInstance, player.connectionToClient);
-                player.SetPlayerInstance(playerInstance);
-            }
+            selectedGameMode.OnBeginGame();
         }
     }
 

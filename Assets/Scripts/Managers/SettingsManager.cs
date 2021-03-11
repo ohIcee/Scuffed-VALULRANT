@@ -15,8 +15,17 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private RenderPipelineAsset[] qualityLevels;
     public event Action<int> ClientOnGraphicsQualityLevelChanged;
 
+    public static SettingsManager Instance;
+
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
         DontDestroyOnLoad(gameObject);
 
         mouseSensitivity = PlayerPrefs.GetFloat(MOUSE_SENSITIVITY_PREFS_KEY);

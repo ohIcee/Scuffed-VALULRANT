@@ -9,12 +9,21 @@ public enum GameModes
 }
 
 [System.Serializable]
-[CreateAssetMenu(menuName = "GameModes/Create GameMode", order = 0)]
-public class GameMode : ScriptableObject
+public abstract class GameMode : MonoBehaviour
 {
+    public string ALLSpawnLocationsParentName = "SPAWNS";
 
-    public GameModes gameMode;
+    public abstract GameModes SelectedGameMode { get; }
+    public abstract bool HasRespawning { get; }
+    public abstract float RespawnTime { get; }
+    public abstract string GamemodeSpawnLocationsParentName { get; }
 
-    public float RespawnTime;
+    public abstract void OnBeginGame();
+
+    public abstract void OnKilledPlayer(ValulrantNetworkPlayer player);
+
+    public abstract void OnDeath(ValulrantNetworkPlayer player);
+
+    public abstract void OnAllPlayersDead();
 
 }

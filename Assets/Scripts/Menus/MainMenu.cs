@@ -34,6 +34,8 @@ public class MainMenu : MonoBehaviour
 
         HandleSensitivityUpdated(settingsManager.GetMouseSensitivity());
         HandleGraphicsQualityUpdated(settingsManager.GetGraphicsQualityLevel());
+
+        usernameInput.text = PlayerPrefs.GetString("USERNAME");
     }
 
     private void OnDisable()
@@ -43,6 +45,27 @@ public class MainMenu : MonoBehaviour
 
         settingsManager.ClientOnSensitivityChanged -= HandleSensitivityUpdated;
         settingsManager.ClientOnGraphicsQualityLevelChanged -= HandleGraphicsQualityUpdated;
+    }
+
+    // Receive a string for the gamemode and find the component on the
+    // NetworkManager, because stopping hosting for some reason reloads
+    // the scene and thus unbinds our UI actions...
+    public void SelectGamemode(string mode)
+    {
+        ValulrantNetworkManager manager = (ValulrantNetworkManager)ValulrantNetworkManager.singleton;
+
+        switch (mode)
+        {
+            case "FFA":
+                manager.SelectGamemode(FindObjectOfType<FFA>());
+                break;
+            case "BOMB":
+                manager.SelectGamemode(FindObjectOfType<Bomb>());
+                break;
+            default:
+                Debug.LogWarning($"Invalid gamemode selected! {mode}");
+                break;
+        }
     }
 
     public void HostLobby()
@@ -64,8 +87,6 @@ public class MainMenu : MonoBehaviour
 
     private void HandleGraphicsQualityUpdated(int level)
     {
-        Debug.Log("Graphics Quality Updated!");
-
         graphicsSettingDropdown.value = level;
     }
 
@@ -103,6 +124,7 @@ public class MainMenu : MonoBehaviour
     private void SetUsername()
     {
         PlayerPrefs.SetString("USERNAME", usernameInput.text.Length > 0 ? usernameInput.text : "XDDD POG");
+        PlayerPrefs.Save();
     }
 
     public void Join()
@@ -140,5 +162,7 @@ public class MainMenu : MonoBehaviour
         landingPagePanel.SetActive(true);
         joiningPagePanel.SetActive(false);
     }
+
+    public void ExitGame() => Application.Quit();
 
 }

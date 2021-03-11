@@ -63,8 +63,6 @@ public class WeaponManager : NetworkBehaviour
 
 	private IEnumerator Reload_Coroutine()
 	{
-		Debug.Log("Reloading...");
-
 		isReloading = true;
 
 		CmdOnReload();

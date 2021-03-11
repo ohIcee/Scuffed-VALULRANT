@@ -21,6 +21,12 @@ public class PlayerHealth : NetworkBehaviour
 
     #region Server
 
+    [Server]
+    public void AddHealth(int amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, 100);
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();

@@ -21,7 +21,6 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
     private float defaultYPos;
     private float currBobAmount = 0f;
 
-    private bool previouslyGrounded = false;
     private float currentLandResetTime = 0f;
 
     private void Start()

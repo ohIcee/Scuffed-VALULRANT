@@ -453,6 +453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indicatorPrefab: {fileID: 281903389161483592, guid: b138f4078c7265c4aa6686fc9d406652, type: 3}
   holder: {fileID: 3805987689769358833}
+  camera: {fileID: 0}
   player: {fileID: 4207293392497186}
 --- !u!1 &227020861636999911
 GameObject:
@@ -1895,7 +1896,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 75
   orthographic: 0
