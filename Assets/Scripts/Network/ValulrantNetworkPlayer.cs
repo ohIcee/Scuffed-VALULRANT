@@ -50,6 +50,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public string GetDisplayName() => displayName;
     public bool GetIsPartyOwner() => isPartyOwner;
     public Color GetPlayerColor() => playerColor;
+    public GameObject GetPlayerInstance() => playerInstance;
 
     #region Server
 

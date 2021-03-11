@@ -15,7 +15,7 @@ public class PlayerFiring : NetworkBehaviour
 
     [SerializeField] private AudioSource firingAudioSource;
 
-    [SerializeField] private AudioSource hitPlayerAudioSource; 
+    [SerializeField] private AudioSource hitPlayerAudioSource;
     [SerializeField] private AudioSource killPlayerAudioSource;
     [SerializeField] private List<AudioClip> playerHitSFXs;
     [SerializeField] private List<AudioClip> playerKillSFXs;
@@ -67,7 +67,7 @@ public class PlayerFiring : NetworkBehaviour
         RpcDoHitEffect(_pos, _normal);
     }
 
-    [Command]
+    [Command]   //// _playerIdentity -> hit player identity
     private void CmdPlayerShot(NetworkIdentity _playerIdentity, int _damage)
     {
         RpcPlayerShot();
@@ -83,6 +83,8 @@ public class PlayerFiring : NetworkBehaviour
             currentArmor -= (int)(_damage * playerEquipment.GetDamageDecreaseMultiplier());
             int extraDamage = currentArmor < 0 ? Mathf.Abs(currentArmor) : 0;
 
+            TargetCreateDamageIndicator(_playerIdentity.connectionToClient, transform);
+
             playerHealth.DealDamage(_damage + extraDamage, player.GetNetworkPlayer());
         }
     }
@@ -90,6 +92,13 @@ public class PlayerFiring : NetworkBehaviour
     #endregion
 
     #region Client
+
+    [TargetRpc]
+    void TargetCreateDamageIndicator(NetworkConnection target, Transform shooterPlayerTransform)
+    {
+        ValulrantNetworkPlayer networkPlayer = target.identity.GetComponent<ValulrantNetworkPlayer>();
+        DamageIndicatorSystem.CreateIndicator(shooterPlayerTransform);
+    }
 
     //Is called on all clients when we need to to
     // a fire effect
