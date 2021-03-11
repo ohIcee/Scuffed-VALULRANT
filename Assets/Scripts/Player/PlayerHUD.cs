@@ -40,9 +40,10 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private GameObject playerKilledPopupPrefab = null;
     
     [SerializeField] private Player player;
+    private SettingsManager settingsManager;
 
 #region EscapeMenu
-
+ 
     public bool GetIsEscapeMenuOpen() => escapeMenuPanel.activeSelf;
     public bool GetIsBuyMenuOpen() => buyMenuPanel.activeSelf;
     public bool GetIsSettingsMenuOpen() => settingsPanel.activeSelf;
@@ -58,9 +59,10 @@ public class PlayerHUD : MonoBehaviour
         bool newState = !settingsPanel.activeSelf;
         settingsPanel.SetActive(newState);
 
-        if (newState) PlayerPrefs.Save();
+        if (newState) settingsManager.SavePlayerPrefs();
     }
 
+    // Called from UI
     public void OnMouseSensitivityChangedInput()
     {
         if (mouseSensitivityInput.text.EndsWith(".")) return;
@@ -74,43 +76,23 @@ public class PlayerHUD : MonoBehaviour
         Debug.LogWarning($"Incorrect mouse sensitivity input: {mouseSensitivityInput.text}");
     }
 
+    // Called from UI
     public void OnMouseSensitivityChangedScroll() => OnMouseSensitivityChanged(mouseSensitivityScrollBar.value);
-    
-    private void SetInitialMouseSensitivityValue() 
-    {
-        float sensitivity = PlayerPrefs.GetFloat("MOUSE_SENS");
-
-        mouseSensitivityInput.text = sensitivity.ToString();
-        mouseSensitivityScrollBar.value = sensitivity;
-    }
-
-    public void SetInitialGraphicsQualityValue()
-    {
-        graphicsSettingDropdown.value = PlayerPrefs.GetInt("QUALITY_LEVEL");
-    }
 
     private void OnMouseSensitivityChanged(float newSens)
     {
         newSens = Mathf.Clamp(newSens, 0, 1);
 
-        mouseSensitivityInput.text = newSens.ToString();
-        mouseSensitivityScrollBar.value = newSens;
+        settingsManager.ChangeSensitivity(newSens);
+        settingsManager.SaveCurrentSensitivity();
 
         player.ChangeSensitivity( newSens );
-
-        Debug.Log($"CHANGED SENSITIVITY TO {newSens}");
-
-        PlayerPrefs.SetFloat("MOUSE_SENS", newSens);
     }
 
+    // Called from UI
     public void ChangeGraphicsQuality(int value)
     {
-        QualitySettings.SetQualityLevel(value);
-        QualitySettings.renderPipeline = qualityLevels[value];
-
-        Debug.Log($"saved quality level {value}");
-
-        PlayerPrefs.SetInt("QUALITY_LEVEL", value);
+        settingsManager.ChangeGraphicsQuality(value);
     }
 
     public void ToggleBuyMenu(bool active)
@@ -129,21 +111,22 @@ public class PlayerHUD : MonoBehaviour
 
 #endregion
 
-    // NO CHECKMARK IF DELETED - LEAVE IT IN
     private void Start()
     {
-        player.GetNetworkPlayer().ClientOnMoneyUpdated += HandleMoneyUpdated;
-    }
+        settingsManager = FindObjectOfType<SettingsManager>();
 
-    private void Awake()
-    {
+        player.GetNetworkPlayer().ClientOnMoneyUpdated += HandleMoneyUpdated;
+
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
         playerFiring.ClientOnAmmoUpdated += HandleAmmoUpdated;
 
+        settingsManager.ClientOnSensitivityChanged += HandleSensitivityUpdated;
+        settingsManager.ClientOnGraphicsQualityLevelChanged += HandleGraphicsQualityUpdated;
+
         playerEquipment.ClientOnKevlarDurabilityUpdated += HandleKevlarDurabilityUpdated;
 
-        SetInitialMouseSensitivityValue();
-        SetInitialGraphicsQualityValue();
+        HandleSensitivityUpdated(settingsManager.GetMouseSensitivity());
+        HandleGraphicsQualityUpdated(settingsManager.GetGraphicsQualityLevel());
     }
 
     private void OnDestroy()
@@ -155,6 +138,23 @@ public class PlayerHUD : MonoBehaviour
             player.GetNetworkPlayer().ClientOnMoneyUpdated -= HandleMoneyUpdated;
 
         playerEquipment.ClientOnKevlarDurabilityUpdated -= HandleKevlarDurabilityUpdated;
+
+        if (settingsManager != null)
+        {
+            settingsManager.ClientOnSensitivityChanged -= HandleSensitivityUpdated;
+            settingsManager.ClientOnGraphicsQualityLevelChanged -= HandleGraphicsQualityUpdated;
+        }
+    }
+
+    private void HandleSensitivityUpdated(float sens)
+    {
+        mouseSensitivityInput.text = sens.ToString();
+        mouseSensitivityScrollBar.value = sens;
+    }
+
+    private void HandleGraphicsQualityUpdated(int level)
+    {
+        graphicsSettingDropdown.value = level;
     }
 
     public void ToggleEscapeMenu()

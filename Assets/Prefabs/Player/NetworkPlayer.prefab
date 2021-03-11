@@ -170,6 +170,7 @@ MonoBehaviour:
   deathEffect: {fileID: 126342, guid: 61f1d72a1cbb48c4486d8ee7afcf3704, type: 3}
   spawnEffect: {fileID: 136626, guid: d61051166d1c1f14f9e4a3268379948a, type: 3}
   killFeed: {fileID: 2973525127036799687}
+  settingsManager: {fileID: 0}
   displayName: Missing Name
   playerColor: {r: 1, g: 0, b: 0, a: 1}
   scoreboardScoreEntries:

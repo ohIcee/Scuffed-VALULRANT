@@ -28,8 +28,12 @@ public class WeaponSway : MonoBehaviour
     private float inputX;
     private float inputY;
 
+    private SettingsManager settingsManager;
+
     private void Start()
     {
+        settingsManager = FindObjectOfType<SettingsManager>();
+
         initialPosition = transform.localPosition;
         initialRotation = transform.localRotation;
     }
@@ -65,8 +69,8 @@ public class WeaponSway : MonoBehaviour
     }
 
     private void calculateSway() {
-        inputX = -mouseInput.x;
-        inputY = -mouseInput.y;
+        inputX = -mouseInput.x * settingsManager.GetMouseSensitivity();
+        inputY = -mouseInput.y * settingsManager.GetMouseSensitivity();
     }
 
     public void ReceiveInput(Vector2 mouseInput) {

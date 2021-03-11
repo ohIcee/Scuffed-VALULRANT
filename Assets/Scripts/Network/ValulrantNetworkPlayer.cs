@@ -19,11 +19,11 @@ using UnityEngine.SceneManagement;
 
 public class ValulrantNetworkPlayer : NetworkBehaviour
 {
-    [SerializeField] private Renderer playerColorRenderer = null;
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject spawnEffect;
     [SerializeField] private KillFeed killFeed;
     private PlayerHealth playerHealth = null;
+    private SettingsManager settingsManager = null;
 
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))] [SerializeField] private string displayName = "Missing Name";
     [SyncVar] [SerializeField] private Color playerColor = Color.red;
@@ -88,12 +88,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
         playerHealth.ServerOnPlayerKilled += ServerHandlePlayerKilled;
-
-
-        if (PlayerPrefs.HasKey("MOUSE_SENS")) {
-            float sens = PlayerPrefs.GetFloat("MOUSE_SENS");
-            playerInstance.GetComponent<Player>().ChangeSensitivity(sens);
-        }
     }
 
     public override void OnStopServer()
@@ -260,6 +254,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public override void OnStartAuthority()
     {
         CmdSetDisplayName(PlayerPrefs.GetString("USERNAME"));
+        settingsManager = FindObjectOfType<SettingsManager>();
     }
 
     public override void OnStartClient()

@@ -95,14 +95,16 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMinSpeed = 10f;
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
-
-    
     
     [SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
     public NetworkIdentity GetNetworkIdentity() => netIdentity;
 
-    public void SetNetworkPlayer(ValulrantNetworkPlayer player) => networkPlayer = player;
+    public void SetNetworkPlayer(ValulrantNetworkPlayer player)
+    {
+        networkPlayer = player;
+        ChangeSensitivity(FindObjectOfType<SettingsManager>().GetMouseSensitivity() );
+    }
     public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;
 
     public UnityAction<bool> onStanceChanged;

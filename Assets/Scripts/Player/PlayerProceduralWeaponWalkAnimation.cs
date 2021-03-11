@@ -16,7 +16,6 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
     [SerializeField] private float landResetTime = .5f;
  
     [Header("References")]
-    [SerializeField] private CharacterController controller = null;
     [SerializeField] private Player player = null;
  
     private float defaultYPos;
@@ -30,17 +29,14 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
         defaultYPos = transform.localPosition.y;
     }
 
-    public void HasJumped()
-    {
-        Debug.Log($"Setting land reset time to {landResetTime}");
-        currentLandResetTime = landResetTime;        
-    }
+    public void HasJumped() => currentLandResetTime = landResetTime;        
 
     private void Update()
     {
 
         if (!enableBobbing) return;
 
+        // Lift head to jumping Y Offset if we're not grounded
         if (!player.IsGrounded)
         {
             currBobAmount = 0;
@@ -53,6 +49,8 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
             return;
         }
 
+        // If we landed, reset the weapon back to default position before
+        // going forward
         if (currentLandResetTime > 0f && player.IsGrounded)
         {
             transform.localPosition = new Vector3(
@@ -63,8 +61,11 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
 
             currentLandResetTime -= Time.deltaTime;
             return;
-        }
+        } 
 
+        // If the player is moving, move the weapon up and down 
+        // to emulate walking, else
+        // reset the position to default Y position
         if (!player.IsPressingMovementInputs()) {
             currBobAmount = 0;
             transform.localPosition = new Vector3(

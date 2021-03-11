@@ -20,37 +20,29 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private RenderPipelineAsset[] qualityLevels;
     [SerializeField] private TMP_Dropdown graphicsSettingDropdown = null;
 
+    private SettingsManager settingsManager = null;
+
     private void OnEnable()
     {
+        settingsManager = FindObjectOfType<SettingsManager>();
+
         ValulrantNetworkManager.ClientOnConnected += HandleClientConnected;
         ValulrantNetworkManager.ClientOnDisconnected += HandleClientDisconnected;
 
-        if (PlayerPrefs.HasKey("QUALITY_LEVEL"))
-        {
-            int level = PlayerPrefs.GetInt("QUALITY_LEVEL");
+        settingsManager.ClientOnSensitivityChanged += HandleSensitivityUpdated;
+        settingsManager.ClientOnGraphicsQualityLevelChanged += HandleGraphicsQualityUpdated;
 
-            Debug.Log($"loaded quality level {level}");
-            
-            graphicsSettingDropdown.value = level;
-            ChangeGraphicsQuality(level);
-        }
-        else
-        {
-            graphicsSettingDropdown.value = QualitySettings.GetQualityLevel();
-        }
-
-
-        if (PlayerPrefs.HasKey("MOUSE_SENS"))
-        {
-            float sens = PlayerPrefs.GetFloat("MOUSE_SENS");
-            OnMouseSensitivityChanged(sens);
-        }    
+        HandleSensitivityUpdated(settingsManager.GetMouseSensitivity());
+        HandleGraphicsQualityUpdated(settingsManager.GetGraphicsQualityLevel());
     }
 
     private void OnDisable()
     {
         ValulrantNetworkManager.ClientOnConnected -= HandleClientConnected;
         ValulrantNetworkManager.ClientOnDisconnected -= HandleClientDisconnected;
+
+        settingsManager.ClientOnSensitivityChanged -= HandleSensitivityUpdated;
+        settingsManager.ClientOnGraphicsQualityLevelChanged -= HandleGraphicsQualityUpdated;
     }
 
     public void HostLobby()
@@ -64,14 +56,23 @@ public class MainMenu : MonoBehaviour
 
     #region SettingsPage
 
+    private void HandleSensitivityUpdated(float sens)
+    {
+        mouseSensInput.text = sens.ToString();
+        mouseSensScrollbar.value = sens;
+    }
+
+    private void HandleGraphicsQualityUpdated(int level)
+    {
+        Debug.Log("Graphics Quality Updated!");
+
+        graphicsSettingDropdown.value = level;
+    }
+
     public void ChangeGraphicsQuality(int value)
     {
-        QualitySettings.SetQualityLevel(value);
-        QualitySettings.renderPipeline = qualityLevels[value];
-
-        Debug.Log($"saved quality level {value}");
-
-        PlayerPrefs.SetInt("QUALITY_LEVEL", value);
+        settingsManager.ChangeGraphicsQuality(value);
+        settingsManager.SaveCurrentGraphicsQuality();
     }
 
     public void OnMouseSensitivityChangedInput()
@@ -93,10 +94,8 @@ public class MainMenu : MonoBehaviour
     {
         newSens = Mathf.Clamp(newSens, 0, 1);
 
-        mouseSensInput.text = newSens.ToString();
-        mouseSensScrollbar.value = newSens;
-
-        PlayerPrefs.SetFloat("MOUSE_SENS", newSens);
+        settingsManager.ChangeSensitivity(newSens);
+        settingsManager.SaveCurrentSensitivity();
     }
 
     #endregion
@@ -124,7 +123,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnSettingsClose()
     {
-        PlayerPrefs.Save();
+        settingsManager.SavePlayerPrefs();
     }
 
     private void HandleClientConnected()
