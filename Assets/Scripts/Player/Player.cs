@@ -4,9 +4,11 @@ using UnityEngine.Events;
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 public class Player : NetworkBehaviour
 {
+    [Header("References")]
     [Tooltip("Reference to the main camera used for the player")]
     [SerializeField] private Camera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
@@ -14,8 +16,11 @@ public class Player : NetworkBehaviour
     [SerializeField] private AudioSource jumpAudioSource;
     [SerializeField] private AudioSource landAudioSource;
     [SerializeField] private AudioSource fallDamageAudioSource;
-
     [SerializeField] private Renderer bodyRenderer;
+    [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private PlayerFiring playerFiring;
+    [SerializeField] private CharacterController m_Controller;
+    [SerializeField] private PlayerProceduralWeaponWalkAnimation playerProceduralWeaponWalkAnimation;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
@@ -91,8 +96,8 @@ public class Player : NetworkBehaviour
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
 
-    [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField] private PlayerFiring playerFiring;
+    
+    
     [SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
     public NetworkIdentity GetNetworkIdentity() => netIdentity;
@@ -127,7 +132,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [SerializeField] private CharacterController m_Controller;
     Vector3 m_GroundNormal;
     Vector3 m_CharacterVelocity;
     Vector3 m_LatestImpactSpeed;
@@ -284,6 +288,7 @@ public class Player : NetworkBehaviour
                 if (isGrounded && isPressingJump)
                 {
                     isPressingJump = false;
+                    playerProceduralWeaponWalkAnimation.HasJumped();
 
                     // force the crouch state to false
                     if (SetCrouchingState(false, false))
@@ -525,10 +530,9 @@ public class Player : NetworkBehaviour
     public void OnCrouchPressed() => SetCrouchingState(true, false);
     public void OnCrouchReleased() => SetCrouchingState(false, false);
     public void ReceiveMovementInput(Vector2 movementInput) => this.movementInput = movementInput;
-    public void ReceiveMouseInput(Vector2 mouseInput)
-    {
-        this.mouseInput = mouseInput;
-    }
+    public void ReceiveMouseInput(Vector2 mouseInput) => this.mouseInput = mouseInput;
+
+    public bool IsPressingMovementInputs() => movementInput != Vector2.zero;
 
     #endregion
 

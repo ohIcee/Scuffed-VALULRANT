@@ -18,7 +18,7 @@ MonoBehaviour:
   range: 100
   fireRate: 8
   maxBullets: 21
-  bullets: 21
+  bullets: 11
   reloadTime: 2
   explosionRange: 1
   graphics: {fileID: 1935268962224560791, guid: ff3a7d3fe87437240bb5dc7cc0f7bac1, type: 3}
