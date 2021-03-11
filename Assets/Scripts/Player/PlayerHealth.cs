@@ -39,6 +39,7 @@ public class PlayerHealth : NetworkBehaviour
 
         // DIE
         ServerOnPlayerKilled?.Invoke(GetComponent<Player>().GetNetworkPlayer(), killerPlayer);
+
         ServerOnDie?.Invoke();
     }
 

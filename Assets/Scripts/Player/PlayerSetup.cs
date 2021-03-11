@@ -43,7 +43,6 @@ public class PlayerSetup : NetworkBehaviour
     private void RpcSetPlayerColor()
     {
         player.UpdateRendererColor(player.GetNetworkPlayer().GetPlayerColor());
-        Debug.Log($"Setting player color {player.GetNetworkPlayer().GetPlayerColor()}");
     }
 
     public override void OnStartAuthority()

@@ -9,41 +9,33 @@ public class PlayerEquipment : NetworkBehaviour
 
     [SerializeField] private Player player;
 
-    [SerializeField] private int kevlarPrice;
-    [SerializeField] private int helmetPrice;
+    [SerializeField] private int lightKevlarPrice;
+    [SerializeField] private int heavyKevlarPrice;
 
-    [SyncVar(hook = nameof(ClientHandleHelmetDurabilityUpdated))] private int helmetDurability;
+    [SerializeField] private int lightKevlarValue;
+    [SerializeField] private int heavyKevlarValue;
+
+    [SerializeField] private float kevlarDamageDecreaseMultiplier;
+
     [SyncVar(hook = nameof(ClientHandleKevlarDurabilityUpdated))] private int kevlarDurability;
 
-    public event Action<int> ClientOnHelmetDurabilityUpdated;
     public event Action<int> ClientOnKevlarDurabilityUpdated;
+
+    public int GetKevlarDurability() => kevlarDurability;
+    public float GetDamageDecreaseMultiplier() => kevlarDamageDecreaseMultiplier;
 
     #region Client
 
-    public void TryBuyKevlarAndHelmet() {
-        TryBuyKevlar();
-        TryBuyHelmet();
+    public void TryBuyLightKevlar() {
+        CmdBuyLightKevlar();
     }
 
-    public void TryBuyKevlar() {
-        CmdBuyKevlar();
-    }
-
-    public void TryBuyHelmet() {
-        CmdBuyHelmet();
-    }
-
-    private void ClientHandleHelmetDurabilityUpdated(int oldDur, int newDur)
-    {
-        if (!hasAuthority) return;
-
-        ClientOnHelmetDurabilityUpdated?.Invoke(newDur);
+    public void TryBuyHeavyKevlar() {
+        CmdBuyHeavyKevlar();
     }
 
     private void ClientHandleKevlarDurabilityUpdated(int oldDur, int newDur)
     {
-        if (!hasAuthority) return;
-
         ClientOnKevlarDurabilityUpdated?.Invoke(newDur);
     }
 
@@ -51,27 +43,34 @@ public class PlayerEquipment : NetworkBehaviour
 
     #region Server
 
-    private void CmdBuyKevlar()
+    public void UpdateKevlarDurability(int durability)
+    {
+        kevlarDurability = durability;
+    }
+
+    [Command]
+    private void CmdBuyLightKevlar()
     {
         ValulrantNetworkPlayer networkPlayer = player.GetNetworkPlayer();
         int money = networkPlayer.GetMoney();
 
-        if (kevlarDurability < 100 && money >= kevlarPrice)
+        if (kevlarDurability < lightKevlarValue && money >= lightKevlarPrice)
         {
-            networkPlayer.SubtractMoney(kevlarPrice);
-            kevlarDurability = 100;
+            networkPlayer.SubtractMoney(lightKevlarPrice);
+            kevlarDurability = lightKevlarValue;
         }
     }
 
-    private void CmdBuyHelmet()
+    [Command]
+    private void CmdBuyHeavyKevlar()
     {
         ValulrantNetworkPlayer networkPlayer = player.GetNetworkPlayer();
         int money = networkPlayer.GetMoney();
 
-        if (helmetDurability < 100 && money >= helmetPrice)
+        if (kevlarDurability < heavyKevlarValue && money >= heavyKevlarPrice)
         {
-            networkPlayer.SubtractMoney(helmetPrice);
-            helmetDurability = 100;
+            networkPlayer.SubtractMoney(heavyKevlarPrice);
+            kevlarDurability = heavyKevlarValue;
         }
     }
 

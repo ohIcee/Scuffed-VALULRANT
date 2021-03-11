@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel = null;
+    [SerializeField] private GameObject joiningPagePanel = null;
 
     [SerializeField] private TMP_InputField addressInput = null;
     [SerializeField] private TMP_InputField usernameInput = null;
@@ -117,6 +118,8 @@ public class MainMenu : MonoBehaviour
         NetworkManager.singleton.StartClient();
 
         joinButton.interactable = false;
+        joiningPagePanel.SetActive(true);
+        landingPagePanel.SetActive(false);
     }
 
     public void OnSettingsClose()
@@ -129,11 +132,14 @@ public class MainMenu : MonoBehaviour
         joinButton.interactable = true;
 
         landingPagePanel.SetActive(false);
+        joiningPagePanel.SetActive(false);
     }
 
     private void HandleClientDisconnected()
     {
         joinButton.interactable = true;
+        landingPagePanel.SetActive(true);
+        joiningPagePanel.SetActive(false);
     }
 
 }

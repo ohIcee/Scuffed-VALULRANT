@@ -18,8 +18,6 @@ public class InputManager : NetworkBehaviour
     private Vector2 movementInput;
     private Vector2 mouseInput;
 
-    private float mouseSensitivity = 1f;
-
     public override void OnStartAuthority()
     {
         Initialize();
@@ -28,7 +26,6 @@ public class InputManager : NetworkBehaviour
     public void Initialize()
     {
         playerHUD = GetComponent<PlayerHUD>();
-        mouseSensitivity = PlayerPrefs.GetFloat("MOUSE_SENS");
 
         controls = new PlayerControls();
         controls.Enable();
@@ -38,10 +35,8 @@ public class InputManager : NetworkBehaviour
 
         playerInput.EscapeMenu.performed += _ =>
         {
-            if (playerHUD.GetIsBuyMenuOpen()) {
-                playerHUD.ToggleBuyMenu();
-                return;
-            }
+            playerHUD.ToggleBuyMenu(false);
+            playerHUD.ToggleSettingsMenu(false);
 
             playerHUD.ToggleEscapeMenu();
         };
@@ -83,9 +78,6 @@ public class InputManager : NetworkBehaviour
 
         if (playerFiring != null)
         {
-            playerInput.Aim.started += _ => playerFiring.OnStartAiming();
-            playerInput.Aim.canceled += _ => playerFiring.OnStopAiming();
-
             playerInput.Fire.started += _ =>
             {
                 if (playerHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
@@ -124,7 +116,7 @@ public class InputManager : NetworkBehaviour
 
         player.ReceiveMovementInput(movementInput);
         player.ReceiveMouseInput(mouseInput);
-        weaponSway.ReceiveInput(mouseInput * mouseSensitivity * weaponSwaySensitivityMultiplier);
+        weaponSway.ReceiveInput(mouseInput * weaponSwaySensitivityMultiplier);
     }
 
     private void OnBlockingUIOpen()
@@ -133,7 +125,6 @@ public class InputManager : NetworkBehaviour
         player.ReceiveMouseInput(Vector2.zero);
         weaponSway.ReceiveInput(Vector2.zero);
         playerFiring.OnStopFiring();
-        playerFiring.OnStopAiming();
     }
 
     private void OnDestroy()

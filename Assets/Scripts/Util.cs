@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Util
@@ -18,5 +19,7 @@ public class Util
 			SetLayerRecursively(_child.gameObject, _newLayer);
 		}
 	}
+
+	public static AudioClip GetRandomAudioClip(List<AudioClip> clips) => clips[Random.Range(0, clips.Count)];
 
 }

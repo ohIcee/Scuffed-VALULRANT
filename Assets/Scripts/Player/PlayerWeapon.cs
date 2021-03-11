@@ -48,7 +48,7 @@ public class PlayerWeapon : ScriptableObject
 		bullets = maxBullets;
 	}
 
-	public AudioClip GetRandomShotSound() => UseSounds[Random.Range(0, UseSounds.Count - 1)];
+	public AudioClip GetRandomShotSound() => Util.GetRandomAudioClip(UseSounds);
 
 }
 

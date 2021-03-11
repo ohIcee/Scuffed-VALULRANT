@@ -1,8 +1,9 @@
-using System.Collections;
 using UnityEngine;
 using Mirror;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Collections;
 
 public class PlayerFiring : NetworkBehaviour
 {
@@ -13,12 +14,17 @@ public class PlayerFiring : NetworkBehaviour
     private LayerMask layerMask;
 
     [SerializeField] private AudioSource firingAudioSource;
+
+    [SerializeField] private AudioSource hitPlayerAudioSource; 
+    [SerializeField] private AudioSource killPlayerAudioSource;
+    [SerializeField] private List<AudioClip> playerHitSFXs;
+    [SerializeField] private List<AudioClip> playerKillSFXs;
+
     [SerializeField] private WeaponProceduralFireFakeRecoil weaponRecoil;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private CameraShake cameraShake;
 
     public event Action<int, int> ClientOnAmmoUpdated;
-    public event Action ClientOnFired;
 
     private PlayerWeapon currentWeapon;
     private WeaponManager weaponManager;
@@ -56,13 +62,13 @@ public class PlayerFiring : NetworkBehaviour
     //Is called on the server when we hit something
     //Takes in the hit point and the normal of the surface
     [Command]
-    void CmdOnHit(Vector3 _pos, Vector3 _normal)
+    private void CmdOnHit(Vector3 _pos, Vector3 _normal)
     {
         RpcDoHitEffect(_pos, _normal);
     }
 
     [Command]
-    void CmdPlayerShot(NetworkIdentity _playerIdentity, int _damage)
+    private void CmdPlayerShot(NetworkIdentity _playerIdentity, int _damage)
     {
         RpcPlayerShot();
 
@@ -71,7 +77,13 @@ public class PlayerFiring : NetworkBehaviour
 
         if (_playerIdentity.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
         {
-            playerHealth.DealDamage(_damage, player.GetNetworkPlayer());
+            // Calculate damage based on kevlar
+            PlayerEquipment playerEquipment = playerHealth.GetComponent<PlayerEquipment>();
+            int currentArmor = playerEquipment.GetKevlarDurability();
+            currentArmor -= (int)(_damage * playerEquipment.GetDamageDecreaseMultiplier());
+            int extraDamage = currentArmor < 0 ? Mathf.Abs(currentArmor) : 0;
+
+            playerHealth.DealDamage(_damage + extraDamage, player.GetNetworkPlayer());
         }
     }
 
@@ -99,6 +111,11 @@ public class PlayerFiring : NetworkBehaviour
         Destroy(_hitEffect, 2f);
     }
 
+    public void OnKilledPlayer()
+    {
+        killPlayerAudioSource.PlayOneShot( Util.GetRandomAudioClip(playerKillSFXs) );        
+    }
+
     [Client]
     void Fire()
     {
@@ -116,8 +133,6 @@ public class PlayerFiring : NetworkBehaviour
         if (Time.time < nextFireTime) return;
 
         nextFireTime = Time.time + 1f / currentWeapon.fireRate;
-
-        ClientOnFired?.Invoke();
 
         currentWeapon.bullets--;
         ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
@@ -143,6 +158,9 @@ public class PlayerFiring : NetworkBehaviour
                     if (hitLimb.GetOwningPlayer() == player) continue;
 
                     CmdOnHit(hit.point, hit.normal);
+
+                    hitPlayerAudioSource.PlayOneShot( Util.GetRandomAudioClip(playerHitSFXs) );
+
                     CmdPlayerShot(hitLimb.GetOwningPlayer().GetNetworkIdentity(), (int)(currentWeapon.damage * hitLimb.GetDamageMultiplier()));
                     break;
                 }
@@ -177,16 +195,6 @@ public class PlayerFiring : NetworkBehaviour
     #endregion
 
     #region Inputs
-
-    public void OnStartAiming()
-    {
-        //gun.IsAiming = true;
-    }
-
-    public void OnStopAiming()
-    {
-        //gun.IsAiming = false;
-    }
 
     public void OnPressReload()
     {

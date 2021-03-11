@@ -39,11 +39,12 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
     public static event Action ClientOnInfoUpdated;
 
-    public static event Action<int> ClientOnMoneyUpdated;
+    public event Action<int, int> ClientOnMoneyUpdated;
 
     private Color teamColor = new Color();
     [SyncVar] private GameObject playerInstance = null;
 
+    public int GetMoney() => money;
     public int GetKills() => kills;
     public int GetDeaths() => deaths;
     public string GetDisplayName() => displayName;
@@ -63,9 +64,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     {
         money += moneyToAdd;
 
-        Debug.Log($"Player {displayName} now has {money} money!");
-
-        playerInstance.GetComponent<PlayerHUD>().UpdateMoneyText(money);   
+        //Debug.Log($"Player {displayName} now has {money} money!");
     }
 
     [Server]
@@ -73,9 +72,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     {
         money -= moneyToSubtract;
 
-        Debug.Log($"Player {displayName} now has {money} money!");
-
-        playerInstance.GetComponent<PlayerHUD>().UpdateMoneyText(money);
+        //Debug.Log($"Player {displayName} now has {money} money!");
     }
 
     [Server]
@@ -91,6 +88,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         playerHealth = playerInstance.GetComponent<PlayerHealth>();
         playerHealth.ServerOnDie += ServerHandleDie;
         playerHealth.ServerOnPlayerKilled += ServerHandlePlayerKilled;
+
 
         if (PlayerPrefs.HasKey("MOUSE_SENS")) {
             float sens = PlayerPrefs.GetFloat("MOUSE_SENS");
@@ -113,8 +111,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
         killerPlayer.UpdateKillCount(1);
         killerPlayer.AddMoney(500); // replace with money reward
-
-        RpcPlayerKilled(killedPlayer.displayName, killerPlayer.displayName);
     }
 
     [Server]
@@ -123,7 +119,7 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
         RpcDoPlayerDeathEffect(playerInstance.transform.position);
 
         deaths++;
-        Debug.Log($"Player {displayName} now has {deaths} deaths!");
+        //Debug.Log($"Player {displayName} now has {deaths} deaths!");
 
         // DESTROY PLAYER
         playerHealth.ServerOnDie -= ServerHandleDie;
@@ -193,14 +189,6 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
 
     #region Client
 
-    public int GetMoney() => money;
-
-    [ClientRpc]
-    private void RpcPlayerKilled(string killedName, string killerName)
-    {
-        killFeed.HandleOnPlayerKilled(killedName, killerName);
-    }
-
     [ClientRpc]
     private void RpcDoPlayerDeathEffect(Vector3 position)
     {
@@ -215,8 +203,12 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     }
 
     private void ClientHandleKillCountUpdated(int oldKills, int newKills)
-    { 
+    {
         // update HUD
+
+        playerInstance.GetComponent<PlayerFiring>().OnKilledPlayer();
+
+        playerInstance.GetComponent<PlayerHUD>().OnPlayerKilledPopup();
     }
 
     private void ClientHandleDeathCountUpdated(int oldDeaths, int newDeaths)
@@ -225,8 +217,10 @@ public class ValulrantNetworkPlayer : NetworkBehaviour
     }
 
     private void ClientHandleMoneyUpdated(int oldMoney, int newMoney)
-    { 
+    {
         // update HUD
+
+        ClientOnMoneyUpdated?.Invoke(oldMoney, newMoney);
     }
 
     [ClientRpc]
