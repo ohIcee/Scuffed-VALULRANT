@@ -31,8 +31,6 @@ public class Bomb : GameMode
     {
         get { return gamemodeSpawnLocationsParentName; }
     }
-
-    [SerializeField] private int healthOnKill = 50;
     #endregion
 
     [Header("References")]

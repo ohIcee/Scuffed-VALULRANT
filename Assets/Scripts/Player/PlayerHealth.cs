@@ -17,7 +17,7 @@ public class PlayerHealth : NetworkBehaviour
 
     public event Action<ValulrantNetworkPlayer, ValulrantNetworkPlayer> ServerOnPlayerKilled;
 
-    //public bool IsDead() => currentHealth <= 0f;
+    public bool IsDead() => currentHealth <= 0;
 
     #region Server
 

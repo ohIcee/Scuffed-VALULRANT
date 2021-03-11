@@ -8,7 +8,6 @@ public class DamageIndicatorSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private DamageIndicator indicatorPrefab = null;
     [SerializeField] private RectTransform holder = null;
-    [SerializeField] private new Camera camera = null;
     [SerializeField] private Transform player = null;
 
     private Dictionary<Transform, DamageIndicator> Indicators = new Dictionary<Transform, DamageIndicator>();

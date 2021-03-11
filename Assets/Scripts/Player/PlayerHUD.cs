@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
 
 public class PlayerHUD : MonoBehaviour
 {
@@ -12,14 +11,6 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private PlayerHealth playerHealth = null;
     [SerializeField] private Image healthBarImage = null;
     [SerializeField] private TextMeshProUGUI healthText = null;
-    
-    [Header("Escape Menu")]
-    [SerializeField] private GameObject escapeMenuPanel = null;
-    [SerializeField] private GameObject settingsPanel = null;
-    [SerializeField] private Scrollbar mouseSensitivityScrollBar = null;
-    [SerializeField] private TMP_InputField mouseSensitivityInput = null;
-    [SerializeField] private TMP_Dropdown graphicsSettingDropdown = null;
-    [SerializeField] private RenderPipelineAsset[] qualityLevels;
 
     [Header("Shooting & Ammo")]
     [SerializeField] private PlayerFiring playerFiring = null;
@@ -40,60 +31,11 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private GameObject playerKilledPopupPrefab = null;
     
     [SerializeField] private Player player;
-    private SettingsManager settingsManager;
+    
 
-#region EscapeMenu
+#region BuyMenu
  
-    public bool GetIsEscapeMenuOpen() => escapeMenuPanel.activeSelf;
     public bool GetIsBuyMenuOpen() => buyMenuPanel.activeSelf;
-    public bool GetIsSettingsMenuOpen() => settingsPanel.activeSelf;
-
-    public void ToggleSettingsMenu(bool active)
-    {
-        if (settingsPanel.activeSelf && !active
-            || !settingsPanel.activeSelf && active) ToggleSettingsMenu();
-    }
-
-    public void ToggleSettingsMenu()
-    {
-        bool newState = !settingsPanel.activeSelf;
-        settingsPanel.SetActive(newState);
-
-        if (newState) settingsManager.SavePlayerPrefs();
-    }
-
-    // Called from UI
-    public void OnMouseSensitivityChangedInput()
-    {
-        if (mouseSensitivityInput.text.EndsWith(".")) return;
-
-        if (float.TryParse(mouseSensitivityInput.text, out float sens))
-        {
-            OnMouseSensitivityChanged(sens);
-            return;
-        }
-
-        Debug.LogWarning($"Incorrect mouse sensitivity input: {mouseSensitivityInput.text}");
-    }
-
-    // Called from UI
-    public void OnMouseSensitivityChangedScroll() => OnMouseSensitivityChanged(mouseSensitivityScrollBar.value);
-
-    private void OnMouseSensitivityChanged(float newSens)
-    {
-        newSens = Mathf.Clamp(newSens, 0, 1);
-
-        settingsManager.ChangeSensitivity(newSens);
-        settingsManager.SaveCurrentSensitivity();
-
-        player.ChangeSensitivity( newSens );
-    }
-
-    // Called from UI
-    public void ChangeGraphicsQuality(int value)
-    {
-        settingsManager.ChangeGraphicsQuality(value);
-    }
 
     public void ToggleBuyMenu(bool active)
     {
@@ -113,20 +55,12 @@ public class PlayerHUD : MonoBehaviour
 
     private void Start()
     {
-        settingsManager = FindObjectOfType<SettingsManager>();
-
         player.GetNetworkPlayer().ClientOnMoneyUpdated += HandleMoneyUpdated;
 
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
         playerFiring.ClientOnAmmoUpdated += HandleAmmoUpdated;
 
-        settingsManager.ClientOnSensitivityChanged += HandleSensitivityUpdated;
-        settingsManager.ClientOnGraphicsQualityLevelChanged += HandleGraphicsQualityUpdated;
-
         playerEquipment.ClientOnKevlarDurabilityUpdated += HandleKevlarDurabilityUpdated;
-
-        HandleSensitivityUpdated(settingsManager.GetMouseSensitivity());
-        HandleGraphicsQualityUpdated(settingsManager.GetGraphicsQualityLevel());
     }
 
     private void OnDestroy()
@@ -138,40 +72,8 @@ public class PlayerHUD : MonoBehaviour
             player.GetNetworkPlayer().ClientOnMoneyUpdated -= HandleMoneyUpdated;
 
         playerEquipment.ClientOnKevlarDurabilityUpdated -= HandleKevlarDurabilityUpdated;
-
-        if (settingsManager != null)
-        {
-            settingsManager.ClientOnSensitivityChanged -= HandleSensitivityUpdated;
-            settingsManager.ClientOnGraphicsQualityLevelChanged -= HandleGraphicsQualityUpdated;
-        }
     }
 
-    private void HandleSensitivityUpdated(float sens)
-    {
-        mouseSensitivityInput.text = sens.ToString();
-        mouseSensitivityScrollBar.value = sens;
-    }
-
-    private void HandleGraphicsQualityUpdated(int level)
-    {
-        graphicsSettingDropdown.value = level;
-    }
-
-    public void ToggleEscapeMenu()
-    {
-        escapeMenuPanel.SetActive(!escapeMenuPanel.activeSelf);
-
-        Cursor.lockState = escapeMenuPanel.activeSelf ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = escapeMenuPanel.activeSelf;
-    }
-
-    public void OnDisconnectButton()
-    {
-        Player player = GetComponent<Player>();
-        ValulrantNetworkPlayer networkPlayer = player.GetNetworkPlayer();
-        networkPlayer.DisconnectFromServer();
-    }
-   
     public void BuyItem(string itemToBuy)
     {
         switch (itemToBuy)
