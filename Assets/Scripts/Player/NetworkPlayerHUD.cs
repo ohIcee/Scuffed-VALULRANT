@@ -16,6 +16,7 @@ public class NetworkPlayerHUD : MonoBehaviour
     [SerializeField] private RenderPipelineAsset[] qualityLevels;
 
     private SettingsManager settingsManager;
+    private PlayerHealth playerHealth;
     [SerializeField] private ValulrantNetworkPlayer networkPlayer;
 
     #region Client

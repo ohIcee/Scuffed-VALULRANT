@@ -21,6 +21,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private PlayerFiring playerFiring;
     [SerializeField] private CharacterController m_Controller;
     [SerializeField] private PlayerProceduralWeaponWalkAnimation playerProceduralWeaponWalkAnimation;
+    [SerializeField] private PlayerAnimationManager animationManager;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
@@ -59,6 +60,7 @@ public class Player : NetworkBehaviour
     [Header("Jump")]
     [Tooltip("Force applied upward when jumping")]
     [SerializeField] private float jumpForce = 9f;
+    [SerializeField] private float landCheckRayLength = 1f;
 
     [Header("Stance")]
     [Tooltip("Ratio (0-1) of the character height where the camera will be at")]
@@ -95,7 +97,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float fallDamageAtMinSpeed = 10f;
     [Tooltip("Damage recieved when falling at the maximum speed")]
     [SerializeField] private float fallDamageAtMaxSpeed = 50f;
-    
+
     [SyncVar] private ValulrantNetworkPlayer networkPlayer;
 
     public NetworkIdentity GetNetworkIdentity() => netIdentity;
@@ -103,14 +105,25 @@ public class Player : NetworkBehaviour
     public void SetNetworkPlayer(ValulrantNetworkPlayer player)
     {
         networkPlayer = player;
-        ChangeSensitivity(FindObjectOfType<SettingsManager>().GetMouseSensitivity() );
+        ChangeSensitivity(FindObjectOfType<SettingsManager>().GetMouseSensitivity());
     }
     public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;
 
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
 
-    private bool isGrounded { get; set; } = true;
+    private bool _isGrounded = true;
+    private bool isGrounded
+    {
+        get { return _isGrounded; }
+        set
+        {
+            _isGrounded = value;
+            animationManager.UpdateIsGrounded(value);
+            animationManager.UpdateIsJumping(false);
+        }
+    }
+
     public bool IsGrounded => isGrounded;
 
     private bool isCrouching { get; set; }
@@ -152,7 +165,8 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    public void CmdDealDamage(int damageAmount) {
+    public void CmdDealDamage(int damageAmount)
+    {
         playerHealth.DealDamage(damageAmount, networkPlayer);
     }
 
@@ -161,7 +175,7 @@ public class Player : NetworkBehaviour
     {
         if (!hasAuthority) return;
 
-        // check for Y kill
+        // Kill player if he falls below the killheight (falls off the map)
         if (transform.position.y < killHeight)
         {
             CmdDealDamage(9999);
@@ -183,19 +197,34 @@ public class Player : NetworkBehaviour
 
                 // fall damage SFX
                 if (fallDamageAudioSource) CmdPlayFallDamageSound();
-                    //fallDamageAudioSource.PlayOneShot(fallDamageSFXs);
+                //fallDamageAudioSource.PlayOneShot(fallDamageSFXs);
             }
             else
             {
                 // land SFX
                 if (landAudioSource) CmdPlayLandSound();
-                    //landAudioSource.PlayOneShot(landSFX);
+                //landAudioSource.PlayOneShot(landSFX);
             }
         }
 
         UpdateCharacterHeight(false);
 
+        CheckPreLand();
+
         HandleCharacterMovement();
+    }
+
+    // Raycasts a ray below the player to decent when
+    // he will land to play the landing animation before
+    // he lands. Makes it look more natural
+    private void CheckPreLand()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, -transform.up, landCheckRayLength, groundCheckLayers))
+        {
+            animationManager.UpdateIsJumping(false);
+            animationManager.UpdateIsGrounded(true);
+        }
     }
 
     void GroundCheck()
@@ -262,6 +291,38 @@ public class Player : NetworkBehaviour
         // character movement handling
         bool isShifting = isPressingShift;
         {
+            float xVel = 0f, zVel = 0f;
+            if (movementInput.x > 0)
+            {
+                if (isShifting)
+                    xVel = .5f;
+                else
+                    xVel = 1f;
+            }
+            else if (movementInput.x < 0)
+            {
+                if (isShifting)
+                    xVel = -.5f;
+                else
+                    xVel = -1f;
+            }
+
+            if (movementInput.y > 0)
+            {
+                if (isShifting)
+                    zVel = .5f;
+                else
+                    zVel = 1f;
+            }
+            else if (movementInput.y < 0)
+            {
+                if (isShifting)
+                    zVel = -.5f;
+                else
+                    zVel = -1f;
+            }
+            animationManager.UpdateVelocities(xVel, zVel);
+
             if (isShifting)
             {
                 isShifting = SetCrouchingState(false, false);
@@ -291,6 +352,7 @@ public class Player : NetworkBehaviour
                 {
                     isPressingJump = false;
                     playerProceduralWeaponWalkAnimation.HasJumped();
+                    animationManager.UpdateIsJumping(true);
 
                     // force the crouch state to false
                     if (SetCrouchingState(false, false))
@@ -307,7 +369,7 @@ public class Player : NetworkBehaviour
 
                         // play sound
                         if (jumpAudioSource) CmdPlayJumpSound();
-                            //jumpAudioSource.PlayOneShot(jumpSFX);
+                        //jumpAudioSource.PlayOneShot(jumpSFX);
 
                         // remember last time we jumped because we need to prevent snapping to ground for a short time
                         m_LastTimeJumped = Time.time;
@@ -421,7 +483,7 @@ public class Player : NetworkBehaviour
 
     [ClientRpc]
     private void RpcPlayFallDamageSound()
-    { 
+    {
         fallDamageAudioSource.PlayOneShot(fallDamageSFXs[Random.Range(0, fallDamageSFXs.Count - 1)]);
     }
 
@@ -484,6 +546,9 @@ public class Player : NetworkBehaviour
     // returns false if there was an obstruction
     bool SetCrouchingState(bool crouched, bool ignoreObstructions)
     {
+        //playerBodyAnimator.SetBool(CROUCHPARAM, crouched);
+        animationManager.UpdateCrouch(crouched);
+
         // set appropriate heights 
         if (crouched)
         {

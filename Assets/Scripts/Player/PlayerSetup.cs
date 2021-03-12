@@ -15,8 +15,8 @@ public class PlayerSetup : NetworkBehaviour
     public GameObject playerHUDCanvas = null;
     public PlayerHUD playerHUD = null;
     public PlayerHealth playerHealth = null;
-    public MeshRenderer bodyMeshRenderer = null;
-    public GameObject playerNamePlate;
+    public GameObject playerNamePlate = null;
+    public GameObject playerBody = null;
 
     [Header("Weapon shit")]
     public GameObject weaponHolder = null;
@@ -65,9 +65,9 @@ public class PlayerSetup : NetworkBehaviour
         IsDisabled = false;
 
         playerNamePlate.SetActive(false);
+        playerBody.SetActive(false);
 
         characterController.enabled = true;
-        bodyMeshRenderer.enabled = true;
         playerCamera.enabled = true;
         playerHUDCanvas.SetActive(true);
         playerWeaponCamera.gameObject.SetActive(true);
