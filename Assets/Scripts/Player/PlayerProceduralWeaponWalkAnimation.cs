@@ -36,7 +36,7 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
         if (!enableBobbing) return;
 
         // Lift head to jumping Y Offset if we're not grounded
-        if (!player.IsGrounded)
+        if (!player.GetIsGrounded())
         {
             currBobAmount = 0;
             transform.localPosition = new Vector3(
@@ -50,7 +50,7 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
 
         // If we landed, reset the weapon back to default position before
         // going forward
-        if (currentLandResetTime > 0f && player.IsGrounded)
+        if (currentLandResetTime > 0f && player.GetIsGrounded())
         {
             transform.localPosition = new Vector3(
                 transform.localPosition.x, 
@@ -70,16 +70,16 @@ public class PlayerProceduralWeaponWalkAnimation : MonoBehaviour
             transform.localPosition = new Vector3(
                 transform.localPosition.x, 
                 transform.localPosition.y,
-                Mathf.Lerp(transform.localPosition.z, defaultYPos, Time.deltaTime * (player.isPressingShift || player.IsCrouching ? shiftBobbingSpeed : walkBobbingSpeed))
+                Mathf.Lerp(transform.localPosition.z, defaultYPos, Time.deltaTime * (player.isPressingShift || player.GetIsCrouching() ? shiftBobbingSpeed : walkBobbingSpeed))
                 );
         }
-        else if (player.IsPressingMovementInputs() && player.IsGrounded)
+        else if (player.IsPressingMovementInputs() && player.GetIsGrounded())
         {
-            currBobAmount += Time.deltaTime * (player.isPressingShift || player.IsCrouching ? shiftBobbingSpeed : walkBobbingSpeed);
+            currBobAmount += Time.deltaTime * (player.isPressingShift || player.GetIsCrouching() ? shiftBobbingSpeed : walkBobbingSpeed);
             transform.localPosition = new Vector3(
                 transform.localPosition.x,
                 transform.localPosition.y,
-                defaultYPos + Mathf.Sin(currBobAmount) * (player.isPressingShift || player.IsCrouching ? shiftBobAmount : walkBobAmount)
+                defaultYPos + Mathf.Sin(currBobAmount) * (player.isPressingShift || player.GetIsCrouching() ? shiftBobAmount : walkBobAmount)
                 );
         }
 

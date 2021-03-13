@@ -16,7 +16,6 @@ public class Player : NetworkBehaviour
     [SerializeField] private AudioSource jumpAudioSource;
     [SerializeField] private AudioSource landAudioSource;
     [SerializeField] private AudioSource fallDamageAudioSource;
-    [SerializeField] private Renderer bodyRenderer;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private PlayerFiring playerFiring;
     [SerializeField] private CharacterController m_Controller;
@@ -112,22 +111,11 @@ public class Player : NetworkBehaviour
     public UnityAction<bool> onStanceChanged;
     public Vector3 characterVelocity { get; set; }
 
-    private bool _isGrounded = true;
-    private bool isGrounded
-    {
-        get { return _isGrounded; }
-        set
-        {
-            _isGrounded = value;
-            animationManager.UpdateIsGrounded(value);
-            animationManager.UpdateIsJumping(false);
-        }
-    }
-
-    public bool IsGrounded => isGrounded;
+    private bool isGrounded = true;
+    public bool GetIsGrounded() => isGrounded;
 
     private bool isCrouching { get; set; }
-    public bool IsCrouching => isCrouching;
+    public bool GetIsCrouching() => isCrouching;
 
     private bool isPressingJump = false;
     [HideInInspector] public bool isPressingShift = false;
@@ -138,11 +126,6 @@ public class Player : NetworkBehaviour
     {
         get
         {
-            //if (m_WeaponsManager.isAiming)
-            //{
-            //    return aimingRotationMultiplier;
-            //}
-
             return 1f;
         }
     }
@@ -219,11 +202,14 @@ public class Player : NetworkBehaviour
     // he lands. Makes it look more natural
     private void CheckPreLand()
     {
-        RaycastHit hit;
+        Debug.DrawRay(transform.position, -transform.up * landCheckRayLength, Color.red, .1f);
+
         if (Physics.Raycast(transform.position, -transform.up, landCheckRayLength, groundCheckLayers))
         {
-            animationManager.UpdateIsJumping(false);
             animationManager.UpdateIsGrounded(true);
+        }
+        else {
+            animationManager.UpdateIsGrounded(false);
         }
     }
 
@@ -352,7 +338,6 @@ public class Player : NetworkBehaviour
                 {
                     isPressingJump = false;
                     playerProceduralWeaponWalkAnimation.HasJumped();
-                    animationManager.UpdateIsJumping(true);
 
                     // force the crouch state to false
                     if (SetCrouchingState(false, false))
@@ -369,7 +354,6 @@ public class Player : NetworkBehaviour
 
                         // play sound
                         if (jumpAudioSource) CmdPlayJumpSound();
-                        //jumpAudioSource.PlayOneShot(jumpSFX);
 
                         // remember last time we jumped because we need to prevent snapping to ground for a short time
                         m_LastTimeJumped = Time.time;
@@ -430,11 +414,6 @@ public class Player : NetworkBehaviour
 
             characterVelocity = Vector3.ProjectOnPlane(characterVelocity, hit.normal);
         }
-    }
-
-    public void UpdateRendererColor(Color color)
-    {
-        bodyRenderer.material.SetColor("_BaseColor", color);
     }
 
     #region Networking Audio Sources

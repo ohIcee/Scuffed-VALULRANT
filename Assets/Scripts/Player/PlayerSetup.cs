@@ -32,18 +32,9 @@ public class PlayerSetup : NetworkBehaviour
         playerHealth.ResetHealth();
     }
 
-    [Command]
-    private void CmdSetPlayerColor() => RpcSetPlayerColor();
-
     #endregion
 
     #region Client
-
-    [ClientRpc]
-    private void RpcSetPlayerColor()
-    {
-        player.UpdateRendererColor(player.GetNetworkPlayer().GetPlayerColor());
-    }
 
     public override void OnStartAuthority()
     {
@@ -75,8 +66,6 @@ public class PlayerSetup : NetworkBehaviour
         audioListener.enabled = true;
 
         playerHUD.UpdateMoneyText( GetComponent<Player>().GetNetworkPlayer().GetMoney() );
-
-        CmdSetPlayerColor();
 
         foreach (MonoBehaviour script in ScriptsToEnable)
         {

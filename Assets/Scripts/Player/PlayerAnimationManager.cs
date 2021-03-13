@@ -12,15 +12,15 @@ public class PlayerAnimationManager : NetworkBehaviour
     [SerializeField] private string XVELOCITYPARAM = "VelocityX";
     [SerializeField] private string ZVELOCITYPARAM = "VelocityZ";
     [SerializeField] private string CROUCHPARAM = "IsCrouching";
-    [SerializeField] private string ISJUMPINGPARAM = "IsJumping";
     [SerializeField] private string ISGROUNDEDPARAM = "IsGrounded";
 
     #region Client
 
     public void UpdateVelocities(float xVel, float zVel) => CmdUpdateVelocities(xVel, zVel);
     public void UpdateCrouch(bool crouch) => CmdUpdateCrouch(crouch);
-    public void UpdateIsJumping(bool jump) => CmdUpdateIsJumping(jump);
-    public void UpdateIsGrounded(bool grounded) => CmdUpdateIsGrounded(grounded);
+    public void UpdateIsGrounded(bool grounded) { 
+        CmdUpdateIsGrounded(grounded);
+    }
 
     [ClientRpc]
     private void RpcUpdateVelocities(float xVel, float zVel) 
@@ -40,14 +40,6 @@ public class PlayerAnimationManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcUpdateIsJumping(bool jump)
-    {
-        if (hasAuthority) return;
-
-        playerBodyAnimator.SetBool(ISJUMPINGPARAM, jump);
-    }
-
-    [ClientRpc]
     private void RpcUpdateIsGrounded(bool grounded)
     {
         if (hasAuthority) return;
@@ -61,7 +53,6 @@ public class PlayerAnimationManager : NetworkBehaviour
 
     [Command] private void CmdUpdateVelocities(float xVel, float zVel) => RpcUpdateVelocities(xVel, zVel);
     [Command] private void CmdUpdateCrouch(bool crouch) => RpcUpdateCrouch(crouch);
-    [Command] private void CmdUpdateIsJumping(bool jump) => RpcUpdateIsJumping(jump);
     [Command] private void CmdUpdateIsGrounded(bool grounded) => RpcUpdateIsGrounded(grounded);
 
     #endregion

@@ -28,8 +28,8 @@ public class DebugMonitor : MonoBehaviour
         playerIDText.text = $"Player ID: {networkPlayer.netId}";
         playerMovementSpeedText.text = $"{fpMov.characterVelocity}";
         isShiftingText.text = $"Is Shifting: {fpMov.isPressingShift}";
-        isCrouchingText.text = $"Is Crouching: {fpMov.IsCrouching}";
-        isGroundedText.text = $"Is Grounded: {fpMov.IsGrounded}";
+        isCrouchingText.text = $"Is Crouching: {fpMov.GetIsCrouching()}";
+        isGroundedText.text = $"Is Grounded: {fpMov.GetIsGrounded()}";
         isDeadText.text = $"Is Dead: {fpMov.currentHeight}";
     }
 }

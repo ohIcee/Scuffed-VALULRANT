@@ -161,6 +161,10 @@ public class PlayerFiring : NetworkBehaviour
             {
                 RaycastHit hit = hits[i];
 
+                // If we hit a player object go to the next one
+                // (We're looking for a limb)
+                if (hit.transform.TryGetComponent<CharacterController>(out CharacterController controller)) continue;
+
                 if (hit.transform.TryGetComponent<PlayerLimb>(out PlayerLimb hitLimb))
                 {
                     // If we hit our own limb, skip to the next hit
