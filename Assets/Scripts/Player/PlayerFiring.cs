@@ -163,9 +163,9 @@ public class PlayerFiring : NetworkBehaviour
 
                 // If we hit a player object go to the next one
                 // (We're looking for a limb)
-                if (hit.transform.TryGetComponent<CharacterController>(out CharacterController controller)) continue;
+                if (hit.transform.TryGetComponent(out CharacterController controller)) continue;
 
-                if (hit.transform.TryGetComponent<PlayerLimb>(out PlayerLimb hitLimb))
+                if (hit.transform.TryGetComponent(out PlayerLimb hitLimb))
                 {
                     // If we hit our own limb, skip to the next hit
                     if (hitLimb.GetOwningPlayer() == player) continue;
@@ -174,6 +174,7 @@ public class PlayerFiring : NetworkBehaviour
 
                     hitPlayerAudioSource.PlayOneShot( Util.GetRandomAudioClip(playerHitSFXs) );
 
+                    Debug.Log($"Hit limb: {hitLimb == null}");
                     CmdPlayerShot(hitLimb.GetOwningPlayer().GetNetworkIdentity(), (int)(currentWeapon.damage * hitLimb.GetDamageMultiplier()));
                     break;
                 }
