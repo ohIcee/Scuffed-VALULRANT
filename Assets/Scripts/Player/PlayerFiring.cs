@@ -174,7 +174,6 @@ public class PlayerFiring : NetworkBehaviour
 
                     hitPlayerAudioSource.PlayOneShot( Util.GetRandomAudioClip(playerHitSFXs) );
 
-                    Debug.Log($"Hit limb: {hitLimb == null}");
                     CmdPlayerShot(hitLimb.GetOwningPlayer().GetNetworkIdentity(), (int)(currentWeapon.damage * hitLimb.GetDamageMultiplier()));
                     break;
                 }

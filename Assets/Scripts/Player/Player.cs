@@ -101,10 +101,10 @@ public class Player : NetworkBehaviour
 
     public NetworkIdentity GetNetworkIdentity() => netIdentity;
 
+    [Server]
     public void SetNetworkPlayer(ValulrantNetworkPlayer player)
     {
         networkPlayer = player;
-        ChangeSensitivity(FindObjectOfType<SettingsManager>().GetMouseSensitivity());
     }
     public ValulrantNetworkPlayer GetNetworkPlayer() => networkPlayer;
 
@@ -145,6 +145,7 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         SetCrouchingState(false, false);
+        ChangeSensitivity(FindObjectOfType<SettingsManager>().GetMouseSensitivity());
     }
 
     [Command]
