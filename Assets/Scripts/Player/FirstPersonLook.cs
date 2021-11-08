@@ -15,15 +15,6 @@ public class FirstPersonLook : NetworkBehaviour
     Vector2 appliedMouseDelta;
     #endregion
 
-    #region zooming
-    public float ZoomAmount = 0.75f;
-    public float MaxZoom = 15f; // Effectively the min FOV that we can reach while zooming with this camera.
-
-    private float defaultFOV;
-    private bool IsZooming;
-    private bool CanZoom = true;
-    #endregion
-
     [Header("References")]
     [SerializeField] private CinemachineVirtualCamera playerCamera;
     [SerializeField] private Transform character;
@@ -36,11 +27,6 @@ public class FirstPersonLook : NetworkBehaviour
 
         cameraTransform.GetComponent<CinemachineVirtualCamera>().enabled = true;
         audioListener.enabled = true;
-    }
-
-    void Start()
-    {
-        defaultFOV = playerCamera.m_Lens.FieldOfView;
     }
 
     [ClientCallback]
@@ -66,16 +52,5 @@ public class FirstPersonLook : NetworkBehaviour
         character.localRotation = Quaternion.AngleAxis(currentMouseLook.x, Vector3.up);
     }
 
-    public void OnZoomPressed()
-    {
-        IsZooming = true;
-        playerCamera.m_Lens.FieldOfView = Mathf.Lerp(defaultFOV, MaxZoom, ZoomAmount);
-    }
-
-    public void OnZoomReleased()
-    {
-        IsZooming = false;
-        playerCamera.m_Lens.FieldOfView = defaultFOV;
-    }
     public void ReceiveInput(Vector2 mouseInput) => this.mouseInput = mouseInput;
 }

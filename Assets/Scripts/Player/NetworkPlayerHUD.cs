@@ -20,7 +20,6 @@ public class NetworkPlayerHUD : MonoBehaviour
     [SerializeField] private ValulrantNetworkPlayer networkPlayer;
 
     #region Client
-
     private void Start()
     {
         settingsManager = FindObjectOfType<SettingsManager>();
@@ -40,7 +39,6 @@ public class NetworkPlayerHUD : MonoBehaviour
             settingsManager.ClientOnGraphicsQualityLevelChanged -= HandleGraphicsQualityUpdated;
         }
     }
-
     #region EscapeMenu
 
     private void HandleSensitivityUpdated(float sens)
