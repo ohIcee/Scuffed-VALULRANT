@@ -11,7 +11,8 @@
                     "id": "81e007f6-d20b-4188-9520-6cc721cfecf5",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Jump",
@@ -19,7 +20,8 @@
                     "id": "4286a67d-00c6-400d-b289-33099741f99d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "MouseX",
@@ -27,7 +29,8 @@
                     "id": "aba0d4d3-ec16-4e01-b394-7a2a411cf34c",
                     "expectedControlType": "Axis",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "MouseY",
@@ -35,7 +38,8 @@
                     "id": "0671e677-93c9-48bd-aa12-83e2ae34e0fe",
                     "expectedControlType": "Axis",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Crouch",
@@ -43,7 +47,8 @@
                     "id": "5c7e26fe-ce4e-480f-90e9-ed6415aa1739",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "ShiftWalk",
@@ -51,7 +56,8 @@
                     "id": "4f1d32b9-5460-4cb6-ba01-8cecb43f9ec4",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Aim",
@@ -59,7 +65,8 @@
                     "id": "66b52b31-95fb-4cfd-9a40-ee10abda2d6b",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Fire",
@@ -67,7 +74,8 @@
                     "id": "efec4be8-00f0-422f-ba03-9f443a9d3946",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "DebugMonitor",
@@ -75,7 +83,8 @@
                     "id": "7eacb172-d519-40ee-bc51-039c028ba365",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "EscapeMenu",
@@ -83,7 +92,8 @@
                     "id": "62a482b4-7aff-4bf6-a17a-728b83235548",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Reload",
@@ -91,7 +101,8 @@
                     "id": "a816c5b8-fc6c-4cd1-a06a-a1a5f2b75d39",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Suicide",
@@ -99,7 +110,8 @@
                     "id": "6cd20dca-2e19-4bde-9944-73dcc6ec1ce1",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "BuyMenu",
@@ -107,7 +119,26 @@
                     "id": "45e846e6-f23b-4ad9-b97f-a7c374c9dfc0",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EquipPrimary",
+                    "type": "Button",
+                    "id": "93b4c43d-309d-49cd-96d4-3c0e59b74e36",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EquipSecondary",
+                    "type": "Button",
+                    "id": "e918c4f6-b2ed-4581-8499-6602293f1f75",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -295,6 +326,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "BuyMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "92aa7f62-fd12-4ba7-8844-d164ed451452",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EquipPrimary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f036d1e-9713-4518-aa98-0fba46be3b4d",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EquipSecondary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

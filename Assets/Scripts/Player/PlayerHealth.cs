@@ -34,6 +34,11 @@ public class PlayerHealth : NetworkBehaviour
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Deal damage to player
+    /// </summary>
+    /// <param name="damageAmount">Amount of damage dealt</param>
+    /// <param name="killerPlayer">Player who dealt the damage</param>
     [Server]
     public void DealDamage(int damageAmount, ValulrantNetworkPlayer killerPlayer)
     {

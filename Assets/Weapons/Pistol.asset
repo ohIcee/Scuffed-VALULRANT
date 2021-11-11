@@ -17,8 +17,8 @@ MonoBehaviour:
   damage: 10
   range: 100
   fireRate: 6.5
-  maxBullets: 31
-  bullets: 15
+  maxBullets: 12
+  bullets: 25
   reloadTime: 1
   explosionRange: 1
   graphics: {fileID: 1935268962224560791, guid: fe1b7aa7ed5366b468774d99ae0dbbe2, type: 3}
@@ -34,3 +34,4 @@ MonoBehaviour:
   maxVerticalRecoil: 10
   horizontalRecoilPerShot: {x: -0.1, y: 0.1}
   horizontalRecoilAfterMaxVerticalRecoil: 2
+  recoilRecoveryTime: 1

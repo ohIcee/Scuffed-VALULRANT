@@ -143,6 +143,24 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipPrimary"",
+                    ""type"": ""Button"",
+                    ""id"": ""93b4c43d-309d-49cd-96d4-3c0e59b74e36"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipSecondary"",
+                    ""type"": ""Button"",
+                    ""id"": ""e918c4f6-b2ed-4581-8499-6602293f1f75"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -332,6 +350,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""BuyMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""92aa7f62-fd12-4ba7-8844-d164ed451452"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipPrimary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7f036d1e-9713-4518-aa98-0fba46be3b4d"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipSecondary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -353,6 +393,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerInput_Reload = m_PlayerInput.FindAction("Reload", throwIfNotFound: true);
         m_PlayerInput_Suicide = m_PlayerInput.FindAction("Suicide", throwIfNotFound: true);
         m_PlayerInput_BuyMenu = m_PlayerInput.FindAction("BuyMenu", throwIfNotFound: true);
+        m_PlayerInput_EquipPrimary = m_PlayerInput.FindAction("EquipPrimary", throwIfNotFound: true);
+        m_PlayerInput_EquipSecondary = m_PlayerInput.FindAction("EquipSecondary", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -425,6 +467,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_Reload;
     private readonly InputAction m_PlayerInput_Suicide;
     private readonly InputAction m_PlayerInput_BuyMenu;
+    private readonly InputAction m_PlayerInput_EquipPrimary;
+    private readonly InputAction m_PlayerInput_EquipSecondary;
     public struct PlayerInputActions
     {
         private @PlayerControls m_Wrapper;
@@ -442,6 +486,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Reload => m_Wrapper.m_PlayerInput_Reload;
         public InputAction @Suicide => m_Wrapper.m_PlayerInput_Suicide;
         public InputAction @BuyMenu => m_Wrapper.m_PlayerInput_BuyMenu;
+        public InputAction @EquipPrimary => m_Wrapper.m_PlayerInput_EquipPrimary;
+        public InputAction @EquipSecondary => m_Wrapper.m_PlayerInput_EquipSecondary;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -490,6 +536,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @BuyMenu.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnBuyMenu;
                 @BuyMenu.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnBuyMenu;
                 @BuyMenu.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnBuyMenu;
+                @EquipPrimary.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEquipPrimary;
+                @EquipPrimary.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEquipPrimary;
+                @EquipPrimary.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEquipPrimary;
+                @EquipSecondary.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEquipSecondary;
+                @EquipSecondary.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEquipSecondary;
+                @EquipSecondary.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnEquipSecondary;
             }
             m_Wrapper.m_PlayerInputActionsCallbackInterface = instance;
             if (instance != null)
@@ -533,6 +585,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @BuyMenu.started += instance.OnBuyMenu;
                 @BuyMenu.performed += instance.OnBuyMenu;
                 @BuyMenu.canceled += instance.OnBuyMenu;
+                @EquipPrimary.started += instance.OnEquipPrimary;
+                @EquipPrimary.performed += instance.OnEquipPrimary;
+                @EquipPrimary.canceled += instance.OnEquipPrimary;
+                @EquipSecondary.started += instance.OnEquipSecondary;
+                @EquipSecondary.performed += instance.OnEquipSecondary;
+                @EquipSecondary.canceled += instance.OnEquipSecondary;
             }
         }
     }
@@ -552,5 +610,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnReload(InputAction.CallbackContext context);
         void OnSuicide(InputAction.CallbackContext context);
         void OnBuyMenu(InputAction.CallbackContext context);
+        void OnEquipPrimary(InputAction.CallbackContext context);
+        void OnEquipSecondary(InputAction.CallbackContext context);
     }
 }

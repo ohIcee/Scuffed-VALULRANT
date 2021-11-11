@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class PlayerSetup : NetworkBehaviour
 {
@@ -45,13 +46,6 @@ public class PlayerSetup : NetworkBehaviour
     {
         if (!hasAuthority) return;
 
-        //- Get players and update scoreboard
-        //List<ValulrantNetworkPlayer> players = ((ValulrantNetworkManager)NetworkManager.singleton).Players;
-        //foreach (ValulrantNetworkPlayer player in players)
-        //{
-        //    playerHUD.Ge
-        //}
-
         CmdResetHealth();
         IsDisabled = false;
 
@@ -65,7 +59,8 @@ public class PlayerSetup : NetworkBehaviour
         playerWeaponCamera.enabled = true;
         audioListener.enabled = true;
 
-        playerHUD.UpdateMoneyText( GetComponent<Player>().GetNetworkPlayer().GetMoney() );
+        if (GetComponent<Player>().GetNetworkPlayer() != null)
+            playerHUD.UpdateMoneyText( GetComponent<Player>().GetNetworkPlayer().GetMoney() );
 
         foreach (MonoBehaviour script in ScriptsToEnable)
         {

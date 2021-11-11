@@ -145,7 +145,7 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         SetCrouchingState(false, false);
-        ChangeSensitivity(FindObjectOfType<SettingsManager>().GetMouseSensitivity());
+        ChangeSensitivity(FindObjectOfType<SettingsManager>()?.GetMouseSensitivity() ?? 0.25f);
     }
 
     [Command]

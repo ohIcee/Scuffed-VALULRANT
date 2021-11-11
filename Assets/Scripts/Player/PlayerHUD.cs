@@ -14,6 +14,8 @@ public class PlayerHUD : MonoBehaviour
 
     [Header("Shooting & Ammo")]
     [SerializeField] private PlayerFiring playerFiring = null;
+
+    [SerializeField] private WeaponManager weaponManager = null;
     [SerializeField] private TextMeshProUGUI ammoText = null;
 
     [Header("Kevlar")]
@@ -55,10 +57,15 @@ public class PlayerHUD : MonoBehaviour
 
     private void Start()
     {
-        player.GetNetworkPlayer().ClientOnMoneyUpdated += HandleMoneyUpdated;
+        if (player.GetNetworkPlayer() != null)
+        {
+            player.GetNetworkPlayer().ClientOnMoneyUpdated += HandleMoneyUpdated;
+        }
+        else Debug.LogWarning("NetworkPlayer is NULL");
 
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
         playerFiring.ClientOnAmmoUpdated += HandleAmmoUpdated;
+        weaponManager.ClientOnAmmoUpdated += HandleAmmoUpdated;
 
         playerEquipment.ClientOnKevlarDurabilityUpdated += HandleKevlarDurabilityUpdated;
     }
@@ -67,6 +74,7 @@ public class PlayerHUD : MonoBehaviour
     {
         playerHealth.ClientOnHealthUpdated -= HandleHealthUpdated;
         playerFiring.ClientOnAmmoUpdated -= HandleAmmoUpdated;
+        weaponManager.ClientOnAmmoUpdated -= HandleAmmoUpdated;
 
         if (player != null && player.GetNetworkPlayer() != null)
             player.GetNetworkPlayer().ClientOnMoneyUpdated -= HandleMoneyUpdated;

@@ -1,6 +1,13 @@
+using System;
 using UnityEngine;
 using Mirror;
 using System.Collections;
+
+public enum WeaponSlot
+{
+	Primary,
+	Secondary
+}
 
 public class WeaponManager : NetworkBehaviour
 {
@@ -14,11 +21,16 @@ public class WeaponManager : NetworkBehaviour
 	[SerializeField]
 	private PlayerWeapon primaryWeapon;
 
+	[SerializeField] 
+	private PlayerWeapon secondaryWeapon;
+
 	private PlayerWeapon currentWeapon;
 	private WeaponGraphics currentGraphics;
 	[SerializeField] private PlayerFiring playerShooting;
 
 	public bool isReloading = false;
+	
+	public event Action<int, int> ClientOnAmmoUpdated;
 
 	void Start()
 	{
@@ -35,8 +47,29 @@ public class WeaponManager : NetworkBehaviour
 		return currentGraphics;
 	}
 
+	public void EquipWeapon(WeaponSlot slot)
+	{
+		switch (slot)
+		{
+			case WeaponSlot.Primary:
+				EquipWeapon(primaryWeapon);
+				break;
+			case WeaponSlot.Secondary:
+				EquipWeapon(secondaryWeapon);
+				break;
+			default:
+				Debug.LogError($"Invalid enum type in EquipWeapon: {slot}");
+				break;
+		}
+	}
+	
 	void EquipWeapon(PlayerWeapon _weapon)
 	{
+		if (currentWeapon != null)
+		{
+			Destroy(currentGraphics.gameObject);
+		}
+
 		currentWeapon = _weapon;
 
 		GameObject _weaponIns = (GameObject)Instantiate(_weapon.graphics, weaponHolder.position, weaponHolder.rotation);
@@ -50,7 +83,9 @@ public class WeaponManager : NetworkBehaviour
 
 		if (hasAuthority)
 			Util.SetLayerRecursively(_weaponIns, LayerMask.NameToLayer(weaponLayerName));
-
+		
+		// Update Ammo UI
+		ClientOnAmmoUpdated?.Invoke(currentWeapon.bullets, currentWeapon.maxBullets);
 	}
 
 	public void Reload()

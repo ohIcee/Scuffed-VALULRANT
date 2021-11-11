@@ -69,8 +69,11 @@ public class WeaponSway : MonoBehaviour
     }
 
     private void calculateSway() {
-        inputX = -mouseInput.x * settingsManager.GetMouseSensitivity();
-        inputY = -mouseInput.y * settingsManager.GetMouseSensitivity();
+        inputX = -mouseInput.x;
+        inputY = -mouseInput.y;
+     
+        //inputX = -mouseInput.x * settingsManager.GetMouseSensitivity();
+        //inputY = -mouseInput.y * settingsManager.GetMouseSensitivity();
     }
 
     public void ReceiveInput(Vector2 mouseInput) {

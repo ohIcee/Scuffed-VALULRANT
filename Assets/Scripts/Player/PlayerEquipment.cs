@@ -17,7 +17,8 @@ public class PlayerEquipment : NetworkBehaviour
 
     [SerializeField] private float kevlarDamageDecreaseMultiplier;
 
-    [SyncVar(hook = nameof(ClientHandleKevlarDurabilityUpdated))] private int kevlarDurability;
+    [SyncVar(hook = nameof(ClientHandleKevlarDurabilityUpdated))] 
+    private int kevlarDurability;
 
     public event Action<int> ClientOnKevlarDurabilityUpdated;
 
@@ -33,7 +34,8 @@ public class PlayerEquipment : NetworkBehaviour
     public void TryBuyHeavyKevlar() {
         CmdBuyHeavyKevlar();
     }
-
+    
+    [Client]
     private void ClientHandleKevlarDurabilityUpdated(int oldDur, int newDur)
     {
         ClientOnKevlarDurabilityUpdated?.Invoke(newDur);

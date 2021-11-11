@@ -75,13 +75,14 @@ public class PlayerFiring : NetworkBehaviour
         // Return if we hit our own unit
         if (_playerIdentity.connectionToClient == connectionToClient) return;
 
-        if (_playerIdentity.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
+        if (_playerIdentity.TryGetComponent(out PlayerHealth playerHealth))
         {
             // Calculate damage based on kevlar
             PlayerEquipment playerEquipment = playerHealth.GetComponent<PlayerEquipment>();
             int currentArmor = playerEquipment.GetKevlarDurability();
             currentArmor -= (int)(_damage * playerEquipment.GetDamageDecreaseMultiplier());
             int extraDamage = currentArmor < 0 ? Mathf.Abs(currentArmor) : 0;
+            playerEquipment.UpdateKevlarDurability(currentArmor);
 
             TargetCreateDamageIndicator(_playerIdentity.connectionToClient, transform);
 

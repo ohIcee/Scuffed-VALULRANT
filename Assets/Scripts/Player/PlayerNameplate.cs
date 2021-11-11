@@ -4,7 +4,7 @@ using TMPro;
 
 public class PlayerNameplate : MonoBehaviour
 {
-
+    
     [SerializeField]
     private TextMeshProUGUI usernameText;
 
@@ -21,7 +21,8 @@ public class PlayerNameplate : MonoBehaviour
     {
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
 
-        usernameText.text = player.GetNetworkPlayer().GetDisplayName();
+        if (player.GetNetworkPlayer() != null)
+            usernameText.text = player.GetNetworkPlayer().GetDisplayName();
     }
 
     //private void UpdateUsername(string username)

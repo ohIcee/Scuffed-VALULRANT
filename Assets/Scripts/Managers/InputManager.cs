@@ -10,6 +10,7 @@ public class InputManager : NetworkBehaviour
     [SerializeField] private PlayerFiring playerFiring;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] WeaponSway weaponSway;
+    [SerializeField] private WeaponManager weaponManager;
 
     private PlayerHUD playerHUD;
     private NetworkPlayerHUD networkHUD;
@@ -28,7 +29,9 @@ public class InputManager : NetworkBehaviour
     public void Initialize()
     {
         playerHUD = GetComponent<PlayerHUD>();
-        networkHUD = player.GetNetworkPlayer().GetComponent<NetworkPlayerHUD>();
+        
+        if (player.GetNetworkPlayer() != null)
+            networkHUD = player.GetNetworkPlayer().GetComponent<NetworkPlayerHUD>();
 
         controls = new PlayerControls();
         controls.Enable();
@@ -46,12 +49,15 @@ public class InputManager : NetworkBehaviour
                 return;
             }
 
-            networkHUD.ToggleSettingsMenu(false);
-            networkHUD.ToggleEscapeMenu();
+            if (networkHUD != null)
+            {
+                networkHUD.ToggleSettingsMenu(false);
+                networkHUD.ToggleEscapeMenu();
+            }
         };
 
         playerInput.BuyMenu.performed += _ => {
-            if (networkHUD.GetIsEscapeMenuOpen()) return;
+            if (networkHUD != null && networkHUD.GetIsEscapeMenuOpen()) return;
 
             // is game in buy stage
 
@@ -61,21 +67,21 @@ public class InputManager : NetworkBehaviour
         if (player != null)
         {
             playerInput.Jump.performed += _ => {
-                if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+                if (networkHUD != null && networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 player.OnJumpPressed();
             };
             playerInput.Jump.canceled += _ => player.OnJumpReleased();
 
             playerInput.Crouch.started += _ => {
-                if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+                if (networkHUD != null && networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 player.OnCrouchPressed();
             };
             playerInput.Crouch.canceled += _ => player.OnCrouchReleased();
 
             playerInput.ShiftWalk.started += _ => {
-                if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+                if (networkHUD != null && networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 player.OnShiftPressed();
             };
@@ -89,7 +95,7 @@ public class InputManager : NetworkBehaviour
         {
             playerInput.Fire.started += _ =>
             {
-                if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+                if (networkHUD != null && networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
 
                 playerFiring.OnStartFiring();
                 toggleCursorLock(true);
@@ -98,14 +104,27 @@ public class InputManager : NetworkBehaviour
 
             playerInput.Reload.performed += _ =>
             {
-                if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+                if ((networkHUD != null && networkHUD.GetIsEscapeMenuOpen()) || playerHUD.GetIsBuyMenuOpen()) return;
 
                 playerFiring.OnPressReload();
             };
         }
 
+        if (weaponManager != null)
+        {
+            playerInput.EquipPrimary.performed += _ =>
+            {
+                weaponManager.EquipWeapon(WeaponSlot.Primary);
+            };
+
+            playerInput.EquipSecondary.performed += _ =>
+            {
+                weaponManager.EquipWeapon(WeaponSlot.Secondary);
+            };
+        }
+
         playerInput.Suicide.performed += _ => {
-            if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+            if ((networkHUD != null && networkHUD.GetIsEscapeMenuOpen()) || playerHUD.GetIsBuyMenuOpen()) return;
 
             player.CmdDealDamage(9999);
         };
@@ -117,7 +136,7 @@ public class InputManager : NetworkBehaviour
         if (!hasAuthority) return;
 
         // disable input if escape menu is open
-        if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen())
+        if (networkHUD != null && networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen())
         {
             OnBlockingUIOpen();
             return;
@@ -145,7 +164,7 @@ public class InputManager : NetworkBehaviour
 
     private void toggleCursorLock(bool locked)
     {
-        if (networkHUD.GetIsEscapeMenuOpen() || playerHUD.GetIsBuyMenuOpen()) return;
+        if ((networkHUD != null && networkHUD.GetIsEscapeMenuOpen()) || playerHUD.GetIsBuyMenuOpen()) return;
 
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
     }
