@@ -114,12 +114,22 @@ public class InputManager : NetworkBehaviour
         {
             playerInput.EquipPrimary.performed += _ =>
             {
-                weaponManager.EquipWeapon(WeaponSlot.Primary);
+                if (isClientOnly)
+                {
+                    weaponManager.EquipWeapon(WeaponSlot.Primary);
+                }
+                
+                weaponManager.CmdEquipWeapon(WeaponSlot.Primary);
             };
 
             playerInput.EquipSecondary.performed += _ =>
             {
-                weaponManager.EquipWeapon(WeaponSlot.Secondary);
+                if (isClientOnly)
+                {
+                    weaponManager.EquipWeapon(WeaponSlot.Secondary);
+                }
+
+                weaponManager.CmdEquipWeapon(WeaponSlot.Secondary);
             };
         }
 

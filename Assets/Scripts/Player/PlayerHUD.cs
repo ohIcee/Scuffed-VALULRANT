@@ -18,6 +18,10 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private WeaponManager weaponManager = null;
     [SerializeField] private TextMeshProUGUI ammoText = null;
 
+    [SerializeField] private GameObject reloadIndicatorPanel = null;
+    [SerializeField] private TextMeshProUGUI reloadTimeLeftText = null;
+    [SerializeField] private Image reloadTimeLeftProgressBar = null;
+
     [Header("Kevlar")]
     [SerializeField] private PlayerEquipment playerEquipment = null;
     [SerializeField] private TextMeshProUGUI kevlarText = null;
@@ -66,6 +70,7 @@ public class PlayerHUD : MonoBehaviour
         playerHealth.ClientOnHealthUpdated += HandleHealthUpdated;
         playerFiring.ClientOnAmmoUpdated += HandleAmmoUpdated;
         weaponManager.ClientOnAmmoUpdated += HandleAmmoUpdated;
+        weaponManager.ClientReloadProgress += HandleReloadProgress;
 
         playerEquipment.ClientOnKevlarDurabilityUpdated += HandleKevlarDurabilityUpdated;
     }
@@ -75,6 +80,7 @@ public class PlayerHUD : MonoBehaviour
         playerHealth.ClientOnHealthUpdated -= HandleHealthUpdated;
         playerFiring.ClientOnAmmoUpdated -= HandleAmmoUpdated;
         weaponManager.ClientOnAmmoUpdated -= HandleAmmoUpdated;
+        weaponManager.ClientReloadProgress -= HandleReloadProgress;
 
         if (player != null && player.GetNetworkPlayer() != null)
             player.GetNetworkPlayer().ClientOnMoneyUpdated -= HandleMoneyUpdated;
@@ -132,5 +138,14 @@ public class PlayerHUD : MonoBehaviour
     private void HandleMoneyUpdated(int oldMoney, int newMoney)
     {
         moneyText.text = $"${newMoney}";
+    }
+
+    private void HandleReloadProgress(float currentTime, float maxTime)
+    {
+        if (!reloadIndicatorPanel.activeSelf && currentTime > 0.01f) reloadIndicatorPanel.SetActive(true);
+        if (currentTime <= 0.01f && reloadIndicatorPanel.activeSelf) reloadIndicatorPanel.SetActive(false);
+
+        reloadTimeLeftText.text = string.Format("{0:F1}", currentTime) + "s";
+        reloadTimeLeftProgressBar.fillAmount = currentTime / maxTime;
     }
 }

@@ -31,7 +31,10 @@ public class WeaponManager : NetworkBehaviour
 	public bool isReloading = false;
 	
 	public event Action<int, int> ClientOnAmmoUpdated;
+	public event Action<float, float> ClientReloadProgress;
 
+	private Coroutine reloadCoroutine;
+	
 	void Start()
 	{
 		EquipWeapon(primaryWeapon);
@@ -62,9 +65,26 @@ public class WeaponManager : NetworkBehaviour
 				break;
 		}
 	}
-	
+
+	[Command]
+	public void CmdEquipWeapon(WeaponSlot slot)
+	{
+		RpcEquipWeapon(slot);
+	}
+
+	private void RpcEquipWeapon(WeaponSlot slot)
+	{
+		EquipWeapon(slot);
+	}
+
 	void EquipWeapon(PlayerWeapon _weapon)
 	{
+		if (reloadCoroutine != null)
+		{
+			Debug.Log("Currently Reloading! Cancelling the reload.");
+			StopCoroutine(reloadCoroutine);
+		}
+
 		if (currentWeapon != null)
 		{
 			Destroy(currentGraphics.gameObject);
@@ -90,25 +110,39 @@ public class WeaponManager : NetworkBehaviour
 
 	public void Reload()
 	{
+		Debug.Log("yuh");
 		if (isReloading)
 			return;
-
-		StartCoroutine(Reload_Coroutine());
+		Debug.Log("Is Reloading");
+		
+		if (reloadCoroutine != null)
+			return;
+		Debug.Log("is reload coro null");
+		
+		reloadCoroutine = StartCoroutine(Reload_Coroutine());
 	}
 
+	private float reloadTimeLeft;
 	private IEnumerator Reload_Coroutine()
 	{
 		isReloading = true;
 
 		CmdOnReload();
+		
+		// yield return new WaitForSeconds(currentWeapon.reloadTime);
 
-		yield return new WaitForSeconds(currentWeapon.reloadTime);
+		for (reloadTimeLeft = currentWeapon.reloadTime; reloadTimeLeft > 0f; reloadTimeLeft -= Time.deltaTime)
+		{
+			ClientReloadProgress?.Invoke(reloadTimeLeft, currentWeapon.reloadTime);
+			yield return null;
+		}
 
 		currentWeapon.bullets = currentWeapon.maxBullets;
 
 		playerShooting.OnReloadComplete();
 
 		isReloading = false;
+		reloadCoroutine = null;
 	}
 
 	[Command]
